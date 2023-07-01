@@ -1,4 +1,3 @@
 
-from .vector_reg import VectorReg
-from .scalar_reg import ScalarReg
+from .one_dim_reg import OneDimReg
 from .isa_scene import IsaScene

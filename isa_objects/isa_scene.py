@@ -1,13 +1,13 @@
 
 import numpy as np
+from colour import Color
 from typing import List
 from manim import config
 from manim import MovingCameraScene, MovingCamera
 from manim import Text, Mobject, Rectangle
 from manim import UP, DOWN, LEFT, RIGHT
 from manim import FadeIn, FadeOut, Transform
-from .vector_reg import VectorReg
-from .scalar_reg import ScalarReg
+from .one_dim_reg import OneDimReg, OneDimRegElem
 
 class IsaScene(MovingCameraScene):
 
@@ -106,21 +106,59 @@ class IsaScene(MovingCameraScene):
             self._play_frame_play(no_wait=no_wait)
             self.wait()
 
-    def frame_read_elem(self, reg: VectorReg, color, *index):
-        if isinstance(reg, ScalarReg):
-            elem = reg.get_elem(color)
-        elif isinstance(reg, VectorReg):
-            elem = reg.get_elem(color, index[0])
+    def frame_read_elem(self,
+                        vector: OneDimReg,
+                        color: Color,
+                        size: float = -1.0,
+                        e: int = 0,
+                        **kargs):
+        """
+        Read element from register, return one Rectangle.
+
+        Args:
+            vector: Register.
+            color: Color of new element.
+            size: Width of element in byte.
+            e: Index of element.
+            kargs: Arguments to new element.
+        """
+        
+        if isinstance(vector, OneDimReg):
+            elem = vector.get_elem(color=color, elem_width=size, index=e,
+                                   **kargs)
 
         self.frame_fadein_list.append(elem)
         self.frame_fadeout_list.append(elem)
         return elem
 
-    def frame_move_elem(self, elem: Mobject, reg: VectorReg, *index, scale: float = 1.0):
+    def frame_move_elem(self,
+                        elem: OneDimRegElem,
+                        vector: OneDimReg,
+                        size: float = -1.0,
+                        e: int = 0):
+        """
+        Move element to register, add animate to list.
+
+        Args:
+            elem: Element object.
+            vector: Register.
+            size: Width of element in byte.
+            e: Index of element.
+        """
+        if size < 0:
+            size = vector.elem_width
+
+        dest_pos = vector.get_elem_center(index=e, elem_width=size)
+
+        old_width = elem.get_elem_width()
+        new_width = size * vector.ratio
+        scale = new_width / old_width
+
         if scale != 1.0:
-            animate = elem.animate.move_to(reg.get_elem_center(index[0])).stretch(scale, 0)
+            animate = elem.animate.move_to(dest_pos).stretch(scale, 0)
+            elem.ratio = elem.ratio * scale
         else:
-            animate = elem.animate.move_to(reg.get_elem_center(index[0]))
+            animate = elem.animate.move_to(dest_pos)
         self.frame_play_list.append(animate)
 
     #
@@ -150,43 +188,71 @@ class IsaScene(MovingCameraScene):
 
         self.within_frame = False
 
-    def section_decl_scalar(self, *args, **kargs):
-        scalar = ScalarReg(*args, **kargs, font_size=40).shift(DOWN * self.vertical_coord)
+    def section_decl_scalar(self,
+                            text: str,
+                            color: Color,
+                            width: int,
+                            **kargs):
+        scalar = OneDimReg(text=text,
+                           color=color,
+                           width=width,
+                           elements=1,
+                           font_size=40,
+                           **kargs).shift(DOWN * self.vertical_coord)
         self.vertical_coord += 2
 
         self.section_fadein_list.append(scalar)
         self.section_fadeout_list.append(scalar)
 
-        if self.horizontal_coord < scalar.get_left_boundary_width():
-            self.horizontal_coord = scalar.get_left_boundary_width()
+        if self.horizontal_coord < scalar.get_max_boundary_width():
+            self.horizontal_coord = scalar.get_max_boundary_width()
 
         return scalar
 
-    def section_decl_vector(self, *args, **kargs):
-        vector = VectorReg(*args, **kargs, font_size=40).shift(DOWN * self.vertical_coord)
+    def section_decl_vector(self,
+                            text: str,
+                            color: Color,
+                            width: int,
+                            elements: int = 1,
+                            **kargs):
+        vector = OneDimReg(text=text,
+                           color=color,
+                           width=width,
+                           elements=elements,
+                           font_size=40,
+                           **kargs).shift(DOWN * self.vertical_coord)
         self.vertical_coord += 2
 
         self.section_fadein_list.append(vector)
         self.section_fadeout_list.append(vector)
 
-        if self.horizontal_coord < vector.get_left_boundary_width():
-            self.horizontal_coord = vector.get_left_boundary_width()
+        if self.horizontal_coord < vector.get_max_boundary_width():
+            self.horizontal_coord = vector.get_max_boundary_width()
 
         return vector
 
-    def section_decl_vector_group(self, names, *args, **kargs):
+    def section_decl_vector_group(self,
+                                  text_list: List[str],
+                                  color: Color,
+                                  width: int,
+                                  elements: int = 1,
+                                  **kargs):
         vector_list = []
-        for i, name in enumerate(names):
+        for i, text in enumerate(text_list):
             vector_list.append(
-                VectorReg(name, *args, **kargs, font_size=40).shift(DOWN * (self.vertical_coord + i))
-                )
-        self.vertical_coord += len(names) + 1
+                OneDimReg(text=text,
+                          color=color,
+                          width=width,
+                          elements=elements,
+                          font_size=40,
+                          **kargs).shift(DOWN * (self.vertical_coord + i)))
+        self.vertical_coord += len(text_list) + 1
 
         self.section_fadein_list.extend(vector_list)
         self.section_fadeout_list.extend(vector_list)
 
-        if self.horizontal_coord < vector_list[0].get_left_boundary_width():
-            self.horizontal_coord = vector_list[0].get_left_boundary_width()
+        if self.horizontal_coord < vector_list[0].get_max_boundary_width():
+            self.horizontal_coord = vector_list[0].get_max_boundary_width()
 
         return vector_list
 
@@ -224,9 +290,19 @@ class IsaScene(MovingCameraScene):
     # Predefined frame
     #
 
-    def frame_counter_to_predicate(self, png_obj: ScalarReg, *args, **kargs):
+    def frame_counter_to_predicate(self,
+                                   png_obj: OneDimReg,
+                                   text: str,
+                                   color: Color,
+                                   width: int,
+                                   elements: int = 1,
+                                   **kargs):
         self.start_frame()
-        predicate = self.section_decl_vector(*args, **kargs)
+        predicate = self.section_decl_vector(text=text,
+                                             color=color,
+                                             width=width,
+                                             elements=elements,
+                                             **kargs)
         predicate.shift(png_obj.get_reg_center() - predicate.get_reg_center())
         self.vertical_coord -= 2
 
@@ -248,16 +324,22 @@ class IsaScene(MovingCameraScene):
         return predicate
 
     def frame_concat_vector(self,
-                            v1: VectorReg,
-                            v2: VectorReg,
-                            *args, **kargs) -> VectorReg:
+                            v1: OneDimReg,
+                            v2: OneDimReg,
+                            text: str,
+                            color: Color,
+                            **kargs) -> OneDimReg:
+        reg_width = v1.reg_width + v2.reg_width
         elements = v1.elements + v2.elements
-        elem_width = int(min(v1.elem_width, v2.elem_width))
         if "ratio" not in kargs:
             kargs["ratio"] = max(v1.ratio, v2.ratio)
 
         self.start_frame()
-        vector = self.section_decl_vector(*args, elements=elements, elem_width=elem_width, **kargs)
+        vector = self.section_decl_vector(text=text,
+                                          color=color,
+                                          width=reg_width,
+                                          elements=elements,
+                                          **kargs)
         vector.shift(v1.get_reg_center() - vector.get_reg_center())
         self.vertical_coord -= 2
 
@@ -290,15 +372,19 @@ class IsaScene(MovingCameraScene):
     #
 
     def step_data_convert(self,
-                          elem: Rectangle,
-                          scale: float,
+                          elem: OneDimRegElem,
+                          size: float,
                           index: int) -> Rectangle:
-        elem_width = elem.width * scale
 
-        elem_target = elem.copy().stretch(scale, 0) \
-            .move_to(elem.get_right() + LEFT * (index + 0.5) * elem_width)
+        old_width = elem.get_elem_width() * elem.ratio
+        new_width = size * elem.ratio
+        scale = new_width / old_width
 
-        self.play(Transform(elem, elem_target))
+        if scale != 1.0:
+            dest_pos = elem.get_elem_center() + RIGHT * old_width / 2 \
+                + LEFT * new_width * (index + 0.5)
+
+            self.play(elem.animate.stretch(scale, 0).move_to(dest_pos))
+            elem.ratio = elem.ratio * scale
 
         return elem
-
