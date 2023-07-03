@@ -7,7 +7,7 @@ from manim import MovingCameraScene, MovingCamera
 from manim import Text, Mobject, Rectangle
 from manim import UP, DOWN, LEFT, RIGHT
 from manim import FadeIn, FadeOut, Transform
-from .one_dim_reg import OneDimReg, OneDimRegElem
+from ..isa_objects.one_dim_reg import OneDimReg, OneDimRegElem
 
 class IsaScene(MovingCameraScene):
 
