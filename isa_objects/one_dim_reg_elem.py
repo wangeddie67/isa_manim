@@ -39,6 +39,8 @@ class OneDimRegElem(VGroup):
         elem_width: element width.
     """
 
+    require_serialization = False
+
     def __init__(self,
                  color: Color,
                  width: int,

@@ -51,6 +51,8 @@ class OneDimReg(VGroup):
         elements: number of element.
     """
 
+    require_serialization = False
+
     def __init__(self,
                  text: str,
                  color: Color,

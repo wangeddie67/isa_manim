@@ -172,14 +172,24 @@ class IsaScene(MovingCameraScene):
             animate
         """
         for item in self._section_animate_list:
-            # new animate is predecessor of one existed item.
+            # new animate is successor of one existed item.
             if animate.is_predecessor(item):
                 animate.predecessor_list.append(item)
                 item.successor_list.append(animate)
-            # new animate is successor of one existed item.
+            # new animate is predecessor of one existed item.
             if animate.is_successor(item):
                 animate.successor_list.append(item)
                 item.predecessor_list.append(animate)
+
+            # serialization dependency.
+            for dep_item in animate.dep_item_list:
+                if not dep_item.require_serialization:
+                    continue
+
+                # new animate is successor of one existed item.
+                if item.is_background(dep_item):
+                    animate.predecessor_list.append(item)
+                    item.successor_list.append(animate)
 
         self._section_animate_list.append(animate)
 
