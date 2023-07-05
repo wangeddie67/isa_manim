@@ -2,7 +2,7 @@
 Library to generate ISA behavior by Manim.
 """
 
-# Mobjects for ISA flow.
+# Objects for ISA flow.
 from .isa_objects import OneDimReg, OneDimRegElem
 
 # Animation for ISA flow.
