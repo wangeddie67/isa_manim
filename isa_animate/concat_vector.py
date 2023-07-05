@@ -34,8 +34,6 @@ def concat_vector(src1: OneDimReg,
     reg_width = src1.reg_width + src2.reg_width
     elem_width = int(min(src1.elem_width, src2.elem_width))
     elements = int(reg_width / elem_width)
-    if "ratio" not in kargs:
-        kargs["ratio"] = max(src1.ratio, src2.ratio)
 
     vector = OneDimReg(text=text,
                        color=color,

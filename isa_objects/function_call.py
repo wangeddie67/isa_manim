@@ -8,6 +8,7 @@ from manim import VGroup, Ellipse, Text
 from manim import LEFT, RIGHT, UP, DOWN
 from manim import DEFAULT_FONT_SIZE
 from colour import Color
+from ..isa_config import get_scene_ratio
 
 class FunctionCall(VGroup):
     """
@@ -30,14 +31,10 @@ class FunctionCall(VGroup):
       \                    /
        --------------------
 
-    Register rectangle support scale ratio on x-axis, which means the ratio of
-    the width in scene to the width of register.
-
     Members:
         label_text: Label text object.
         value_text_list: List of value text object.
         reg_rect: Register rectangle object.
-        ratio: scene width / register width.
         reg_width: register width.
         elem_width: element width.
         elements: number of element.
@@ -60,16 +57,9 @@ class FunctionCall(VGroup):
             elements: Number of elements.
 
         kwargs:
-            ratio: scene width / register width
             label_pos: Label position related to the center of elem_width.
             font_size: Font size of label and value text.
         """
-        # Scene ratio
-        self.ratio = 1.0
-        if "ratio" in kwargs:
-            self.ratio = kwargs["ratio"]
-            del kwargs["ratio"]
-
         # Font size
         if "font_size" in kwargs:
             font_size = kwargs["font_size"]
@@ -89,7 +79,7 @@ class FunctionCall(VGroup):
         # function ellipse
         self.func_ellipse = Ellipse(color=color,
                                 height=1.0,
-                                width=self.func_width * self.ratio,
+                                width=self.func_width,
                                 **kwargs)
 
         # Label text
@@ -107,7 +97,7 @@ class FunctionCall(VGroup):
         """
         Return scene width of register.
         """
-        return self.func_width * self.ratio
+        return self.func_width * get_scene_ratio()
 
     def get_max_boundary_width(self) -> float:
         """

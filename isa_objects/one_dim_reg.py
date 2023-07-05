@@ -8,6 +8,7 @@ from manim import LEFT
 from manim import DEFAULT_FONT_SIZE
 from colour import Color
 from .one_dim_reg_elem import OneDimRegElem
+from ..isa_config import get_scene_ratio
 
 class OneDimReg(VGroup):
     """
@@ -38,14 +39,10 @@ class OneDimReg(VGroup):
     |         |                                      |
     --------------------------------------------------
 
-    Register rectangle support scale ratio on x-axis, which means the ratio of
-    the width in scene to the width of register.
-
     Members:
         label_text: Label text object.
         value_text_list: List of value text object.
         reg_rect: Register rectangle object.
-        ratio: scene width / register width.
         reg_width: register width.
         elem_width: element width.
         elements: number of element.
@@ -65,20 +62,13 @@ class OneDimReg(VGroup):
         Args:
             text: Register name.
             color: Color of register.
-            width: Width of register, in Byte
+            width: Width of register, in bits
             elements: Number of elements.
 
         kwargs:
-            ratio: scene width / register width
             label_pos: Label position related to the center of elem_width.
             font_size: Font size of label and value text.
         """
-        # Scene ratio
-        self.ratio = 1.0
-        if "ratio" in kwargs:
-            self.ratio = kwargs["ratio"]
-            del kwargs["ratio"]
-
         # Font size
         if "font_size" in kwargs:
             font_size = kwargs["font_size"]
@@ -106,8 +96,8 @@ class OneDimReg(VGroup):
         # Register rectangle
         self.reg_rect = Rectangle(color=color,
                                   height=1.0,
-                                  width=width * self.ratio,
-                                  grid_xstep=self.elem_width,
+                                  width=width * get_scene_ratio(),
+                                  grid_xstep=self.elem_width * get_scene_ratio(),
                                   **kwargs)
 
         # Label text
@@ -125,7 +115,7 @@ class OneDimReg(VGroup):
         self.value_text_list = []
         for index, value in enumerate(value_str_list):
             elem_label_pos = self.reg_rect.get_right() + \
-                LEFT * (index + 0.5 ) * self.elem_width * self.ratio
+                LEFT * (index + 0.5 ) * self.elem_width * get_scene_ratio()
             elem_label = Text(text=value,
                                 color=color,
                                 font_size=font_size) \
@@ -142,7 +132,7 @@ class OneDimReg(VGroup):
         """
         Return scene width of register.
         """
-        return self.reg_width * self.ratio
+        return self.reg_width * get_scene_ratio()
 
     def get_max_boundary_width(self) -> float:
         """
@@ -167,13 +157,13 @@ class OneDimReg(VGroup):
 
         Args:
             index: Index of elements.
-            elem_width: Width of element in byte.
+            elem_width: Width of element in bits.
         """
         if elem_width < 0:
             elem_width = self.elem_width
 
         return self.reg_rect.get_right() \
-            + LEFT * (index + 0.5) * elem_width * self.ratio
+            + LEFT * (index + 0.5) * elem_width * get_scene_ratio()
 
 
     def get_elem(self,
@@ -191,7 +181,7 @@ class OneDimReg(VGroup):
 
         Args:
             color: Color of new rectangle.
-            elem_width: Width of data element in Byte.
+            elem_width: Width of data element in bits.
             index: Index of data element in register.
             kwargs: Arguments to new elements.
         """
@@ -199,7 +189,7 @@ class OneDimReg(VGroup):
             elem_width = self.elem_width
 
         return OneDimRegElem(color=color,
-                             width=elem_width * self.ratio,
+                             width=elem_width,
                              fill_opacity=0.5,
                              **kwargs) \
             .move_to(self.get_elem_center(index=index, elem_width=elem_width))

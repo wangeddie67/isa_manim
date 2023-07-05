@@ -7,6 +7,7 @@ from manim import VGroup, Rectangle, Text
 from manim import LEFT
 from manim import DEFAULT_FONT_SIZE
 from colour import Color
+from ..isa_config import get_scene_ratio
 
 class OneDimRegElem(VGroup):
     """
@@ -29,13 +30,9 @@ class OneDimRegElem(VGroup):
     |                  |
     --------------------
 
-    Element rectangle support scale ratio on x-axis, which means the ratio of
-    the width in scene to the width of register.
-
     Members:
         value_text: Value text object.
         reg_rect: Register rectangle object.
-        ratio: scene width / register width.
         elem_width: element width.
     """
 
@@ -53,16 +50,9 @@ class OneDimRegElem(VGroup):
             width: Width of register, in Byte
 
         kwargs:
-            ratio: scene width / register width
             font_size: Font size of label and value text.
             value: element value.
         """
-        # Scene ratio
-        self.ratio = 1.0
-        if "ratio" in kwargs:
-            self.ratio = kwargs["ratio"]
-            del kwargs["ratio"]
-
         # Font size
         if "font_size" in kwargs:
             font_size = kwargs["font_size"]
@@ -83,7 +73,7 @@ class OneDimRegElem(VGroup):
         # Register rectangle
         self.elem_rect = Rectangle(color=color,
                                   height=1.0,
-                                  width=width * self.ratio,
+                                  width=width * get_scene_ratio(),
                                   **kwargs)
 
         # Value text
@@ -106,7 +96,7 @@ class OneDimRegElem(VGroup):
         """
         Return scene width of element.
         """
-        return self.elem_width * self.ratio
+        return self.elem_width * get_scene_ratio()
 
     def get_elem_center(self) -> np.ndarray:
         """
@@ -131,4 +121,4 @@ class OneDimRegElem(VGroup):
             elem_width = self.elem_width
 
         return self.elem_rect.get_right() \
-            + LEFT * (index + 0.5) * elem_width * self.ratio
+            + LEFT * (index + 0.5) * elem_width * get_scene_ratio()
