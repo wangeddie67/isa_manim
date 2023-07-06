@@ -106,7 +106,7 @@ class IsaScene(MovingCameraScene):
             self._play_frame_play(no_wait=no_wait)
             self.wait()
 
-    def frame_read_elem(self,
+    def read_elem(self,
                         vector: OneDimReg,
                         color: Color,
                         size: float = -1.0,
@@ -131,7 +131,7 @@ class IsaScene(MovingCameraScene):
         self.frame_fadeout_list.append(elem)
         return elem
 
-    def frame_move_elem(self,
+    def move_elem(self,
                         elem: OneDimRegElem,
                         vector: OneDimReg,
                         size: float = -1.0,
@@ -188,7 +188,7 @@ class IsaScene(MovingCameraScene):
 
         self.within_frame = False
 
-    def section_decl_scalar(self,
+    def decl_scalar(self,
                             text: str,
                             color: Color,
                             width: int,
@@ -209,7 +209,7 @@ class IsaScene(MovingCameraScene):
 
         return scalar
 
-    def section_decl_vector(self,
+    def decl_vector(self,
                             text: str,
                             color: Color,
                             width: int,
@@ -231,7 +231,7 @@ class IsaScene(MovingCameraScene):
 
         return vector
 
-    def section_decl_vector_group(self,
+    def decl_vector_group(self,
                                   text_list: List[str],
                                   color: Color,
                                   width: int,
@@ -290,7 +290,7 @@ class IsaScene(MovingCameraScene):
     # Predefined frame
     #
 
-    def frame_counter_to_predicate(self,
+    def counter_to_predicate(self,
                                    png_obj: OneDimReg,
                                    text: str,
                                    color: Color,
@@ -298,7 +298,7 @@ class IsaScene(MovingCameraScene):
                                    elements: int = 1,
                                    **kargs):
         self.start_frame()
-        predicate = self.section_decl_vector(text=text,
+        predicate = self.decl_vector(text=text,
                                              color=color,
                                              width=width,
                                              elements=elements,
@@ -323,7 +323,7 @@ class IsaScene(MovingCameraScene):
 
         return predicate
 
-    def frame_concat_vector(self,
+    def concat_vector(self,
                             v1: OneDimReg,
                             v2: OneDimReg,
                             text: str,
@@ -335,7 +335,7 @@ class IsaScene(MovingCameraScene):
             kargs["ratio"] = max(v1.ratio, v2.ratio)
 
         self.start_frame()
-        vector = self.section_decl_vector(text=text,
+        vector = self.decl_vector(text=text,
                                           color=color,
                                           width=reg_width,
                                           elements=elements,
@@ -371,7 +371,7 @@ class IsaScene(MovingCameraScene):
     # Predefined step
     #
 
-    def step_data_convert(self,
+    def data_convert(self,
                           elem: OneDimRegElem,
                           size: float,
                           index: int) -> Rectangle:

@@ -16,4 +16,4 @@ from .isa_animate import read_elem
 from .isa_animate import read_scalar_reg, read_vector_group, read_vector_reg
 
 # Scene for ISA flow
-from .isa_scene import MoveFlowScene
+from .isa_scene import CalculateFlowScene

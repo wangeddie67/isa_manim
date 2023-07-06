@@ -2,15 +2,18 @@
 from typing import List, Union, Tuple
 import numpy as np
 from manim import logger
-from manim import Mobject
-from manim import FadeOut
-from manim import MovingCameraScene, MovingCamera
+from manim import Mobject, Text
+from manim import FadeOut, FadeIn
+from manim import UP, DOWN
+from manim import ZoomedScene
+from manim import BLACK
+from manim import config
 from ..isa_animate import IsaAnimate
 
 class _IsaAnimateSection():
     """
-    This scene is used for those instruction with neither arithmetic/logic
-    operation nor load/store operation.
+    This scene is used for those instruction with neither arithmetic/logic operation nor load/store
+    operation.
     For example:
     - move instruction.
     - shuffle instruction.
@@ -31,8 +34,7 @@ class _IsaAnimateSection():
         self.step_animate_list = []
         self.step_item_list = []
 
-    def analysis_flow(self,
-                      bg_items: List[Mobject] = []) -> List[Mobject]:
+    def analysis_flow(self, bg_items: List[Mobject] = []) -> List[Mobject]:
         """
         Analysis the data flow and organize animations into several step.
 
@@ -89,28 +91,50 @@ class _IsaAnimateSection():
         return [] if self.fade_out else step_item
 
 
-class IsaScene(MovingCameraScene):
+class IsaScene(ZoomedScene):
     """
-    This scene is used for those instruction with neither arithmetic/logic
-    operation nor load/store operation.
+    This scene is used for those instruction with neither arithmetic/logic operation nor load/store
+    operation.
     For example:
     - move instruction.
     - shuffle instruction.
     - data convert instruction.
     """
 
-    def __init__(self, camera_class=MovingCamera, **kwargs):
-        super().__init__(camera_class=camera_class, **kwargs)
+    def __init__(self, **kwargs):
+        ZoomedScene.__init__(
+            self,
+            zoom_factor=1.0,
+            zoomed_display_height=config.frame_height / 2 + 2,
+            zoomed_display_width=config.frame_width,
+            zoomed_display_center=DOWN * ((config.frame_height / 2 - 2) / 2),
+            image_frame_stroke_width=0,
+            zoomed_camera_config={
+                "background_opacity": 1,
+                "default_frame_stroke_width": 0,
+                },
+            **kwargs
+        )
 
         self._isa_flow_section_list: List[_IsaAnimateSection] = []
         self._section_animate_list: List[IsaAnimate] = []
         self._always_on_item_list: List[Mobject] = []
+
+        self.title_obj = None
 
     def construct(self):
         """
         Construct animation.
         """
         self.construct_isa_flow()
+
+        self.zoomed_display.display_frame.set_color(BLACK)
+        self.zoomed_camera.frame.move_to(DOWN * ((config.frame_height / 2 - 2) / 2))
+
+        if self.title_obj:
+            self.play(FadeIn(self.title_obj))
+
+        self.activate_zooming()
 
         msg = f"Register {len(self._isa_flow_section_list)} sections."
         logger.info(msg)
@@ -127,7 +151,7 @@ class IsaScene(MovingCameraScene):
             if section.camera_animate:
                 camera_ratio = section.camera_animate[0]
                 camera_target = section.camera_animate[1]
-                self.play(self.camera.frame.animate.scale(camera_ratio)
+                self.play(self.zoomed_camera.frame.animate.scale(camera_ratio)
                           .move_to(camera_target))
 
             # Play each step in section.
@@ -163,8 +187,7 @@ class IsaScene(MovingCameraScene):
         """
         self._always_on_item_list.append(item)
 
-    def _register_animation(self,
-                            animate: IsaAnimate):
+    def _register_animation(self, animate: IsaAnimate):
         """
         Register animation to scene and build dependency.
 
@@ -193,8 +216,7 @@ class IsaScene(MovingCameraScene):
 
         self._section_animate_list.append(animate)
 
-    def register_animation(self,
-                           animate: Union[IsaAnimate, List[IsaAnimate]]):
+    def register_animation(self, animate: Union[IsaAnimate, List[IsaAnimate]]):
         """
         Register animation to scene.
 
@@ -236,3 +258,24 @@ class IsaScene(MovingCameraScene):
                     camera_animate=camera_animate))
 
         self._section_animate_list = []
+
+    def draw_title(self, title: str):
+        """
+        Draw title of the animation.
+
+        Args:
+            title: String of title.
+        """
+        self.title_obj = Text(title, font_size=35).move_to(UP * 3.5)
+
+    def draw_subtitle(self, subtitle: str):
+        """
+        Draw sub title of the animation.
+
+        Args:
+            subtitle: String of subtitle.
+        """
+        subtitle_obj = Text(subtitle, font_size=25).move_to(UP * 3)
+        self._register_animation(animate=IsaAnimate(
+            animate=FadeIn(subtitle_obj), src=[], dst=[subtitle_obj], dep=[]))
+
