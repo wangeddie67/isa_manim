@@ -2,11 +2,7 @@
 from typing import List
 from colour import Color
 from manim import config
-from manim import Text, Rectangle
 from manim import UP, DOWN
-from manim import FadeIn
-from manim import MovingCamera, MultiCamera
-from ..isa_animate import IsaAnimate
 from ..isa_animate import read_scalar_reg, read_vector_group, read_vector_reg
 from ..isa_animate import read_elem, assign_elem
 from ..isa_animate import concat_vector, counter_to_predicate, data_convert
@@ -252,13 +248,20 @@ class CalculateFlowScene(IsaScene):
         """
         Animate of Function call.
         """
+        func_kwargs = dict()
+        if "args_value" in kwargs:
+            func_kwargs["args_value"] = kwargs["args_value"]
+            del kwargs["args_value"]
+
         if func in self.function_dict:
             func_obj = self.function_dict[func]
         else:
             animate_func = def_func_call(
                 func=func,
                 color=color,
-                arg_width=[x.get_elem_width() for x in args])
+                args_width=[x.get_elem_width() for x in args],
+                res_width=size,
+                **func_kwargs)
 
             func_obj : FunctionCall = animate_func.dst_item_list[0]
             self.function_dict[func] = func_obj

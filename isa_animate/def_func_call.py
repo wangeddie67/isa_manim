@@ -4,14 +4,15 @@ Call function.
 
 from typing import List
 from colour import Color
-from manim import FadeIn, FadeOut, AnimationGroup
+from manim import FadeIn
 from ..isa_objects import FunctionCall
 from .isa_animate import IsaAnimate
 
 
 def def_func_call(func: str,
                   color: Color,
-                  arg_width: List[float],
+                  args_width: List[float],
+                  res_width: float,
                   **kwargs) -> IsaAnimate:
     """
     Convert data to another element.
@@ -28,7 +29,7 @@ def def_func_call(func: str,
     """
 
     func_object = FunctionCall(
-        text=func, color=color, arg_width=arg_width, **kwargs)
+        text=func, color=color, args_width=args_width, res_width=res_width, **kwargs)
 
     animate = FadeIn(func_object)
 

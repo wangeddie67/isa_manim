@@ -28,7 +28,7 @@ def assign_elem(elem: OneDimRegElem,
     dest_pos = vector.get_elem_center(index=index, elem_width=size)
 
     # Calculate scaling factor
-    old_width = elem.get_elem_width()
+    old_width = elem.get_elem_width() * get_scene_ratio()
     new_width = size * get_scene_ratio()
     scale = new_width / old_width
 

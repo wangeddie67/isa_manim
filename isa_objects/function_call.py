@@ -4,7 +4,7 @@ One dimension register object.
 
 from typing import List
 import numpy as np
-from manim import VGroup, Ellipse, Text
+from manim import VGroup, Ellipse, Text, Rectangle, DashedVMobject
 from manim import LEFT, RIGHT, UP, DOWN
 from manim import DEFAULT_FONT_SIZE
 from colour import Color
@@ -45,7 +45,8 @@ class FunctionCall(VGroup):
     def __init__(self,
                  text: str,
                  color: Color,
-                 arg_width: List[float],
+                 args_width: List[float],
+                 res_width: float,
                  **kwargs):
         """
         Constructor an function call.
@@ -67,28 +68,68 @@ class FunctionCall(VGroup):
         else:
             font_size = DEFAULT_FONT_SIZE
 
+        # Argument Text
+        if "args_value" in kwargs:
+            args_value = kwargs["args_value"]
+            del kwargs["args_value"]
+        else:
+            args_value = ["" for _ in range(0, args_width)]
+
+        args_scene_width = [width * get_scene_ratio() for width in args_width]
+
         # function width
-        self.func_width = sum(arg_width) + len(arg_width) - 1
+        self.func_width = sum(args_scene_width) + len(args_scene_width) - 1
         self.func_height = 4
         self.args_pos = [LEFT * (self.func_width / 2)
-                            + RIGHT * (sum(arg_width[0:i]) + i + arg_width[i] / 2)
+                            + RIGHT * (sum(args_scene_width[0:i]) + i + args_scene_width[i] / 2)
                             + UP * 1.5
-                         for i in range(0, len(arg_width))]
+                         for i in range(0, len(args_scene_width))]
         self.dst_pos = DOWN * 1.5
 
         # function ellipse
         self.func_ellipse = Ellipse(color=color,
-                                height=1.0,
-                                width=self.func_width,
-                                **kwargs)
+                                    height=1.0,
+                                    width=self.func_width,
+                                    **kwargs)
 
         # Label text
         self.label_text = Text(text=text,
                                color=color,
                                font_size=font_size)
 
+        # Scale
+        if self.label_text.width > self.func_ellipse.width:
+            value_text_scale = self.func_ellipse.width / self.label_text.width
+            self.label_text.scale(value_text_scale)
+
+        # Arguments Rectangle
+        self.args_rect = []
+        self.args_text = []
+        for arg_pos, arg_width, arg_value in zip(self.args_pos, args_width, args_value):
+            arg_rect = DashedVMobject(Rectangle(color=color,
+                                                height=1.0,
+                                                width=arg_width * get_scene_ratio() )) \
+                    .move_to(arg_pos + UP * 0.5)
+            arg_text = Text(text=arg_value, color=color, font_size=font_size) \
+                    .move_to(arg_pos + UP * 0.5)
+            # Scale
+            if arg_text.width > arg_rect.width:
+                arg_text_scale = arg_rect.width / arg_text.width
+                arg_text.scale(arg_text_scale)
+
+            self.args_rect.append(arg_rect)
+            self.args_text.append(arg_text)
+
+        # Result Rectangle
+        self.args_rect.append(
+            DashedVMobject(Rectangle(color=color,
+                                     height=1.0,
+                                     width=res_width * get_scene_ratio())) \
+                .move_to(self.dst_pos + DOWN * 0.5)
+        )
+
         super().__init__(**kwargs)
-        self.add(self.func_ellipse, self.label_text)
+        self.add(self.func_ellipse, self.label_text, *self.args_rect, *self.args_text)
 
     def align_points_with_larger(self, larger_mobject):
         raise NotImplementedError("Please override in a child class.")
@@ -115,19 +156,22 @@ class FunctionCall(VGroup):
                      index: int,
                      arg_height: float = 1.0) -> np.ndarray:
         """
-        Return center position of specified item.
-
-        If not specified element width, return one elem as same as definition.
-        Otherwise, return one element with specified width.
+        Return center position of specified argument item.
 
         Args:
             index: Index of elements.
-            elem_width: Width of element in byte.
+            arg_height: Height of source arguments.
         """
         return self.get_func_center() \
             + self.args_pos[index] + UP * arg_height / 2
 
     def get_dst_pos(self,
                     dst_height: float = 1.0) -> np.ndarray:
+        """
+        Return center position of destination item.
+
+        Args:
+            dst_height: Height of destination argument.
+        """
         return self.get_func_center() \
             + self.dst_pos + DOWN * dst_height / 2

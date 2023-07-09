@@ -94,9 +94,9 @@ class OneDimRegElem(VGroup):
 
     def get_elem_width(self) -> float:
         """
-        Return scene width of element.
+        Return width of element in bit.
         """
-        return self.elem_width * get_scene_ratio()
+        return self.elem_width
 
     def get_elem_center(self) -> np.ndarray:
         """
