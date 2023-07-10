@@ -12,6 +12,7 @@ def data_convert(elem: OneDimRegElem,
                  color: Color,
                  size: float,
                  index: int,
+                 value = None,
                  **kwargs) -> IsaAnimate:
     """
     Convert data to another element.
@@ -27,7 +28,11 @@ def data_convert(elem: OneDimRegElem,
         - Animation.
     """
 
-    new_elem = OneDimRegElem(color, size, fill_opacity=0.5, **kwargs) \
+    new_elem = OneDimRegElem(color=color,
+                             width=size,
+                             fill_opacity=0.5,
+                             value=value,
+                             **kwargs) \
         .move_to(elem.get_sub_elem_center(index=index, elem_width=size))
 
     animate=AnimationGroup(FadeIn(new_elem), FadeOut(elem))

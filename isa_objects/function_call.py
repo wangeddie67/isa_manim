@@ -73,7 +73,7 @@ class FunctionCall(VGroup):
             args_value = kwargs["args_value"]
             del kwargs["args_value"]
         else:
-            args_value = ["" for _ in range(0, args_width)]
+            args_value = ["" for _ in args_width]
 
         args_scene_width = [width * get_scene_ratio() for width in args_width]
 

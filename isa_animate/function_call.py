@@ -14,6 +14,7 @@ def function_call(func: FunctionCall,
                   args: List[OneDimRegElem],
                   color: Color,
                   width: float,
+                  value = None,
                   **kwargs) -> IsaAnimate:
     """
     Convert data to another element.
@@ -32,6 +33,7 @@ def function_call(func: FunctionCall,
     dst_elem = OneDimRegElem(color=color,
                              width=width,
                              fill_opacity=0.5,
+                             value=value,
                              font_size=40, **kwargs)
     dst_elem.move_to(func.get_dst_pos())
 

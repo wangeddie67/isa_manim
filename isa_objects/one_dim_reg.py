@@ -55,6 +55,7 @@ class OneDimReg(VGroup):
                  color: Color,
                  width: int,
                  elements: int = 1,
+                 value = None,
                  **kwargs):
         """
         Constructor an scalar register.
@@ -77,14 +78,7 @@ class OneDimReg(VGroup):
             font_size = DEFAULT_FONT_SIZE
 
         # Element value
-        if "values" in kwargs:
-            if isinstance(kwargs["values"], str):
-                value_str_list = [kwargs["values"]]
-            else:
-                value_str_list = kwargs["values"]
-            del kwargs["values"]
-        else:
-            value_str_list = []
+        self.value = value
 
         # element number:
         self.elements = elements
@@ -111,19 +105,8 @@ class OneDimReg(VGroup):
                 + self.label_text.get_left() + LEFT * 0.2
         self.label_text.move_to(label_pos)
 
-        # Value text
-        self.value_text_list = []
-        for index, value in enumerate(value_str_list):
-            elem_label_pos = self.reg_rect.get_right() + \
-                LEFT * (index + 0.5 ) * self.elem_width * get_scene_ratio()
-            elem_label = Text(text=value,
-                                color=color,
-                                font_size=font_size) \
-                .move_to(elem_label_pos)
-            self.value_text_list.append(elem_label)
-
         super().__init__(**kwargs)
-        self.add(self.reg_rect, self.label_text, *self.value_text_list)
+        self.add(self.reg_rect, self.label_text)
 
     def align_points_with_larger(self, larger_mobject):
         raise NotImplementedError("Please override in a child class.")
@@ -170,6 +153,7 @@ class OneDimReg(VGroup):
                  color: Color,
                  elem_width: float = -1.0,
                  index: int = 0,
+                 value = None,
                  **kwargs) -> Rectangle:
         """
         Return a rectangle of specified item. 
@@ -191,5 +175,6 @@ class OneDimReg(VGroup):
         return OneDimRegElem(color=color,
                              width=elem_width,
                              fill_opacity=0.5,
+                             value=value,
                              **kwargs) \
             .move_to(self.get_elem_center(index=index, elem_width=elem_width))

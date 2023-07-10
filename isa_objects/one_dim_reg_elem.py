@@ -41,6 +41,7 @@ class OneDimRegElem(VGroup):
     def __init__(self,
                  color: Color,
                  width: int,
+                 value = None,
                  **kwargs):
         """
         Constructor an element.
@@ -61,11 +62,7 @@ class OneDimRegElem(VGroup):
             font_size = DEFAULT_FONT_SIZE
 
         # Element value
-        if "value" in kwargs:
-            value_str = kwargs["value"]
-            del kwargs["value"]
-        else:
-            value_str = ""
+        self.value = value
 
         # Register width
         self.elem_width = width
@@ -77,7 +74,7 @@ class OneDimRegElem(VGroup):
                                   **kwargs)
 
         # Value text
-        self.value_text = Text(text=value_str,
+        self.value_text = Text(text=hex(self.value) if self.value else "",
                                color=color,
                                font_size=font_size)
 
