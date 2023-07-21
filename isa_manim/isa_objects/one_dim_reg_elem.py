@@ -1,5 +1,17 @@
 """
-One dimension register element object.
+Object for register element
+
+Register element provides an absolute graphic object for register elements.
+
+Graphic object is a VGroup containing one Text objects and one Rectangle object.
+
+* Value text object presents the register value of each element.
+* Height of element rectangle object must be 1.0 while width of register rectangle object presents 
+  the width of element, 1.0 means 8 bit.
+
+Graphic object structure:
+
+* Value text and Element rectangle are central alignment.
 """
 
 import numpy as np
@@ -11,29 +23,13 @@ from ..isa_config import get_scene_ratio
 
 class OneDimRegElem(VGroup):
     """
-    Register element provides an absolute graphic object for register elements.
+    Object for register element.
 
-    Graphic object is a VGroup containing one Text objects and one Rectangle
-    object.
-    - Value text object presents the register value of each element.
-    - Height of element rectangle object must be 1.0 while width of register
-    rectangle object presents the width of element, 1.0 means 1 byte.
-
-    Graphic object structure:
-    - Value text and Element rectangle are central alignment.
-
-    --------------------
-    | Element Rectangle|
-    |  --------------  |
-    |  | Value Text |  |
-    |  --------------  |
-    |                  |
-    --------------------
-
-    Members:
+    Attributes:
         value_text: Value text object.
-        reg_rect: Register rectangle object.
+        elem_rect: Register rectangle object.
         elem_width: element width.
+        value: Value of this element, which should be an integer or UInt defined by isa_sim_utils.
     """
 
     require_serialization = False
@@ -48,11 +44,14 @@ class OneDimRegElem(VGroup):
 
         Args:
             color: Color of register.
-            width: Width of register, in Byte
+            width: Width of register, in bit.
+            value: Value of this register, which should be an integer or UInt defined by
+                isa_sim_utils.
+            **kwargs: Arguments to new register rectangle.
 
-        kwargs:
-            font_size: Font size of label and value text.
-            value: element value.
+        kwargs accept flowing arguments:
+
+            * font_size: Font size of value text.
         """
         # Font size
         if "font_size" in kwargs:
@@ -88,18 +87,6 @@ class OneDimRegElem(VGroup):
 
     def align_points_with_larger(self, larger_mobject):
         raise NotImplementedError("Please override in a child class.")
-
-    def get_elem_width(self) -> float:
-        """
-        Return width of element in bit.
-        """
-        return self.elem_width
-
-    def get_elem_center(self) -> np.ndarray:
-        """
-        return center position of register rectangle.
-        """
-        return self.elem_rect.get_center()
 
     def get_sub_elem_center(self,
                             index: int,

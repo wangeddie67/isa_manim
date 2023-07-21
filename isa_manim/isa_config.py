@@ -11,8 +11,7 @@ Configuration structure to pass arguments of ISA. For example, element size and 
 
 def get_scene_ratio() -> float:
     """
-    Return scene ratio. 
-    scene width / bit. Default: 1.0 means 8 bits.
+    Return scene ratio, as scene width / bit. Default: 1.0 means 8 bits.
     """
     global isa_config   # pylint: disable=global-variable-not-assigned,invalid-name
     return isa_config["scene_ratio"]

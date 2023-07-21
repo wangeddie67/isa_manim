@@ -1,54 +1,49 @@
 """
-One dimension register object.
+Object for one dimension register
+
+One-dimension register provides an absolute graphic object for registers, including:
+
+* General purpose registers.
+* SIMD&FP/SVE registers for ARM
+* Predicate registers for ARM.
+* MMX/XMM/YMM/ZMM register for Intel.
+
+Graphic object is a VGroup containing one Text objects and one Rectangle object.
+
+* Label text object presents the register name.
+* Height of register rectangle object must be 1.0 while width of register rectangle object presents 
+  the width of register, 1.0 means 8 bit.
+
+Graphic object structure:
+
+* Label text and register rectangle are horizontal alignment.
 """
 
 import numpy as np
-from manim import VGroup, Rectangle, Text
-from manim import LEFT
-from manim import DEFAULT_FONT_SIZE
+from manim import (VGroup, Rectangle, Text,
+                   LEFT,
+                   DEFAULT_FONT_SIZE)
 from colour import Color
 from .one_dim_reg_elem import OneDimRegElem
 from ..isa_config import get_scene_ratio
 
 class OneDimReg(VGroup):
     """
-    One-dimension register provides an absolute graphic object for registers, 
-    including:
-    - general purpose registers.
-    - predicate registers for ARM.
-    - SIMD&FP registers for ARM
-    - SVE registers for ARM.
+    Object for one-dimension register.
 
-    Graphic object is a VGroup containing several Text objects and one Rectangle
-    object.
-    - Label text object presents the register name.
-    - List of value text object presents the register value of each element.
-      If number of value text must be as same as the number of elements.
-    - Height of register rectangle object must be 1.0 while width of register
-    rectangle object presents the width of register, 1.0 means 1 byte.
-
-    Graphic object structure:
-    - Label text, value text and register rectangle are horizontal alignment.
-    - register rectangle and value text are vertical alignment.
-
-    --------------------------------------------------
-    |         |        Register Rectangle            |
-    |         |  ---------------------------------   |
-    | Label   |  | Value Text | Value Text | ... |   |
-    |  Text   |  ---------------------------------   |
-    |         |                                      |
-    --------------------------------------------------
-
-    Members:
+    Attributes:
         label_text: Label text object.
-        value_text_list: List of value text object.
         reg_rect: Register rectangle object.
-        reg_width: register width.
-        elem_width: element width.
-        elements: number of element.
+        reg_width: register width in bit.
+        elem_width: element width in bit.
+        elements: number of elements.
+        value: Value of this register, which should be an integer or UInt defined by isa_sim_utils.
     """
 
     require_serialization = False
+    """
+    Animation related with this object does not need to be serialized.
+    """
 
     def __init__(self,
                  text: str,
@@ -65,10 +60,16 @@ class OneDimReg(VGroup):
             color: Color of register.
             width: Width of register, in bits
             elements: Number of elements.
+            value: Value of this register, which should be an integer or UInt defined by
+                isa_sim_utils.
+            **kwargs: Arguments to new register rectangle.
 
-        kwargs:
-            label_pos: Label position related to the center of elem_width.
-            font_size: Font size of label and value text.
+        kwargs accept flowing arguments:
+
+        * label_pos: position of label text. By default, the position of label text is defined as
+          close to the left boundary of register rectangle.
+        * font_size: Font size of label. By default, the font size is defined by configuration.
+
         """
         # Font size
         if "font_size" in kwargs:
@@ -111,23 +112,11 @@ class OneDimReg(VGroup):
     def align_points_with_larger(self, larger_mobject):
         raise NotImplementedError("Please override in a child class.")
 
-    def get_reg_width(self) -> float:
-        """
-        Return scene width of register.
-        """
-        return self.reg_width * get_scene_ratio()
-
     def get_max_boundary_width(self) -> float:
         """
         Return maximum scene width (left or right).
         """
         return self.reg_rect.width / 2 + self.label_text.width
-
-    def get_reg_center(self) -> np.ndarray:
-        """
-        return center position of register rectangle.
-        """
-        return self.reg_rect.get_center()
 
     def get_elem_center(self,
                         index: int,
@@ -167,6 +156,7 @@ class OneDimReg(VGroup):
             color: Color of new rectangle.
             elem_width: Width of data element in bits.
             index: Index of data element in register.
+            value: Value of data element.
             kwargs: Arguments to new elements.
         """
         if elem_width < 0:
