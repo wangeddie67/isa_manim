@@ -6,7 +6,7 @@
    :caption: Contents:
 
    01-Objects for ISA Animation.md
-   02-Register File.md
+   02-Animation for ISA Behaviors.md
 
 Indices and tables
 ==================

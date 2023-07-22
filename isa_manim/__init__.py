@@ -8,14 +8,15 @@ from manim import *
 from .isa_objects import OneDimReg, TwoDimReg, OneDimRegElem, FunctionCall
 
 # Animation for ISA flow.
-from .isa_animate import IsaAnimate
-
-from .isa_animate import assign_elem
-from .isa_animate import concat_vector
-from .isa_animate import counter_to_predicate
-from .isa_animate import data_convert
-from .isa_animate import read_elem
-from .isa_animate import read_scalar_reg, read_vector_group, read_vector_reg
+from .isa_animate import (decl_register,
+                          replace_register,
+                          concat_vector,
+                          read_elem,
+                          assign_elem,
+                          replace_elem,
+                          decl_func_call,
+                          function_call)
 
 # Scene for ISA flow
-from .isa_scene import CalculateFlowScene
+# from .isa_animate import IsaAnimate
+# from .isa_scene import CalculateFlowScene

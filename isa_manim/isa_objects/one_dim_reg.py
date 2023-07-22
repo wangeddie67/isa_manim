@@ -94,6 +94,7 @@ class OneDimReg(VGroup):
                                   width=width * get_scene_ratio(),
                                   grid_xstep=self.elem_width * get_scene_ratio(),
                                   **kwargs)
+        self.reg_rect.submobjects = []
 
         # Label text
         self.label_text = Text(text=text,

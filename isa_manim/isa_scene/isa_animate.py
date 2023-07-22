@@ -2,15 +2,14 @@
 Define data structure for animate for dependency analysis.
 """
 
-from typing import Union, List
+from typing import List, Any
 from manim import Animation
-from ..isa_objects import OneDimReg, OneDimRegElem
 
 class IsaAnimate:
     """
     Data structure for animate for dependency analysis.
 
-    Members:
+    Attributes:
         animate: Animate
         src_item_list: source items
         dst_item_list: destination items
@@ -22,9 +21,9 @@ class IsaAnimate:
 
     def __init__(self,
                  animate: Animation,
-                 src: List[Union[OneDimReg, OneDimRegElem]],
-                 dst: List[Union[OneDimReg, OneDimRegElem]],
-                 dep: List[Union[OneDimReg, OneDimRegElem]] = None
+                 src: List[Any],
+                 dst: List[Any],
+                 dep: List[Any] = None
         ):
         """
         Construct one data structure for animate.
@@ -78,9 +77,9 @@ class IsaAnimate:
         """
         return self.dst_item_list is None or self.dst_item_list == []
 
-    def is_successor(self, post):
+    def is_predecessor_of(self, post):
         """
-        Check whether post is successor of this item.
+        Check whether this item is predecessor of post.
         Successor should play after this animation.
         """
         for dst_item in self.dst_item_list:
@@ -89,9 +88,9 @@ class IsaAnimate:
 
         return False
 
-    def is_predecessor(self, pre):
+    def is_successor_of(self, pre):
         """
-        Check whether pre is predecessor of this item.
+        Check whether this item is successor of pre.
         Predecessor should play before this animation.
         """
         for src_item in self.src_item_list:
@@ -100,7 +99,7 @@ class IsaAnimate:
 
         return False
 
-    def is_background(self, dep):
+    def has_background(self, dep):
         """
         Check whether dep is background of this item.
         Background item should not change during this animation.

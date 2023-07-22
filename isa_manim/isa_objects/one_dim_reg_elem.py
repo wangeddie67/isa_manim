@@ -15,9 +15,9 @@ Graphic object structure:
 """
 
 import numpy as np
-from manim import VGroup, Rectangle, Text
-from manim import LEFT
-from manim import DEFAULT_FONT_SIZE
+from manim import (VGroup, Rectangle, Text,
+                   LEFT,
+                   DEFAULT_FONT_SIZE)
 from colour import Color
 from ..isa_config import get_scene_ratio
 
@@ -60,6 +60,9 @@ class OneDimRegElem(VGroup):
         else:
             font_size = DEFAULT_FONT_SIZE
 
+        if "fill_opacity" not in kwargs:
+            kwargs["fill_opacity"] = 0.5
+
         # Element value
         self.value = value
 
@@ -71,6 +74,7 @@ class OneDimRegElem(VGroup):
                                   height=1.0,
                                   width=width * get_scene_ratio(),
                                   **kwargs)
+        self.elem_rect.submobjects = []
 
         # Value text
         self.value_text = Text(text=str(self.value) if self.value else "",

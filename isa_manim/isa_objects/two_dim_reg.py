@@ -104,8 +104,12 @@ class TwoDimReg(VGroup):
                                         grid_xstep=self.elem_width * get_scene_ratio(),
                                         **kwargs).shift(DOWN * i)
                                 for i in range(0, self.reg_count)]
+        for item in self.reg_rect_list:
+            item.submobjects = []
 
         # Label text
+        if isinstance(text, str):
+            text = [text]
         self.label_text_list = [Text(text=text[i],
                                      color=color,
                                      font_size=font_size)
@@ -151,6 +155,13 @@ class TwoDimReg(VGroup):
         """
         if elem_width < 0:
             elem_width = self.elem_width
+
+        elem_count = self.reg_width // elem_width
+        if index >= elem_count:
+            reg_idx = (reg_idx + index // elem_count) % self.reg_count
+            index = index % elem_count
+        else:
+            reg_idx = reg_idx % self.reg_count
 
         return self.reg_rect_list[reg_idx].get_right() \
             + LEFT * (index + 0.5) * elem_width * get_scene_ratio()
