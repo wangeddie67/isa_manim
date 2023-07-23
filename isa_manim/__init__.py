@@ -18,5 +18,9 @@ from .isa_animate import (decl_register,
                           function_call)
 
 # Scene for ISA flow
+from .isa_scene import (IsaAnimateItem,
+                        IsaAnimationMap,
+                        IsaPlacementItem,
+                        IsaPlacementMap)
 # from .isa_animate import IsaAnimate
 # from .isa_scene import CalculateFlowScene

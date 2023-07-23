@@ -36,7 +36,16 @@ test_func_animation:
 
 test_animations: test_reg_animation test_elem_animation test_func_animation
 
-demo: test_objects test_animations
+# Test scene.
+test_isa_animation_map:
+	manim -ql --format=gif isa_scene/test_isa_animation_map.py
+
+test_isa_placement_map:
+	manim -ql --format=png isa_scene/test_isa_placement_map.py
+
+test_scene: test_isa_animation_map test_isa_placement_map
+
+demo: test_objects test_animations test_scene
 
 clean:
 	@rm -rf $(BUILDDIR) $(SOURCEDIR)/_autosummary
