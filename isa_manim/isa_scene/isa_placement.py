@@ -109,9 +109,9 @@ class IsaPlacementMap:
 
     def __init__(self, strategy = "BR"):
         self.isa_object_dict: Dict[str, IsaPlacementItem] = dict()
-        self._placement_map: List[List[str]] = [[-1]]
-        self._placement_width: int = 1
-        self._placement_height: int = 1
+        self._placement_map: List[List[str]] = []
+        self._placement_width: int = 0
+        self._placement_height: int = 0
 
         self.resize_placement_map(new_width=config.frame_width,
                                   new_height=config.frame_height)
@@ -127,7 +127,7 @@ class IsaPlacementMap:
                 if self._placement_map[row][col] is not None:
                     max_col = col
                     break
-        return max_col
+        return max_col + 1
     
     @property
     def height(self) -> int:
@@ -137,10 +137,10 @@ class IsaPlacementMap:
                 if self._placement_map[row][col] is not None:
                     max_row = row
                     break
-        return max_row
+        return max_row + 1
 
     def camera_origin(self) -> np.array:
-        return RIGHT * self.width / 2 + DOWN * self.height / 2
+        return RIGHT * self.width / 2 + DOWN * (self.height - 1) / 2
 
     def camera_scale(self, camera_width, camera_height) -> float:
         return max((self.height + 1) / camera_height, self.width / camera_width)
@@ -169,11 +169,6 @@ class IsaPlacementMap:
             else:
                 new_placement_map.append([None for _ in range(0, new_width)])
 
-        for row in range(0, new_height):
-            new_placement_map[row][0] = -1
-        for col in range(0, new_width):
-            new_placement_map[0][col] = -1
-
         self._placement_width = new_width
         self._placement_height = new_height
         self._placement_map = new_placement_map
@@ -194,15 +189,15 @@ class IsaPlacementMap:
             rect_height: Height of rectangle.
         """
         # Return false if there is not enough space in partition map.
-        if self._placement_width - corner_col < rect_width + 1:
+        if self._placement_width - corner_col + 1 < rect_width + 2:
             return False
-        elif self._placement_height - corner_row < rect_height + 1:
+        elif self._placement_height - corner_row + 1 < rect_height + 2:
             return False
 
         # If the space has allocated point, return False
-        for row in range(corner_row, corner_row + rect_height + 1):
-            for col in range(corner_col, corner_col + rect_width + 1):
-                if self._placement_map[row][col] is not None:
+        for row in range(corner_row - 1, corner_row + rect_height + 1):
+            for col in range(corner_col - 1, corner_col + rect_width + 1):
+                if isinstance(self._placement_map[row][col], str):
                     return False
 
         return True
@@ -234,7 +229,7 @@ class IsaPlacementMap:
 
                 # Elements around rectangle
                 if row == corner_row - 1 or row == corner_row + rect_height \
-                        or col == corner_col - 1 or col == corner_col + rect_width + 1:
+                        or col == corner_col - 1 or col == corner_col + rect_width:
                     self._placement_map[row][col] = -1
                 else:
                     self._placement_map[row][col] = hash_str
@@ -248,8 +243,8 @@ class IsaPlacementMap:
 
         # BR strategy, first try to place item under exist item.
         if self._placement_strategy == "RB":
-            for row in range(0, self._placement_height - rect_height + 1):
-                for col in range(0, self._placement_width - rect_width + 1):
+            for row in range(1, self._placement_height - rect_height + 1):
+                for col in range(1, self._placement_width - rect_width + 1):
                     if self._placement_map[row][col] is not None:
                         continue
                     if self._check_space_rect(row, col, rect_width, rect_height):
@@ -260,8 +255,8 @@ class IsaPlacementMap:
 
         # BR strategy, first try to place item beside exist item.
         elif self._placement_strategy == "BR":
-            for col in range(0, self._placement_width - rect_width + 1):
-                for row in range(0, self._placement_height - rect_height + 1):
+            for col in range(1, self._placement_width - rect_width + 1):
+                for row in range(1, self._placement_height - rect_height + 1):
                     if self._placement_map[row][col] is not None:
                         continue
                     if self._check_space_rect(row, col, rect_width, rect_height):
@@ -311,3 +306,16 @@ class IsaPlacementMap:
                     new_height = int(self._placement_height + 1)
                     new_width = int(new_height / self._placement_hv_ratio)
                 self.resize_placement_map(new_width, new_height)
+
+    def print_map(self) -> str:
+        map_str = ""
+        for row in self._placement_map:
+            for item in row:
+                if item is None:
+                    map_str += " "
+                elif item is -1:
+                    map_str += "*"
+                else:
+                    map_str += "O"
+            map_str += "\n"
+        return map_str
