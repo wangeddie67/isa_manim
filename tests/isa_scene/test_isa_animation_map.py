@@ -1,5 +1,5 @@
 """
-Test data flow analysis with ISA animations.
+Test animation flow analysis.
 """
 
 import os
@@ -12,14 +12,14 @@ from isa_manim import (Scene, # pylint: disable=wrong-import-position
                        LEFT, RIGHT, UP, DOWN,
                        read_elem, function_call, assign_elem,
                        OneDimReg, OneDimRegElem, FunctionCall,
-                       IsaAnimateItem, IsaAnimationMap)
+                       IsaAnimationMap)
 
 config.frame_height = 10
 config.frame_width = 24
 
 class TestIsaAnimationMap(Scene):
     """
-    Test object for register element.
+    Test animation flow analysis.
     """
     def construct(self):
         animation_map = IsaAnimationMap()
@@ -37,32 +37,32 @@ class TestIsaAnimationMap(Scene):
 
         for i in range(0, 4):
             sum_ = OneDimRegElem(color=RED, width=32)
-            animation_map.register_animation(IsaAnimateItem(
+            animation_map.animation_add_animation(
                 animate=read_elem(vector=zda, elem=sum_, index=i),
-                src=[], dst=[sum_], dep=[zda]))
+                src=[], dst=[sum_], dep=[zda])
 
             for j in range(0, 2):
                 opa = OneDimRegElem(color=GREEN, width=16)
-                animation_map.register_animation(IsaAnimateItem(
+                animation_map.animation_add_animation(
                     animate=read_elem(vector=zn, elem=opa, index=i * 2 + j),
-                    src=[], dst=[opa], dep=[zn]))
+                    src=[], dst=[opa], dep=[zn])
                 opb = OneDimRegElem(color=BLUE, width=16)
-                animation_map.register_animation(IsaAnimateItem(
+                animation_map.animation_add_animation(
                     animate=read_elem(vector=zm, elem=opb, index=i * 2 + j),
-                    src=[], dst=[opb], dep=[zm]))
+                    src=[], dst=[opb], dep=[zm])
                 prod = OneDimRegElem(color=YELLOW, width=32)
-                animation_map.register_animation(IsaAnimateItem(
+                animation_map.animation_add_animation(
                     animate=function_call(mul_unit, args_list=[opa, opb], res_item=prod),
-                    src=[opa, opb], dst=[prod], dep=[mul_unit]))
+                    src=[opa, opb], dst=[prod], dep=[mul_unit])
                 sum__ = OneDimRegElem(color=PURPLE, width=32)
-                animation_map.register_animation(IsaAnimateItem(
+                animation_map.animation_add_animation(
                     animate=function_call(add_unit, args_list=[prod, sum_], res_item=sum__),
-                    src=[prod, sum_], dst=[sum__], dep=[add_unit]))
+                    src=[prod, sum_], dst=[sum__], dep=[add_unit])
                 sum_ = sum__
 
-            animation_map.register_animation(IsaAnimateItem(
+            animation_map.animation_add_animation(
                 animate=assign_elem(elem=sum_, vector=zda, index=i),
-                src=[sum_], dst=[sum_], dep=[zda]))
+                src=[sum_], dst=[sum_], dep=[zda])
 
             if i == 0:
                 animation_map.switch_section(wait=1)

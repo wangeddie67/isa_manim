@@ -1,5 +1,5 @@
 """
-Predefined Animation
+Predefined Animations.
 """
 
 from typing import List, Union

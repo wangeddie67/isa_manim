@@ -208,47 +208,40 @@ class IsaAnimationMap:
         """
         self.always_on_item_list.append(item)
 
-    def register_animation(self, animate: Union[IsaAnimateItem, List[IsaAnimateItem]]):
+    def animation_add_animation(self,
+                                animate: Animation,
+                                src: List[Any],
+                                dst: List[Any],
+                                dep: List[Any] = None):
         """
         Register animation to scene and build dependency.
 
         Args:
             animate: IsaAnimateItem or a list of IsaAnimateItem.
         """
-        if isinstance(animate, list):
-            for item in animate:
-                if not isinstance(item, IsaAnimateItem):
-                    raise ValueError(
-                        "Arguments must be IsaAnimate or a list of IsaAnimate.")
-                else:
-                    self.register_animation(item)
-            return
-
-        if not isinstance(animate, IsaAnimateItem):
-            raise ValueError(
-                "Arguments must be IsaAnimate or a list of IsaAnimate.")
+        animate_item = IsaAnimateItem(animate, src, dst, dep)
 
         for item in self._section_animate_list:
             # new animate is successor of one existed item.
-            if animate.is_successor_of(item):
-                animate.predecessor_list.append(item)
-                item.successor_list.append(animate)
+            if animate_item.is_successor_of(item):
+                animate_item.predecessor_list.append(item)
+                item.successor_list.append(animate_item)
             # new animate is predecessor of one existed item.
-            if animate.is_predecessor_of(item):
-                animate.successor_list.append(item)
-                item.predecessor_list.append(animate)
+            if animate_item.is_predecessor_of(item):
+                animate_item.successor_list.append(item)
+                item.predecessor_list.append(animate_item)
 
             # serialization dependency.
-            for dep_item in animate.dep_item_list:
+            for dep_item in animate_item.dep_item_list:
                 if not dep_item.require_serialization:
                     continue
 
                 # new animate is successor of one existed item.
                 if item.has_background(dep_item):
-                    animate.predecessor_list.append(item)
-                    item.successor_list.append(animate)
+                    animate_item.predecessor_list.append(item)
+                    item.successor_list.append(animate_item)
 
-        self._section_animate_list.append(animate)
+        self._section_animate_list.append(animate_item)
 
     def switch_section(self,
                        wait: float = 0,
@@ -329,6 +322,8 @@ class IsaAnimationMap:
                     animate_list=[item.animate for item in new_step_animate],
                     left_item_list=step_item.copy(),
                     camera_animate=step_camera_animate))
+
+                first_step_in_section = False
 
             # Wait after step
             self.isa_animation_step_list[-1].wait = animation_section.wait

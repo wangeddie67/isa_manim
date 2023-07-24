@@ -7,6 +7,7 @@
 
    01-Objects for ISA Animation.md
    02-Animation for ISA Behaviors.md
+   03-Scenes for ISA Animation.md
 
 Indices and tables
 ==================

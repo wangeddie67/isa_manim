@@ -5,7 +5,6 @@ isa_manim provides several objects that appear in ISA frequently. These objects 
 animate as MObject provided by Manim.
 
 Each object is a series of MObject (Text, Rectangle, Eclipse or Arrow) packed into one VGroup.
-
 """
 
 from .one_dim_reg_elem import OneDimRegElem

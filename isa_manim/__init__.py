@@ -21,6 +21,7 @@ from .isa_animate import (decl_register,
 from .isa_scene import (IsaAnimateItem,
                         IsaAnimationMap,
                         IsaPlacementItem,
-                        IsaPlacementMap)
-# from .isa_animate import IsaAnimate
-# from .isa_scene import CalculateFlowScene
+                        IsaPlacementMap,
+                        IsaColorMap)
+
+from .isa_scene import SingleIsaScene, MultiIsaScene

@@ -43,7 +43,13 @@ test_isa_animation_map:
 test_isa_placement_map:
 	manim -ql --format=png isa_scene/test_isa_placement_map.py
 
-test_scene: test_isa_animation_map test_isa_placement_map
+test_single_isa_scene:
+	manim -ql --format=gif isa_scene/test_single_isa_scene.py
+
+test_multi_isa_scene:
+	manim -ql --format=gif isa_scene/test_multi_isa_scene.py
+
+test_scene: test_isa_animation_map test_isa_placement_map test_single_isa_scene test_multi_isa_scene
 
 demo: test_objects test_animations test_scene
 
