@@ -7,7 +7,7 @@ import numpy as np
 from manim import logger
 from manim import (Text,
                    FadeIn,
-                   ORIGIN, UP, DOWN,
+                   ORIGIN, UP, DOWN, RIGHT,
                    ZoomedScene,
                    BLACK,
                    config)
@@ -117,6 +117,7 @@ class MultiIsaScene(ZoomedScene, IsaDataFlow):
         """
         self.draw_subtitle(subtitle)
         self.placement_reset()
+        self.colormap_reset()
 
     def end_section(self,
                     wait: int = 1,
@@ -140,9 +141,13 @@ class MultiIsaScene(ZoomedScene, IsaDataFlow):
         If no update, return None. Otherwise, return a tuple of scaling factor and new location.
         The returned scaling factor the ratio of new scaling factor and old scaling factor.
         """
-        zoomed_frame_origin = self.placement_origin()
+        zoomed_frame_width = self.placement_width()
         zoomed_frame_scale = \
             self.placement_scale(self.zoomed_display_width, self.zoomed_display_height)
+
+        zoomed_frame_origin_x = zoomed_frame_width / 2
+        zoomed_frame_origin_y = (self.zoomed_display_height * zoomed_frame_scale) / 2
+        zoomed_frame_origin = RIGHT * zoomed_frame_origin_x + DOWN * zoomed_frame_origin_y
 
         if abs(zoomed_frame_scale - self.camera_scale_rate) > 1e-3 \
                 or abs(zoomed_frame_origin[0] - self.camera_origin[0]) > 1e-3 \

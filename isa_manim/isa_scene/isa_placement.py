@@ -84,11 +84,17 @@ class IsaPlacementItem:
         Return width of item in integer for placement.
         """
         if isinstance(self.isa_object, OneDimReg):
-            return ceil(self.isa_object.reg_rect.width + self.isa_object.label_text.width)
+            if self.isa_object.label_text.width < 2:
+                return ceil(self.isa_object.reg_rect.width + 2)
+            else:
+                return ceil(self.isa_object.reg_rect.width + self.isa_object.label_text.width)
         elif isinstance(self.isa_object, TwoDimReg):
             label_text_width = max([item.width for item in self.isa_object.label_text_list])
             reg_rect_width = max([item.width for item in self.isa_object.reg_rect_list])
-            return ceil(label_text_width + reg_rect_width)
+            if label_text_width < 2:
+                return ceil(2 + reg_rect_width)
+            else:
+                return ceil(label_text_width + reg_rect_width)
         elif isinstance(self.isa_object, OneDimRegElem):
             return ceil(self.isa_object.elem_rect.width)
         elif isinstance(self.isa_object, FunctionCall):

@@ -4,6 +4,7 @@ Define APIs for animation in ISA data flow, manage animation flow and object pla
 
 from typing import List
 from colour import Color
+import sys
 from manim import WHITE
 from ..isa_animate import (decl_register,
                            replace_register,
@@ -40,7 +41,17 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
 
         self.default_font_size = default_font_size
 
-        self.lazy_dep_map = {}
+        self.last_dep_map = {}
+
+    def _traceback_hash(self, depth = 2) -> int:
+        """
+        Return hash value according to traceback.
+        """
+        # frame 0 is _traceback_hash
+        # frame 1 is animation API 
+        # frame 2 is the caller of animation API
+        frame = sys._getframe(depth)
+        return hash(str(frame))
 
     #
     # Animations APIs
@@ -135,10 +146,10 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
             del kwargs["color_hash"]
             color = self.colormap_get_color(hash_str)
         else:
-            color = self.colormap_get_color()
+            color = self.colormap_get_color(self._traceback_hash())
         elem = OneDimRegElem(color=color, width=size, **kwargs)
 
-        self.lazy_dep_map[elem] = vector
+        self.last_dep_map[elem] = vector
 
         self.animation_add_animation(
             animate=read_elem(vector=vector, elem=elem, reg_idx=reg_idx, index=index),
@@ -163,10 +174,10 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
             e: Index of element.
         """
         old_dep = None
-        if elem in self.lazy_dep_map:
-            old_dep = self.lazy_dep_map[elem]
-            del self.lazy_dep_map[elem]
-        self.lazy_dep_map[elem] = vector
+        if elem in self.last_dep_map:
+            old_dep = self.last_dep_map[elem]
+            del self.last_dep_map[elem]
+        self.last_dep_map[elem] = vector
 
         self.animation_add_animation(
             animate=assign_elem(elem=elem, vector=vector, size=size, reg_idx=reg_idx, index=index),
@@ -186,7 +197,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         color = self.colormap_default_color
         mask_pred = OneDimReg(text=text, color=color, width=width, elements=elements, **kwargs)
         self.animation_add_animation(
-            animate=replace_register(png_obj, mask_pred, align="center"),
+            animate=replace_register(png_obj, mask_pred, align="left"),
             src=png_obj,
             dst=mask_pred)
         return mask_pred
@@ -227,13 +238,13 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
             del kwargs["color_hash"]
             color = self.colormap_get_color(hash_str)
         else:
-            color = self.colormap_get_color()
+            color = self.colormap_get_color(self._traceback_hash())
         new_elem = OneDimRegElem(color=color, width=size, **kwargs)
 
         old_dep = None
-        if elem in self.lazy_dep_map:
-            old_dep = self.lazy_dep_map[elem]
-        self.lazy_dep_map[new_elem] = old_dep
+        if elem in self.last_dep_map:
+            old_dep = self.last_dep_map[elem]
+        self.last_dep_map[new_elem] = old_dep
 
         self.animation_add_animation(
             animate=replace_elem(old_elem=elem, new_elem=new_elem, index=index, align="right"),
@@ -252,7 +263,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         Animate of Function call.
         """
         if not isa_hash:
-            isa_hash = hash(func)
+            isa_hash = self._traceback_hash()
 
         func_kwargs = dict()
         if "args_value" in kwargs:
@@ -276,15 +287,15 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
             del kwargs["color_hash"]
             res_color = self.colormap_get_color(hash_str)
         else:
-            res_color = self.colormap_get_color()
+            res_color = self.colormap_get_color(self._traceback_hash())
         res_elem = OneDimRegElem(color=res_color, width=res_size, **kwargs)
 
         old_dep = []
         for arg in args:
-            if arg in self.lazy_dep_map:
-                old_dep.append(self.lazy_dep_map[arg])
-                del self.lazy_dep_map[arg]
-        self.lazy_dep_map[res_elem] = func_unit
+            if arg in self.last_dep_map:
+                old_dep.append(self.last_dep_map[arg])
+                del self.last_dep_map[arg]
+        self.last_dep_map[res_elem] = func_unit
 
         self.animation_add_animation(
             animate=function_call(func_object=func_unit, args_list=args, res_item=res_elem),

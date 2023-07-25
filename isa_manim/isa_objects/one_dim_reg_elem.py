@@ -74,7 +74,6 @@ class OneDimRegElem(VGroup):
                                   height=1.0,
                                   width=width * get_scene_ratio(),
                                   **kwargs)
-        self.elem_rect.submobjects = []
 
         # Value text
         self.value_text = Text(text=str(self.value) if self.value else "",

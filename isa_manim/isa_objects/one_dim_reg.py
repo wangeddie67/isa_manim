@@ -86,15 +86,20 @@ class OneDimReg(VGroup):
 
         # Register width
         self.reg_width = width
-        self.elem_width = float(width) / elements
+        self.elem_width = width // elements
 
         # Register rectangle
-        self.reg_rect = Rectangle(color=color,
-                                  height=1.0,
-                                  width=width * get_scene_ratio(),
-                                  grid_xstep=self.elem_width * get_scene_ratio(),
-                                  **kwargs)
-        self.reg_rect.submobjects = []
+        if elements > 1:
+            self.reg_rect = Rectangle(color=color,
+                                    height=1.0,
+                                    width=width * get_scene_ratio(),
+                                    grid_xstep=self.elem_width * get_scene_ratio(),
+                                    **kwargs)
+        else:
+            self.reg_rect = Rectangle(color=color,
+                                    height=1.0,
+                                    width=width * get_scene_ratio(),
+                                    **kwargs)
 
         # Label text
         self.label_text = Text(text=text,

@@ -95,17 +95,22 @@ class TwoDimReg(VGroup):
 
         # Register width
         self.reg_width = width
-        self.elem_width = float(width) / elements
+        self.elem_width = width // elements
 
         # Register rectangle
-        self.reg_rect_list = [Rectangle(color=color,
-                                        height=1.0,
-                                        width=width * get_scene_ratio(),
-                                        grid_xstep=self.elem_width * get_scene_ratio(),
-                                        **kwargs).shift(DOWN * i)
-                                for i in range(0, self.reg_count)]
-        for item in self.reg_rect_list:
-            item.submobjects = []
+        if elements > 1:
+            self.reg_rect_list = [Rectangle(color=color,
+                                            height=1.0,
+                                            width=width * get_scene_ratio(),
+                                            grid_xstep=self.elem_width * get_scene_ratio(),
+                                            **kwargs).shift(DOWN * i)
+                                    for i in range(0, self.reg_count)]
+        else:
+            self.reg_rect_list = [Rectangle(color=color,
+                                            height=1.0,
+                                            width=width * get_scene_ratio(),
+                                            **kwargs).shift(DOWN * i)
+                                    for i in range(0, self.reg_count)]
 
         # Label text
         if isinstance(text, str):

@@ -3,7 +3,7 @@ Predefined Animations.
 """
 
 from typing import List, Union
-from manim import (AnimationGroup, Succession, FadeIn, FadeOut, Animation,
+from manim import (AnimationGroup, Succession, FadeIn, FadeOut, Animation, Transform, 
                    LEFT, RIGHT)
 from ..isa_objects import (OneDimReg, OneDimRegElem, TwoDimReg, FunctionCall)
 from ..isa_config import get_scene_ratio
@@ -45,7 +45,8 @@ def replace_register(old_vector: OneDimReg,
 
     new_vector.shift(new_pos - new_vector.reg_rect.get_center())
 
-    return AnimationGroup(FadeIn(new_vector), FadeOut(old_vector))
+    return Succession(Transform(old_vector, new_vector),
+                      AnimationGroup(FadeIn(new_vector), FadeOut(old_vector)))
 
 def concat_vector(vector_list: List[OneDimReg],
                   new_vector: OneDimReg) -> Animation:
@@ -167,7 +168,8 @@ def replace_elem(old_elem: OneDimRegElem,
 
     new_elem.move_to(new_pos)
 
-    return AnimationGroup(FadeIn(new_elem), FadeOut(old_elem))
+    return Succession(Transform(old_elem, new_elem),
+                      AnimationGroup(FadeIn(new_elem), FadeOut(old_elem)))
 
 #
 # Animation with functions.

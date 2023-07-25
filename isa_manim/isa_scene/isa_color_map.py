@@ -37,6 +37,15 @@ class IsaColorMap:
         self.colormap_default_color: Color = default_color
         self._colormap_hash_dict: Dict[str, Color] = {}
 
+    def colormap_reset(self):
+        """
+        Reset color map.
+
+        Reset color index and clear dictionary.
+        """
+        self._colormap_color_index = len(self._colormap_color_list) - 1
+        self._colormap_hash_dict = {}
+
     def colormap_get_color(self, color_hash = None) -> Color:
         """
         Get color for one object. If one hash value is specified and the value is existed in the

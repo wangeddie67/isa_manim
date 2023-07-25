@@ -87,7 +87,6 @@ class FunctionCall(VGroup):
                                     height=1.0,
                                     width=func_width,
                                     **kwargs)
-        self.func_ellipse.submobjects = []
 
         # Label text
         self.label_text = Text(text=text,
@@ -107,7 +106,6 @@ class FunctionCall(VGroup):
                                                 height=1.0,
                                                 width=arg_width * get_scene_ratio() )) \
                     .move_to(arg_pos + UP * 0.5)
-            arg_rect.submobjects[0].submobjects = []
             arg_text = Text(text=arg_value, color=color, font_size=font_size) \
                     .move_to(arg_pos + UP * 0.5)
             # Scale
@@ -124,7 +122,6 @@ class FunctionCall(VGroup):
                                      height=1.0,
                                      width=res_width * get_scene_ratio())) \
                 .move_to(DOWN * 2.0)
-        self.res_rect.submobjects[0].submobjects = []
 
         super().__init__(**kwargs)
         self.add(
