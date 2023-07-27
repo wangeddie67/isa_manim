@@ -10,7 +10,7 @@ from isa_manim import (MovingCameraScene, # pylint: disable=wrong-import-positio
                        config,
                        WHITE,
                        RIGHT, DOWN,
-                       OneDimReg, TwoDimReg, FunctionCall, Dot, NumberPlane,
+                       OneDimReg, TwoDimReg, FunctionUnit, Dot, NumberPlane,
                        IsaPlacementMap)
 
 config.frame_height = 9
@@ -27,8 +27,8 @@ class TestIsaPlacementMap(MovingCameraScene):
         zm = OneDimReg(text="Zm", color=WHITE, width=128)
         za = TwoDimReg(text="Za", color=WHITE, nreg=2, width=256)
 
-        mul_unit = FunctionCall(text="*(a,b)", color=WHITE, args_width=[16, 16], res_width=32)
-        add_unit = FunctionCall(text="+(a,b)", color=WHITE, args_width=[32, 32], res_width=32)
+        mul_unit = FunctionUnit(text="*(a,b)", color=WHITE, args_width=[16, 16], res_width=32)
+        add_unit = FunctionUnit(text="+(a,b)", color=WHITE, args_width=[32, 32], res_width=32)
 
         animation_map.placement_add_object(zn)
         animation_map.placement_add_object(zm)

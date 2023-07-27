@@ -14,7 +14,7 @@ from ..isa_animate import (decl_register,
                            replace_elem,
                            decl_func_call,
                            function_call)
-from ..isa_objects import OneDimReg, OneDimRegElem, TwoDimReg, FunctionCall
+from ..isa_objects import OneDimReg, OneDimRegElem, TwoDimReg, FunctionUnit
 from .isa_animate import IsaAnimationMap
 from .isa_placement import IsaPlacementMap
 from .isa_color_map import IsaColorMap
@@ -275,7 +275,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         else:
             args_width = [item.elem_width for item in args]
             func_color = self.colormap_default_color
-            func_unit = FunctionCall(text=func, color=func_color, args_width=args_width,
+            func_unit = FunctionUnit(text=func, color=func_color, args_width=args_width,
                                      res_width=res_size)
             self.placement_add_object(func_unit, isa_hash)
 

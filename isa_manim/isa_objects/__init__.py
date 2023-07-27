@@ -10,4 +10,5 @@ Each object is a series of MObject (Text, Rectangle, Eclipse or Arrow) packed in
 from .one_dim_reg_elem import OneDimRegElem
 from .one_dim_reg import OneDimReg
 from .two_dim_reg import TwoDimReg
-from .function_call import FunctionCall
+from .func_unit import FunctionUnit
+from .mem_unit import MemoryUnit

@@ -44,7 +44,7 @@ from math import ceil
 import numpy as np
 from typing import List, Union, Dict
 from manim import Mobject, config, RIGHT, DOWN
-from ..isa_objects import (OneDimReg, TwoDimReg, OneDimRegElem, FunctionCall)
+from ..isa_objects import (OneDimReg, TwoDimReg, OneDimRegElem, FunctionUnit)
 
 class IsaPlacementItem:
     """
@@ -97,7 +97,7 @@ class IsaPlacementItem:
                 return ceil(label_text_width + reg_rect_width)
         elif isinstance(self.isa_object, OneDimRegElem):
             return ceil(self.isa_object.elem_rect.width)
-        elif isinstance(self.isa_object, FunctionCall):
+        elif isinstance(self.isa_object, FunctionUnit):
             return ceil(self.isa_object.func_ellipse.width)
         else:
             raise ValueError("Not ISA Object.")
@@ -112,7 +112,7 @@ class IsaPlacementItem:
             return int(self.isa_object.reg_count)
         elif isinstance(self.isa_object, OneDimRegElem):
             return 1
-        elif isinstance(self.isa_object, FunctionCall):
+        elif isinstance(self.isa_object, FunctionUnit):
             return 5
         else:
             raise ValueError("Not ISA Object.")
@@ -127,7 +127,7 @@ class IsaPlacementItem:
             return 2
         elif isinstance(self.isa_object, OneDimRegElem):
             return 2
-        elif isinstance(self.isa_object, FunctionCall):
+        elif isinstance(self.isa_object, FunctionUnit):
             return 3
         else:
             raise ValueError("Not ISA Object.")
@@ -153,7 +153,7 @@ class IsaPlacementItem:
             x = col + self.get_width() / 2
             y = row + 0.5
             self.isa_object.move_to(RIGHT * x + DOWN * y)
-        elif isinstance(self.isa_object, FunctionCall):
+        elif isinstance(self.isa_object, FunctionUnit):
             x = col + self.get_width() / 2
             y = row + 2 + 0.5
             self.isa_object.move_to(RIGHT * x + DOWN * y)

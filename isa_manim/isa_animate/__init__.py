@@ -11,4 +11,7 @@ from .predefine_animate import (decl_register,
                                 assign_elem,
                                 replace_elem,
                                 decl_func_call,
-                                function_call)
+                                function_call,
+                                decl_memory_unit,
+                                write_memory,
+                                read_memory)

@@ -16,7 +16,7 @@ from manim import (VGroup, Ellipse, Text, Rectangle, DashedVMobject,
 from colour import Color
 from ..isa_config import get_scene_ratio
 
-class FunctionCall(VGroup):
+class FunctionUnit(VGroup):
     """
     Object for function call.
 
@@ -130,12 +130,6 @@ class FunctionCall(VGroup):
 
     def align_points_with_larger(self, larger_mobject):
         raise NotImplementedError("Please override in a child class.")
-
-    def get_max_boundary_width(self) -> float:
-        """
-        Return maximum scene width (left or right).
-        """
-        return self.func_ellipse.width / 2
 
     def get_args_pos(self, index: int) -> np.ndarray:
         """

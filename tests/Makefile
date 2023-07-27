@@ -19,10 +19,13 @@ test_two_dim_reg:
 test_one_dim_reg_elem:
 	manim -ql --format=png isa_objects/test_one_dim_reg_elem.py
 
-test_function_call:
-	manim -ql --format=png isa_objects/test_function_call.py
+test_func_unit:
+	manim -ql --format=png isa_objects/test_func_unit.py
 
-test_objects: test_one_dim_reg test_two_dim_reg test_one_dim_reg_elem test_function_call
+test_mem_unit:
+	manim -ql --format=png isa_objects/test_mem_unit.py
+
+test_objects: test_one_dim_reg test_two_dim_reg test_one_dim_reg_elem test_func_unit test_mem_unit
 
 # Test animation.
 test_reg_animation:
@@ -34,7 +37,10 @@ test_elem_animation:
 test_func_animation:
 	manim -ql --format=gif isa_animate/test_func_animation.py
 
-test_animations: test_reg_animation test_elem_animation test_func_animation
+test_memory_animation:
+	manim -ql --format=gif isa_animate/test_memory_animation.py
+
+test_animations: test_reg_animation test_elem_animation test_func_animation test_memory_animation
 
 # Test scene.
 test_isa_animation_map:

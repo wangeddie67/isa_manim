@@ -5,7 +5,7 @@ Predefined Animations.
 from typing import List, Union
 from manim import (AnimationGroup, Succession, FadeIn, FadeOut, Animation, Transform, 
                    LEFT, RIGHT)
-from ..isa_objects import (OneDimReg, OneDimRegElem, TwoDimReg, FunctionCall)
+from ..isa_objects import (OneDimReg, OneDimRegElem, TwoDimReg, FunctionUnit, MemoryUnit)
 from ..isa_config import get_scene_ratio
 
 #
@@ -174,18 +174,60 @@ def replace_elem(old_elem: OneDimRegElem,
 #
 # Animation with functions.
 #
-def decl_func_call(func_object: FunctionCall) -> Animation:
+def decl_func_call(func_unit: FunctionUnit) -> Animation:
     """
     Animation for declare one object of function.
 
     Args:
-        func_object: Object of function.
+        func_unit: Object of function.
     """
-    return FadeIn(func_object)
+    return FadeIn(func_unit)
 
-def function_call(func_object: FunctionCall,
+def function_call(func_unit: FunctionUnit,
                   args_list: List[OneDimRegElem],
                   res_item: OneDimRegElem) -> Animation:
+    """
+    Animation for calling one function.
+
+    Args:
+        func_unit: Object of function object.
+        args_list: List of object of arguments.
+        res_item: List of result item.
+    """
+    res_item.move_to(func_unit.get_dst_pos())
+
+    move_animate = \
+        AnimationGroup(*[arg.animate.move_to(func_unit.get_args_pos(i))
+                         for i, arg in enumerate(args_list)])
+    fade_animate = \
+        AnimationGroup(
+            FadeIn(res_item,
+                   shift=func_unit.get_dst_pos() - func_unit.func_ellipse.get_center()),
+            *[FadeOut(arg,
+                      shift=func_unit.func_ellipse.get_center() - func_unit.get_args_pos(i))
+               for i, arg in enumerate(args_list)]
+        )
+    return Succession(move_animate, fade_animate)
+
+#
+# Animation with memory.
+#
+def decl_memory_unit(mem_unit: MemoryUnit,
+                     start: int = None,
+                     end: int = None) -> Animation:
+    """
+    Animation for declare one object of memory.
+
+    Args:
+        mem_unit: Object of function.
+    """
+    decl_animation = FadeIn(mem_unit)
+    
+    return FadeIn(mem_unit)
+
+def read_memory(mem_unit: MemoryUnit,
+                addr_item: OneDimRegElem,
+                data_item: OneDimRegElem) -> Animation:
     """
     Animation for calling one function.
 
@@ -194,17 +236,34 @@ def function_call(func_object: FunctionCall,
         args_list: List of object of arguments.
         res_item: List of result item.
     """
-    res_item.move_to(func_object.get_dst_pos())
+    data_item.move_to(mem_unit.get_data_pos(data_item.elem_width))
 
     move_animate = \
-        AnimationGroup(*[arg.animate.move_to(func_object.get_args_pos(i))
-                         for i, arg in enumerate(args_list)])
+        AnimationGroup(addr_item.animate.move_to(mem_unit.get_addr_pos(addr_item.elem_width)))
     fade_animate = \
         AnimationGroup(
-            FadeIn(res_item,
-                   shift=func_object.get_dst_pos() - func_object.func_ellipse.get_center()),
-            *[FadeOut(arg,
-                      shift=func_object.func_ellipse.get_center() - func_object.get_args_pos(i))
-               for i, arg in enumerate(args_list)]
-        )
+            FadeIn(data_item, shift=mem_unit.get_data_pos() - mem_unit.mem_rect.get_center()),
+            FadeOut(addr_item, shift=mem_unit.mem_rect.get_center() - mem_unit.get_addr_pos()))
+
+    return Succession(move_animate, fade_animate)
+
+def write_memory(mem_unit: MemoryUnit,
+                 addr_item: OneDimRegElem,
+                 data_item: OneDimRegElem) -> Animation:
+    """
+    Animation for calling one function.
+
+    Args:
+        func_object: Object of function object.
+        args_list: List of object of arguments.
+        res_item: List of result item.
+    """
+    move_animate = \
+        AnimationGroup(addr_item.animate.move_to(mem_unit.get_addr_pos(addr_item.elem_width)),
+                       data_item.animate.move_to(mem_unit.get_data_pos(data_item.elem_width)))
+    fade_animate = \
+        AnimationGroup(
+            FadeOut(data_item, shift=mem_unit.mem_rect.get_center() - mem_unit.get_data_pos()),
+            FadeOut(addr_item, shift=mem_unit.mem_rect.get_center() - mem_unit.get_addr_pos()))
+
     return Succession(move_animate, fade_animate)

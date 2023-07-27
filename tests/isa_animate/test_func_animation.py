@@ -11,7 +11,7 @@ from isa_manim import (Scene, # pylint: disable=wrong-import-position
                        WHITE, BLUE, GREEN, PURPLE, YELLOW,
                        UP, LEFT, RIGHT,
                        Text,
-                       OneDimRegElem, FunctionCall,
+                       OneDimRegElem, FunctionUnit,
                        decl_func_call, function_call)
 
 config.frame_height = 6
@@ -28,7 +28,7 @@ class TestFuncAnimation(Scene):
         self.add(r1_elem, r2_elem)
 
         # Declare function.
-        function_item = FunctionCall(text="+(a, b)",
+        function_item = FunctionUnit(text="+(a, b)",
                                      color=WHITE,
                                      args_width=[16, 16],
                                      res_width=32,

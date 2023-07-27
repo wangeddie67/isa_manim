@@ -1,5 +1,5 @@
 """
-Test object for function call.
+Test object for function unit.
 """
 
 import os
@@ -11,17 +11,17 @@ from isa_manim import (Scene, # pylint: disable=wrong-import-position
                        config,
                        WHITE, GREEN, BLUE, YELLOW,
                        LEFT, RIGHT, UP, DOWN,
-                       FunctionCall)
+                       FunctionUnit)
 
 config.frame_height = 6
 config.frame_width = 24
 
-class TestFunctionCall(Scene):
+class TestFunctionUnit(Scene):
     """
-    Test object for function call.
+    Test object for function unit.
     """
     def construct(self):
-        function = FunctionCall(text="FMA (a * b + c)",
+        function = FunctionUnit(text="FMA (a * b + c)",
                                 color=WHITE,
                                 args_width=[16, 16, 32],
                                 res_width=32,

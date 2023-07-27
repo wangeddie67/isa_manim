@@ -133,16 +133,6 @@ class TwoDimReg(VGroup):
     def align_points_with_larger(self, larger_mobject):
         raise NotImplementedError("Please override in a child class.")
 
-    def get_max_boundary_width(self) -> float:
-        """
-        Return maximum scene width (left or right).
-
-        Args:
-            reg_idx: Index of register.
-        """
-        return max([self.reg_rect_list[reg_idx].width / 2 + self.label_text_list[reg_idx].width
-                    for reg_idx in range(0, self.reg_count)])
-
     def get_elem_center(self,
                         reg_idx: int,
                         index: int,

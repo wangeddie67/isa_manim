@@ -118,12 +118,6 @@ class OneDimReg(VGroup):
     def align_points_with_larger(self, larger_mobject):
         raise NotImplementedError("Please override in a child class.")
 
-    def get_max_boundary_width(self) -> float:
-        """
-        Return maximum scene width (left or right).
-        """
-        return self.reg_rect.width / 2 + self.label_text.width
-
     def get_elem_center(self,
                         index: int,
                         elem_width: float = -1.0) -> np.ndarray:

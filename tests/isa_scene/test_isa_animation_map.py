@@ -11,7 +11,7 @@ from isa_manim import (Scene, # pylint: disable=wrong-import-position
                        WHITE, RED, GREEN, BLUE, YELLOW, PURPLE,
                        LEFT, RIGHT, UP, DOWN,
                        read_elem, function_call, assign_elem,
-                       OneDimReg, OneDimRegElem, FunctionCall,
+                       OneDimReg, OneDimRegElem, FunctionUnit,
                        IsaAnimationMap)
 
 config.frame_height = 10
@@ -28,9 +28,9 @@ class TestIsaAnimationMap(Scene):
         zm = OneDimReg(text="Zm", color=WHITE, width=128).shift(UP * 3)
         zda = OneDimReg(text="Zda", color=WHITE, width=128).shift(UP * 1)
 
-        mul_unit = FunctionCall(text="*(a,b)", color=WHITE, args_width=[16, 16], res_width=32) \
+        mul_unit = FunctionUnit(text="*(a,b)", color=WHITE, args_width=[16, 16], res_width=32) \
             .shift(LEFT * 6 + DOWN * 3)
-        add_unit = FunctionCall(text="+(a,b)", color=WHITE, args_width=[32, 32], res_width=32) \
+        add_unit = FunctionUnit(text="+(a,b)", color=WHITE, args_width=[32, 32], res_width=32) \
             .shift(RIGHT * 4 + DOWN * 3)
 
         self.add(zn, zm, zda, mul_unit, add_unit)
