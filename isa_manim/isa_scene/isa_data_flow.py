@@ -18,7 +18,7 @@ from ..isa_animate import (decl_register,
                            read_memory,
                            write_memory)
 from ..isa_objects import OneDimReg, OneDimRegElem, TwoDimReg, FunctionUnit, MemoryMap, MemoryUnit
-from .isa_animate import IsaAnimationMap
+from .isa_animate import IsaAnimationMap, IsaAnimateItem
 from .isa_placement import IsaPlacementMap
 from .isa_color_map import IsaColorMap
 
@@ -45,6 +45,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         self.default_font_size = default_font_size
 
         self.last_dep_map = {}
+        self.elem_producer_copy = {}
         self.elem_producer_map = {}
         self.elem_refer_count = {}
 
@@ -57,6 +58,31 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         # frame 2 is the caller of animation API
         frame = sys._getframe(depth)
         return hash(str(frame))
+
+    def _set_item_producer(self,
+                           item: OneDimRegElem,
+                           producer: IsaAnimateItem):
+        """
+        Set producer of element.
+        """
+        self.elem_producer_map[item] = producer
+        self.elem_producer_copy[item] = item.copy()
+        self.elem_refer_count[item] = 0
+
+    def _get_duplicate_item(self,
+                            item: OneDimRegElem) -> OneDimRegElem:
+        """
+        Get a copy of element if the element has been referenced.
+        """
+        if self.elem_refer_count[item] == 0:
+            item_ = item
+        else:
+            item_ = self.elem_producer_copy[item]
+            self.elem_producer_copy[item] = self.elem_producer_copy[item].copy()
+        self.elem_refer_count[item] += 1
+        self.elem_producer_map[item].add_copy_item(item_)
+
+        return item_
 
     #
     # Animations APIs
@@ -156,11 +182,12 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
 
         self.last_dep_map[elem] = vector
 
-        self.animation_add_animation(
+        animation_item = self.animation_add_animation(
             animate=read_elem(vector=vector, elem=elem, reg_idx=reg_idx, index=index),
             src=vector,
             dst=elem,
             dep=[vector])
+        self._set_item_producer(elem, animation_item)
         return elem
 
     def move_elem(self,
@@ -184,10 +211,12 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
             del self.last_dep_map[elem]
         self.last_dep_map[elem] = vector
 
+        elem_ = self._get_duplicate_item(elem)
+
         self.animation_add_animation(
-            animate=assign_elem(elem=elem, vector=vector, size=size, reg_idx=reg_idx, index=index),
-            src=elem,
-            dst=elem,
+            animate=assign_elem(elem=elem_, vector=vector, size=size, reg_idx=reg_idx, index=index),
+            src=elem_,
+            dst=elem_,
             dep=[old_dep, vector] if old_dep else [vector])
 
     def counter_to_predicate(self,
@@ -252,11 +281,14 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         if old_dep:
             self.last_dep_map[new_elem] = old_dep
 
-        self.animation_add_animation(
-            animate=replace_elem(old_elem=elem, new_elem=new_elem, index=index, align="right"),
-            src=elem,
+        elem_ = self._get_duplicate_item(elem)
+
+        animation_item = self.animation_add_animation(
+            animate=replace_elem(old_elem=elem_, new_elem=new_elem, index=index, align="right"),
+            src=elem_,
             dst=new_elem,
             dep=old_dep)
+        self._set_item_producer(new_elem, animation_item)
         return new_elem
 
     def function_call(self,
@@ -297,17 +329,23 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         res_elem = OneDimRegElem(color=res_color, width=res_size, **kwargs)
 
         old_dep = []
+        args_ = []
         for arg in args:
             if arg in self.last_dep_map:
                 old_dep.append(self.last_dep_map[arg])
                 del self.last_dep_map[arg]
+
+            arg_ = self._get_duplicate_item(arg)
+            args_.append(arg_)
+
         self.last_dep_map[res_elem] = func_unit
 
-        self.animation_add_animation(
-            animate=function_call(func_unit=func_unit, args_list=args, res_item=res_elem),
-            src=args,
+        animation_item = self.animation_add_animation(
+            animate=function_call(func_unit=func_unit, args_list=args_, res_item=res_elem),
+            src=args_,
             dst=res_elem,
             dep=(old_dep + [func_unit]) if old_dep else [func_unit])
+        self._set_item_producer(res_elem, animation_item)
         return res_elem
 
     def read_memory(self,
@@ -342,6 +380,9 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         if addr in self.last_dep_map:
             old_dep.append(self.last_dep_map[addr])
             del self.last_dep_map[addr]
+
+        addr_ = self._get_duplicate_item(addr)
+
         self.last_dep_map[data] = mem_unit
 
         old_mem_map = None
@@ -360,14 +401,14 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                     laddr=int(addr.value), raddr=int(addr.value) + size // 8)
             mem_unit.mem_map_object = new_mem_map
 
-        self.animation_add_animation(
+        animation_item = self.animation_add_animation(
             animate=read_memory(
-                mem_unit=mem_unit, addr_item=addr, data_item=data,
+                mem_unit=mem_unit, addr_item=addr_, data_item=data,
                 old_mem_map=old_mem_map, new_mem_map=new_mem_map),
             src=[addr, old_mem_map] if old_mem_map is not None else [addr],
             dst=[data, new_mem_map] if new_mem_map is not None else [data],
             dep=(old_dep + [mem_unit]) if old_dep else [mem_unit])
-
+        self._set_item_producer(data, animation_item)
         return data
 
     def write_memory(self,
@@ -394,9 +435,14 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         if addr in self.last_dep_map:
             old_dep.append(self.last_dep_map[addr])
             del self.last_dep_map[addr]
+
+        addr_ = self._get_duplicate_item(addr)
+
         if data in self.last_dep_map:
             old_dep.append(self.last_dep_map[data])
             del self.last_dep_map[data]
+
+        data_ = self._get_duplicate_item(data)
 
         data_color = data.elem_rect.color
 
@@ -418,7 +464,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
 
         self.animation_add_animation(
             animate=write_memory(
-                mem_unit=mem_unit, addr_item=addr, data_item=data,
+                mem_unit=mem_unit, addr_item=addr_, data_item=data_,
                 old_mem_map=old_mem_map, new_mem_map=new_mem_map),
             src=[addr, data, old_mem_map] if old_mem_map is not None else [addr, data],
             dst=[new_mem_map] if new_mem_map is not None else [],

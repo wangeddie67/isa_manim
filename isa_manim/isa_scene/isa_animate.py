@@ -69,6 +69,8 @@ class IsaAnimateItem:
         self.predecessor_list = []
         self.successor_list = []
 
+        self.copy_list = []
+
         if not self.src_item_list and not self.dst_item_list:
             raise ValueError("Animate should have either source or destination.")
 
@@ -114,6 +116,12 @@ class IsaAnimateItem:
         Background item should not change during this animation.
         """
         return dep in self.dep_item_list
+
+    def add_copy_item(self, copy_item):
+        """
+        Add copy item.
+        """
+        self.copy_list.append(copy_item)
 
     def __str__(self) -> str:
         string = f"[Animate={str(self.animate)}, " + \
@@ -212,7 +220,7 @@ class IsaAnimationMap:
                                 animate: Animation,
                                 src: List[Any],
                                 dst: List[Any],
-                                dep: List[Any] = None):
+                                dep: List[Any] = None) -> IsaAnimateItem:
         """
         Register animation to scene and build dependency.
 
@@ -242,6 +250,8 @@ class IsaAnimationMap:
                     item.successor_list.append(animate_item)
 
         self._section_animate_list.append(animate_item)
+
+        return animate_item
 
     def switch_section(self,
                        wait: float = 0,
