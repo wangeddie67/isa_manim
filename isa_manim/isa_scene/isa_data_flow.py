@@ -13,8 +13,11 @@ from ..isa_animate import (decl_register,
                            assign_elem,
                            replace_elem,
                            decl_func_call,
-                           function_call)
-from ..isa_objects import OneDimReg, OneDimRegElem, TwoDimReg, FunctionUnit
+                           function_call,
+                           decl_memory_unit,
+                           read_memory,
+                           write_memory)
+from ..isa_objects import OneDimReg, OneDimRegElem, TwoDimReg, FunctionUnit, MemoryMap, MemoryUnit
 from .isa_animate import IsaAnimationMap
 from .isa_placement import IsaPlacementMap
 from .isa_color_map import IsaColorMap
@@ -42,6 +45,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         self.default_font_size = default_font_size
 
         self.last_dep_map = {}
+        self.elem_producer_map = {}
+        self.elem_refer_count = {}
 
     def _traceback_hash(self, depth = 2) -> int:
         """
@@ -228,7 +233,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
     def data_convert(self,
                      elem: OneDimRegElem,
                      size: float,
-                     index: int,
+                     index: int = 0,
                      **kwargs) -> OneDimRegElem:
         """
         Animate of data convert.
@@ -244,7 +249,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         old_dep = None
         if elem in self.last_dep_map:
             old_dep = self.last_dep_map[elem]
-        self.last_dep_map[new_elem] = old_dep
+        if old_dep:
+            self.last_dep_map[new_elem] = old_dep
 
         self.animation_add_animation(
             animate=replace_elem(old_elem=elem, new_elem=new_elem, index=index, align="right"),
@@ -298,8 +304,123 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         self.last_dep_map[res_elem] = func_unit
 
         self.animation_add_animation(
-            animate=function_call(func_object=func_unit, args_list=args, res_item=res_elem),
+            animate=function_call(func_unit=func_unit, args_list=args, res_item=res_elem),
             src=args,
             dst=res_elem,
-            dep=old_dep + [func_unit] if old_dep else [func_unit])
+            dep=(old_dep + [func_unit]) if old_dep else [func_unit])
         return res_elem
+
+    def read_memory(self,
+                    addr: OneDimRegElem,
+                    size: int,
+                    isa_hash: str = None,
+                    **kwargs) -> OneDimRegElem:
+        """
+        Animate of read memory.
+        """
+        if not isa_hash:
+            isa_hash = "Memory"
+
+        if self.placement_has_object(isa_hash):
+            mem_unit = self.placement_get_object(isa_hash)
+        else:
+            mem_unit = MemoryUnit(color=WHITE, addr_width=64, data_width=128)
+            self.placement_add_object(mem_unit, "Memory")
+
+            self.animation_add_animation(
+                animate=decl_memory_unit(mem_unit), src=None, dst=mem_unit)
+
+        if "color_hash" in kwargs:
+            hash_str = kwargs["color_hash"]
+            del kwargs["color_hash"]
+            data_color = self.colormap_get_color(hash_str)
+        else:
+            data_color = self.colormap_get_color(self._traceback_hash())
+        data = OneDimRegElem(color=data_color, width=size, **kwargs)
+
+        old_dep = []
+        if addr in self.last_dep_map:
+            old_dep.append(self.last_dep_map[addr])
+            del self.last_dep_map[addr]
+        self.last_dep_map[data] = mem_unit
+
+        old_mem_map = None
+        new_mem_map = None
+        if addr.value is not None:
+            if mem_unit.mem_map_object is None:
+                new_mem_map = MemoryMap(
+                    color=WHITE, rd_color=data_color, wr_color=WHITE,
+                    width=mem_unit.mem_map_rect.width, align=16,
+                    rd_range=[(int(addr.value), int(addr.value) + data.elem_width // 8)])
+            else:
+                old_mem_map = mem_unit.mem_map_object
+                if old_mem_map.rd_rect_color == WHITE:
+                    old_mem_map.rd_rect_color = data_color
+                new_mem_map = mem_unit.mem_map_object.add_rd_range(
+                    laddr=int(addr.value), raddr=int(addr.value) + size // 8)
+            mem_unit.mem_map_object = new_mem_map
+
+        self.animation_add_animation(
+            animate=read_memory(
+                mem_unit=mem_unit, addr_item=addr, data_item=data,
+                old_mem_map=old_mem_map, new_mem_map=new_mem_map),
+            src=[addr, old_mem_map] if old_mem_map is not None else [addr],
+            dst=[data, new_mem_map] if new_mem_map is not None else [data],
+            dep=(old_dep + [mem_unit]) if old_dep else [mem_unit])
+
+        return data
+
+    def write_memory(self,
+                    addr: OneDimRegElem,
+                    data: OneDimRegElem,
+                    isa_hash: str = None,
+                    **kwargs) -> None:
+        """
+        Animate of write memory.
+        """
+        if not isa_hash:
+            isa_hash = "Memory"
+
+        if self.placement_has_object(isa_hash):
+            mem_unit = self.placement_get_object(isa_hash)
+        else:
+            mem_unit = MemoryUnit(color=WHITE, addr_width=64, data_width=128)
+            self.placement_add_object(mem_unit, "Memory")
+
+            self.animation_add_animation(
+                animate=decl_memory_unit(mem_unit), src=None, dst=mem_unit)
+
+        old_dep = []
+        if addr in self.last_dep_map:
+            old_dep.append(self.last_dep_map[addr])
+            del self.last_dep_map[addr]
+        if data in self.last_dep_map:
+            old_dep.append(self.last_dep_map[data])
+            del self.last_dep_map[data]
+
+        data_color = data.elem_rect.color
+
+        old_mem_map = None
+        new_mem_map = None
+        if addr.value is not None:
+            if mem_unit.mem_map_object is None:
+                new_mem_map = MemoryMap(
+                    color=WHITE, rd_color=WHITE, wr_color=data_color,
+                    width=mem_unit.mem_map_rect.width, align=16,
+                    wr_range=[(int(addr.value), int(addr.value) + data.elem_width // 8)])
+            else:
+                old_mem_map = mem_unit.mem_map_object
+                if old_mem_map.wr_rect_color == WHITE:
+                    old_mem_map.wr_rect_color = data_color
+                new_mem_map = mem_unit.mem_map_object.add_wr_range(
+                    laddr=int(addr.value), raddr=int(addr.value) + data.elem_width // 8)
+            mem_unit.mem_map_object = new_mem_map
+
+        self.animation_add_animation(
+            animate=write_memory(
+                mem_unit=mem_unit, addr_item=addr, data_item=data,
+                old_mem_map=old_mem_map, new_mem_map=new_mem_map),
+            src=[addr, data, old_mem_map] if old_mem_map is not None else [addr, data],
+            dst=[new_mem_map] if new_mem_map is not None else [],
+            dep=old_dep + [mem_unit])
+        return data

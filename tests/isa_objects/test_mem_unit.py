@@ -126,7 +126,7 @@ class TestMemoryUnit(Scene):
         self.add(mem_rect_label, mem_rect_arrow)
 
         label_text_label = Text("label_text", color=YELLOW) \
-            .move_to(mem_unit.label_text.get_left() + LEFT * 4 + UP * 4)
+            .move_to(mem_unit.label_text.get_left() + LEFT * 4 + UP * 5)
         label_text_arrow = Arrow(
             label_text_label.get_right(), mem_unit.label_text.get_left(), color=YELLOW)
         self.add(label_text_label, label_text_arrow)

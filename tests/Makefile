@@ -22,6 +22,9 @@ test_one_dim_reg_elem:
 test_func_unit:
 	manim -ql --format=png isa_objects/test_func_unit.py
 
+test_mem_map:
+	manim -ql --format=png isa_objects/test_mem_map.py
+
 test_mem_unit:
 	manim -ql --format=png isa_objects/test_mem_unit.py
 
@@ -37,6 +40,9 @@ test_elem_animation:
 test_func_animation:
 	manim -ql --format=gif isa_animate/test_func_animation.py
 
+test_memmap_animation:
+	manim -ql --format=gif isa_animate/test_memmap_animation.py
+
 test_memory_animation:
 	manim -ql --format=gif isa_animate/test_memory_animation.py
 
@@ -51,6 +57,9 @@ test_isa_placement_map:
 
 test_single_isa_scene:
 	manim -ql --format=gif isa_scene/test_single_isa_scene.py
+
+test_single_isa_scene_mem:
+	manim -ql --format=gif isa_scene/test_single_isa_scene_mem.py
 
 test_multi_isa_scene:
 	manim -ql --format=gif isa_scene/test_multi_isa_scene.py

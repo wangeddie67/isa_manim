@@ -5,7 +5,12 @@ Predefined Animations.
 from typing import List, Union
 from manim import (AnimationGroup, Succession, FadeIn, FadeOut, Animation, Transform, 
                    LEFT, RIGHT)
-from ..isa_objects import (OneDimReg, OneDimRegElem, TwoDimReg, FunctionUnit, MemoryUnit)
+from ..isa_objects import (OneDimReg,
+                           OneDimRegElem,
+                           TwoDimReg,
+                           FunctionUnit,
+                           MemoryUnit,
+                           MemoryMap)
 from ..isa_config import get_scene_ratio
 
 #
@@ -212,22 +217,20 @@ def function_call(func_unit: FunctionUnit,
 #
 # Animation with memory.
 #
-def decl_memory_unit(mem_unit: MemoryUnit,
-                     start: int = None,
-                     end: int = None) -> Animation:
+def decl_memory_unit(mem_unit: MemoryUnit) -> Animation:
     """
     Animation for declare one object of memory.
 
     Args:
-        mem_unit: Object of function.
+        mem_unit: Object of memory.
     """
-    decl_animation = FadeIn(mem_unit)
-    
     return FadeIn(mem_unit)
 
 def read_memory(mem_unit: MemoryUnit,
                 addr_item: OneDimRegElem,
-                data_item: OneDimRegElem) -> Animation:
+                data_item: OneDimRegElem,
+                old_mem_map: MemoryMap = None,
+                new_mem_map: MemoryMap = None) -> Animation:
     """
     Animation for calling one function.
 
@@ -245,11 +248,24 @@ def read_memory(mem_unit: MemoryUnit,
             FadeIn(data_item, shift=mem_unit.get_data_pos() - mem_unit.mem_rect.get_center()),
             FadeOut(addr_item, shift=mem_unit.mem_rect.get_center() - mem_unit.get_addr_pos()))
 
-    return Succession(move_animate, fade_animate)
+    if new_mem_map:
+        new_mem_map.shift(
+            mem_unit.mem_map_rect.get_center() - new_mem_map.mem_map_rect.get_center())
+    if old_mem_map is None and new_mem_map is not None:
+        mem_map_animate = AnimationGroup(FadeIn(new_mem_map))
+    else:
+        mem_map_animate = AnimationGroup(FadeOut(old_mem_map), FadeIn(new_mem_map))
+
+    if old_mem_map is None and new_mem_map is None:
+        return Succession(move_animate, fade_animate)
+    else:
+        return Succession(move_animate, AnimationGroup(mem_map_animate, fade_animate))
 
 def write_memory(mem_unit: MemoryUnit,
                  addr_item: OneDimRegElem,
-                 data_item: OneDimRegElem) -> Animation:
+                 data_item: OneDimRegElem,
+                 old_mem_map: MemoryMap = None,
+                 new_mem_map: MemoryMap = None) -> Animation:
     """
     Animation for calling one function.
 
@@ -266,4 +282,15 @@ def write_memory(mem_unit: MemoryUnit,
             FadeOut(data_item, shift=mem_unit.mem_rect.get_center() - mem_unit.get_data_pos()),
             FadeOut(addr_item, shift=mem_unit.mem_rect.get_center() - mem_unit.get_addr_pos()))
 
-    return Succession(move_animate, fade_animate)
+    if new_mem_map:
+        new_mem_map.shift(
+            mem_unit.mem_map_rect.get_center() - new_mem_map.mem_map_rect.get_center())
+    if old_mem_map is None and new_mem_map is not None:
+        mem_map_animate = AnimationGroup(FadeIn(new_mem_map))
+    else:
+        mem_map_animate = AnimationGroup(FadeOut(old_mem_map), FadeIn(new_mem_map))
+
+    if old_mem_map is None and new_mem_map is None:
+        return Succession(move_animate, fade_animate)
+    else:
+        return Succession(move_animate, AnimationGroup(mem_map_animate, fade_animate))

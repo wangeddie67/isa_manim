@@ -76,7 +76,7 @@ class OneDimRegElem(VGroup):
                                   **kwargs)
 
         # Value text
-        self.value_text = Text(text=str(self.value) if self.value else "",
+        self.value_text = Text(text="" if self.value is None else str(self.value),
                                color=color,
                                font_size=font_size)
 

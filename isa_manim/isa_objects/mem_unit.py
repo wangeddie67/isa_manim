@@ -1,34 +1,35 @@
 """
-Object for function call
+Object for memory unit.
 
-Such object provides an absolute graphic object for function call, including pre-defined functions 
-and operators.
+Such object provides an absolute graphic object for memory unit.
 
-Graphic object is a VGroup containing one Ellipse objects, several rectangle objects with dash line 
-and several Text objects.
+Graphic object is a VGroup containing one Round rectangle objects, several rectangle objects, two
+Cubic Bezier lines and several Text objects.
 """
 
-from typing import List
 import numpy as np
-from manim import (VGroup, Text, Rectangle, DashedVMobject, RoundedRectangle, BraceBetweenPoints,
+from manim import (VGroup, Text, Rectangle, DashedVMobject, RoundedRectangle,
                    CubicBezier,
                    LEFT, RIGHT, UP, DOWN,
                    DEFAULT_FONT_SIZE)
 from colour import Color
 from ..isa_config import get_scene_ratio
+from .mem_map import MemoryMap
 
 class MemoryUnit(VGroup):
     """
-    Object for function call.
+    Object for memory unit.
 
     Attributes:
-        args_width: width of arguments, in bit.
-        res_width: Width of return value, in bit.
-        func_ellipse: Ellipse of function.
-        label_text: Text of function name/brief.
-        args_rect_list: rectangle of arguments.
-        args_text_list: text of arguments.
-        res_rect: rectangle of return value.
+        addr_width: width of address, in bit.
+        data_width: Width of data, in bit.
+        mem_rect: Round rectangle of memory unit.
+        label_text: Text of memory.
+        addr_rect: rectangle of address argument.
+        data_rect: rectangle of data argument.
+        mem_map_rect: rectangle of memory map. Provides the position of memory map.
+        mem_map_left_brace: left brace of memory map.
+        mem_map_right_brace: right brace of memory map. 
     """
 
     require_serialization = True
@@ -42,15 +43,13 @@ class MemoryUnit(VGroup):
         Constructor an function call.
 
         Args:
-            text: Register name.
-            color: Color of function call.
-            args_width: Width of arguments, in bit
-            res_width: Width of return value, in bit
-            **kwargs: Arguments to function ellipse.
+            color: Color of memory unit.
+            addr_width: Width of address, in bit
+            data_width: Width of data, in bit
+            **kwargs: Arguments to memory unit.
 
         kwargs:
 
-            * args_value: Text of each argument.
             * font_size: Font size of value text.
         """
         # Font size
@@ -72,27 +71,24 @@ class MemoryUnit(VGroup):
         # Label text
         self.label_text = Text(
             text="Mem", color=color, font_size=font_size) \
-                .move_to(self.mem_rect.get_center() + UP * 0.5)
-        self.range_text = Text(
-            text="", color=color, font_size=font_size) \
-                .move_to(self.mem_rect.get_center() + DOWN * 0.5)
+                .move_to(self.mem_rect.get_center())
 
         # Address rectangle
         self.addr_rect = DashedVMobject(
             Rectangle(color=color, height=1.0, width=addr_width * get_scene_ratio()))
         self.addr_rect.shift(
             LEFT * (1 + self.mem_rect.width / 2 + self.addr_rect.width / 2))
-        self.addr_label_text = Text(
-            text="Addr", color=color, font_size=font_size).move_to(self.addr_rect.get_center())
+        self.addr_label_text = Text(text="Addr", color=color, font_size=font_size) \
+            .move_to(self.addr_rect.get_center() + UP)
 
         # Data rectangle
         self.data_rect = DashedVMobject(
             Rectangle(color=color, height=1.0, width=data_width * get_scene_ratio()))
         self.data_rect.shift(
             RIGHT * (1 + self.mem_rect.width / 2 + self.data_rect.width / 2))
-        self.data_label_text = Text(
-            text="Data", color=color, font_size=font_size).move_to(self.data_rect.get_center())
-        
+        self.data_label_text = Text(text="Data", color=color, font_size=font_size) \
+            .move_to(self.data_rect.get_center() + UP)
+
         self.mem_map_width = self.addr_rect.width + self.data_rect.width + self.mem_rect.width + 2
         self.mem_map_rect = Rectangle(color=color, height=1.0, width=self.mem_map_width, **kwargs)
         self.mem_map_rect.shift(self.addr_rect.get_left() - self.mem_map_rect.get_left())
@@ -104,6 +100,8 @@ class MemoryUnit(VGroup):
         self.mem_map_right_brace = CubicBezier(
             self.mem_map_rect.get_right() + UP * 0.7, self.mem_map_rect.get_right() + UP * 1.25,
             self.mem_rect.get_right() + DOWN * 2.25, self.mem_rect.get_right() + DOWN * 1.5)
+
+        self.mem_map_object : MemoryMap = None
 
         super().__init__(**kwargs)
         self.add(self.mem_rect, self.label_text,

@@ -11,4 +11,5 @@ from .one_dim_reg_elem import OneDimRegElem
 from .one_dim_reg import OneDimReg
 from .two_dim_reg import TwoDimReg
 from .func_unit import FunctionUnit
+from .mem_map import MemoryMap
 from .mem_unit import MemoryUnit

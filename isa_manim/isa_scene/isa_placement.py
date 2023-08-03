@@ -44,7 +44,7 @@ from math import ceil
 import numpy as np
 from typing import List, Union, Dict
 from manim import Mobject, config, RIGHT, DOWN
-from ..isa_objects import (OneDimReg, TwoDimReg, OneDimRegElem, FunctionUnit)
+from ..isa_objects import (OneDimReg, TwoDimReg, OneDimRegElem, FunctionUnit, MemoryUnit)
 
 class IsaPlacementItem:
     """
@@ -99,6 +99,8 @@ class IsaPlacementItem:
             return ceil(self.isa_object.elem_rect.width)
         elif isinstance(self.isa_object, FunctionUnit):
             return ceil(self.isa_object.func_ellipse.width)
+        elif isinstance(self.isa_object, MemoryUnit):
+            return ceil(self.isa_object.mem_map_width + 2)
         else:
             raise ValueError("Not ISA Object.")
 
@@ -114,6 +116,8 @@ class IsaPlacementItem:
             return 1
         elif isinstance(self.isa_object, FunctionUnit):
             return 5
+        elif isinstance(self.isa_object, MemoryUnit):
+            return 6
         else:
             raise ValueError("Not ISA Object.")
 
@@ -129,6 +133,8 @@ class IsaPlacementItem:
             return 2
         elif isinstance(self.isa_object, FunctionUnit):
             return 3
+        elif isinstance(self.isa_object, MemoryUnit):
+            return 4
         else:
             raise ValueError("Not ISA Object.")
 
@@ -157,6 +163,11 @@ class IsaPlacementItem:
             x = col + self.get_width() / 2
             y = row + 2 + 0.5
             self.isa_object.move_to(RIGHT * x + DOWN * y)
+        elif isinstance(self.isa_object, MemoryUnit):
+            x = col + 1 + self.isa_object.addr_rect.width + 1 \
+                + self.isa_object.mem_rect.width / 2
+            y = row + 1 + 0.5
+            self.isa_object.shift(RIGHT * x + DOWN * y - self.isa_object.mem_rect.get_center())
         else:
             raise ValueError("Not ISA Object.")
 
