@@ -13,7 +13,6 @@ from manim import (VGroup, Text, Rectangle,
                    RIGHT, UP, DOWN,
                    DEFAULT_FONT_SIZE)
 from colour import Color
-from ..isa_config import get_scene_ratio
 
 class MemoryMap(VGroup):
     """
@@ -45,8 +44,8 @@ class MemoryMap(VGroup):
                  align: int = 16,
                  left_addr: int = 0,
                  right_addr: int = 0,
-                 rd_range: List[Tuple[int]] = [],
-                 wr_range: List[Tuple[int]] = [],
+                 rd_range: List[Tuple[int]] = None,
+                 wr_range: List[Tuple[int]] = None,
                  **kwargs):
         """
         Constructor a memory map.
@@ -84,11 +83,11 @@ class MemoryMap(VGroup):
 
         self.align = align
 
-        self.left_addr, self.right_addr = self._adjust_range(
-            align, left_addr, right_addr, rd_range + wr_range)
+        self.rd_range = [] if rd_range is None else rd_range
+        self.wr_range = [] if wr_range is None else wr_range
 
-        self.rd_range = rd_range
-        self.wr_range = wr_range
+        self.left_addr, self.right_addr = self._adjust_range(
+            align, left_addr, right_addr, self.rd_range + self.wr_range)
 
         self.left_text = Text(hex(self.left_addr), font_size=font_size)
         self.right_text = Text(hex(self.right_addr), font_size=font_size)
@@ -98,12 +97,12 @@ class MemoryMap(VGroup):
         self.write_rect: List[Rectangle] = []
         self.read_rect: List[Rectangle] = []
 
-        if (self.right_addr != self.left_addr):
+        if self.right_addr != self.left_addr:
             scale_factor = width / (self.right_addr - self.left_addr)
         else:
             scale_factor = 1
 
-        for rd_left_addr, rd_right_addr in rd_range:
+        for rd_left_addr, rd_right_addr in self.rd_range:
             block_width = (rd_right_addr - rd_left_addr) * scale_factor
             center_addr = ceil((rd_left_addr + rd_right_addr) / 2)
             block_offset = (center_addr - self.left_addr) * scale_factor
@@ -111,7 +110,7 @@ class MemoryMap(VGroup):
                 Rectangle(color=rd_color, height=0.5, width=block_width, fill_opacity=0.5)
                     .move_to(self.mem_map_rect.get_left() + RIGHT * block_offset + UP * 0.25))
 
-        for wr_left_addr, wr_right_addr in wr_range:
+        for wr_left_addr, wr_right_addr in self.wr_range:
             block_width = (wr_right_addr - wr_left_addr) * scale_factor
             center_addr = ceil((wr_left_addr + wr_right_addr) / 2)
             block_offset = (center_addr - self.left_addr) * scale_factor

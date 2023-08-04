@@ -28,7 +28,8 @@ test_mem_map:
 test_mem_unit:
 	manim -ql --format=png isa_objects/test_mem_unit.py
 
-test_objects: test_one_dim_reg test_two_dim_reg test_one_dim_reg_elem test_func_unit test_mem_unit
+test_objects: test_one_dim_reg test_two_dim_reg test_one_dim_reg_elem test_func_unit \
+	test_mem_unit test_mem_map
 
 # Test animation.
 test_reg_animation:

@@ -11,8 +11,11 @@ in animate as MObject provided by Manim.
 - :py:class:`isa_manim.isa_objects.one_dim_reg_elem` presents one element in registers. This object
   can be used to present data read from/write to one register. For example, one element in
   one vector register.
-- :py:class:`isa_manim.isa_objects.function_call` presents one function call in ISA flow. This 
+- :py:class:`isa_manim.isa_objects.func_unit` presents one function call in ISA flow. This 
   object provides the name of the function, as well as input arguments and output results.
+- :py:class:`isa_manim.isa_objects.mem_unit` presents the memory access in ISA flow.
+- :py:class:`isa_manim.isa_objects.mem_map` presents the range of memory access. This object 
+  colors the accessed memory addresses.
 
 Each object is a series of MObject (Text, Rectangle, Eclipse or Arrow) packed into one VGroup.
 
@@ -85,7 +88,7 @@ By default, the origin point is the same as the center position of this object.
 
 ## Function call
 
-:py:class:`isa_manim.isa_objects.function_call` presents one function call in ISA flow. This object
+:py:class:`isa_manim.isa_objects.func_unit` presents one function call in ISA flow. This object
 can be used to present one function unit (like floating-point multiply), one operator (like +/-),
 or one predefined function.
 
@@ -105,3 +108,47 @@ As shown in the above figure, such an object contains several MObject:
 
 The height of `args_rect`, `func_ellipse` and `res_rect` is 1.0. Hence, the total height of such an
 object is 5.0. 
+
+**Note**: By default, the origin point is located in the center position of the first register in
+`func_ellipse`, which is different from the center position of this object. It is suggested to use 
+function `shift` rather than function `move_to` to change the location of the register.
+
+## Memory unit
+
+:py:class:`isa_manim.isa_object.mem_unit` presents memory access in ISA flow.
+
+.. image:: _static/TestMemoryUnit_ManimCE_v0.17.3.png
+  :width: 800
+
+As shown in the above figure, such an object contains several MObjects:
+- `mem_rect` presents the memory unit, whose size is fixed as 4.0 x 3.0.
+- `addr_rect` presents the address of memory access, whose width presents the width of the 
+  address.
+- `data_rect` presents the data of memory access, whose width presents the width of the data bus.
+- `mem_map_rect` presents the position of a memory map.
+
+The height of the entire memory unit is 6.0 because one memory map object costs 2.0 in height.
+
+**Note**: By default, the origin point is located in the center position of the first register in
+`mem_rect`, which is different from the center position of this object. It is suggested to use 
+function `shift` rather than function `move_to` to change the location of the register.
+
+## Memory map
+
+:py:class:`isa_manim.isa_object.mem_map` presents accessed memory addresses by coloring the accessed
+memory access in a horizontal block.
+
+.. image:: _static/TestMemoryMap_ManimCE_v0.17.3.png
+  :width: 800
+
+As shown in the above figure, one rectangle presents one certain range from the entire memory. The 
+left address is inclusive while the right address is exclusive. The accessed addresses are colored 
+in the rectangle. The upper half presents the read addresses while the bottom half presents the
+written addresses. 
+
+**Note**: By default, the origin point is located in the center position of the first register in
+`mem_map_rect`, which is different from the center position of this object. It is suggested to use 
+function `shift` rather than function `move_to` to change the location of the register.
+
+The memory map should use with the memory unit. The memory map is placed at the position marked by
+`MemoryUnit.mem_map_rect`.
