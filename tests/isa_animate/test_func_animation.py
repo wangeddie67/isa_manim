@@ -44,7 +44,7 @@ class TestFuncAnimation(Scene):
 
         # Function call.
         res_elem = OneDimRegElem(color=PURPLE, width=32)
-        func_call_animate = function_call(func_object=function_item,
+        func_call_animate = function_call(func_unit=function_item,
                                           args_list=[r1_elem, r2_elem],
                                           res_item=res_elem)
         func_cal_label = Text("function_call", color=YELLOW) \

@@ -54,7 +54,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         Return hash value according to traceback.
         """
         # frame 0 is _traceback_hash
-        # frame 1 is animation API 
+        # frame 1 is animation API
         # frame 2 is the caller of animation API
         frame = sys._getframe(depth)
         return hash(str(frame))

@@ -44,7 +44,7 @@ class TestIsaPlacementMap(MovingCameraScene):
         dot = [Dot(),
                Dot(animation_map.placement_width() * RIGHT),
                Dot(animation_map.placement_height() * DOWN),
-               Dot(animation_map.placement_width() * RIGHT 
+               Dot(animation_map.placement_width() * RIGHT
                    + animation_map.placement_height() * DOWN)
                ]
 

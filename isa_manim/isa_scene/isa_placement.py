@@ -42,7 +42,7 @@ There are two strategies to search rectangle in the placement array:
 
 from math import ceil
 import numpy as np
-from typing import List, Union, Dict
+from typing import List, Dict
 from manim import Mobject, config, RIGHT, DOWN
 from ..isa_objects import (OneDimReg, TwoDimReg, OneDimRegElem, FunctionUnit, MemoryUnit)
 
@@ -396,20 +396,20 @@ class IsaPlacementMap:
         return self._placement_object_dict[place_hash].isa_object
 
     def placement_add_object(self,
-                             object: Mobject,
+                             place_object: Mobject,
                              place_hash: str = None):
         """
         Add object into dictionary and place it into placement map.
 
         Args:
-            object: Object to place.
+            place_object: Object to place.
             place_hash: Hash value of ISA object.
         """
-        if not isinstance(object, Mobject):
+        if not isinstance(place_object, Mobject):
             raise ValueError("Argument must be Mobject.")
 
         #
-        isa_object_item = IsaPlacementItem(object, place_hash)
+        isa_object_item = IsaPlacementItem(place_object, place_hash)
         self._placement_object_dict[isa_object_item.isa_hash] = isa_object_item
 
         place_success = False

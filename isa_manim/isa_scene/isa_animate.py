@@ -3,7 +3,7 @@ Animation flow analysis.
 """
 
 import numpy as np
-from typing import List, Tuple, Union, Any
+from typing import List, Tuple, Any
 from manim import Animation, Mobject, FadeOut
 
 class IsaAnimateItem:
