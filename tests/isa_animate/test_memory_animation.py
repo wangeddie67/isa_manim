@@ -18,7 +18,7 @@ from isa_manim import (Scene, # pylint: disable=wrong-import-position
 config.frame_height = 6
 config.frame_width = 30
 
-class TestFuncAnimation(Scene):
+class TestMemUnitAnimation(Scene):
     """
     Test animation for function, including declaring and calling function.
     """

@@ -1,5 +1,4 @@
 colour
-manim
 numpy
 typing_extensions
 sphinx
