@@ -235,9 +235,11 @@ def read_memory(mem_unit: MemoryUnit,
     Animation for calling one function.
 
     Args:
-        func_object: Object of function object.
-        args_list: List of object of arguments.
-        res_item: List of result item.
+        mem_unit: Object of memory unit.
+        addr_item: address item.
+        data_item: data item.
+        old_mem_map: Old memory map.
+        new_mem_map: New memory map.
     """
     data_item.move_to(mem_unit.get_data_pos(data_item.elem_width))
 
@@ -270,9 +272,11 @@ def write_memory(mem_unit: MemoryUnit,
     Animation for calling one function.
 
     Args:
-        func_object: Object of function object.
-        args_list: List of object of arguments.
-        res_item: List of result item.
+        mem_unit: Object of memory unit.
+        addr_item: address item.
+        data_item: data item.
+        old_mem_map: Old memory map.
+        new_mem_map: New memory map.
     """
     move_animate = \
         AnimationGroup(addr_item.animate.move_to(mem_unit.get_addr_pos(addr_item.elem_width)),

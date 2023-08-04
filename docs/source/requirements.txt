@@ -1,0 +1,4 @@
+sphinx-autopackagesummary
+sphinx-mdinclude
+sphinx_rtd_theme
+myst-parser

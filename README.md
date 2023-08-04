@@ -37,6 +37,9 @@ clone the project to local.
 ```bash
 # git clone repository
 git clone git@github.com:wangeddie67/isa_manim.git
+
+# install requirements
+pip3 install -r isa_manim/requirements.txt
 ```
 
 ## Import
@@ -53,10 +56,7 @@ cd /root/to/isa_sim_utils/docs
 sudo apt-get install python3-sphinx
 
 # Install plugin for Sphinx
-sudo pip3 install sphinxext sphinx-autopackagesummary sphinx-mdinclude sphinx_rtd_theme
-
-# Install Markdown parser
-sudo pip3 install myst-parser
+pip3 install -r source/requirements.txt
 ```
 
 The document can be generated through Makefile.

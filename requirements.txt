@@ -1,5 +1,4 @@
 colour
 numpy
 typing_extensions
-sphinx
-sphinx_mdinclude
+

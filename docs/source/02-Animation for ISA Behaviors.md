@@ -77,3 +77,24 @@ fading in.
 one function unit in two steps. In the first step, elements are moved to arguments of one function
 unit. In the second step, elements are faded out while one result element is faded in at the 
 location of the result of one function unit.
+
+## Animation for the memory unit
+
+Animations for memory include declaring one unit and reading/writing memory, as below:
+
+.. image:: _static/TestMemUnitAnimation_ManimCE_v0.17.3.gif
+  :width: 800
+
+.. image:: _static/TestMemMapAnimation_ManimCE_v0.17.3.gif
+  :width: 800
+
+:py:func:`isa_manim.isa_animate.predefine_animate.decl_memory_unit` declares one memory unit by
+fading in.
+
+:py:func:`isa_manim.isa_animate.predefine_animate.read_memory` presents the animation to read data
+from memory. The address item is fading out while the data item is fading in. Meanwhile, the memory
+map is replaced by fading in/out if the old or new memory map is provided.
+
+:py:func:`isa_manim.isa_animate.predefine_animate.write_memory` presents the animation to write data
+to memory. The address item and data item are fading out. Meanwhile, the memory map is replaced by 
+fading in/out if the old or new memory map is provided.
