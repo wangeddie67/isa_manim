@@ -1,2 +1,6 @@
-
-sphinx-mdinclude==0.5.3
+colour
+manim
+numpy
+typing_extensions
+sphinx
+sphinx_mdinclude
