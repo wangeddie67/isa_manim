@@ -33,3 +33,5 @@ from .isa_scene import (IsaAnimateItem,
                         IsaColorMap)
 
 from .isa_scene import SingleIsaScene, MultiIsaScene
+
+from .isa_config import get_config, set_config
