@@ -9,8 +9,8 @@ Graphic object is a VGroup containing several Rectangle objects and several Text
 from typing import List, Tuple
 from typing_extensions import Self
 from math import ceil
-from manim import (VGroup, Text, Rectangle,
-                   RIGHT, UP, DOWN,
+from manim import (VGroup, Text, Rectangle, Triangle,
+                   RIGHT, UP, DOWN, DEGREES,
                    DEFAULT_FONT_SIZE)
 from colour import Color
 
@@ -46,7 +46,7 @@ class MemoryMap(VGroup):
                  right_addr: int = 0,
                  rd_range: List[Tuple[int]] = None,
                  wr_range: List[Tuple[int]] = None,
-                 **kwargs):
+                 font_size = DEFAULT_FONT_SIZE):
         """
         Constructor a memory map.
 
@@ -60,22 +60,9 @@ class MemoryMap(VGroup):
             right_addr: Right address of memory map.
             rd_range: Memory range accessed by read.
             wr_range: Memory range accessed by write.
-            **kwargs: Arguments to function ellipse.
-
-        kwargs:
-
-            * font_size: Font size of value text.
+            font_size: Font size of value text.
         """
-        self.kwargs = kwargs
-
-        # Font size
-        if "font_size" in kwargs:
-            font_size = kwargs["font_size"]
-            del kwargs["font_size"]
-        else:
-            font_size = DEFAULT_FONT_SIZE
-
-        self.mem_map_rect = Rectangle(color=color, height=1.0, width=width, **kwargs)
+        self.mem_map_rect = Rectangle(color=color, height=1.0, width=width)
 
         self.mem_map_color = color
         self.rd_rect_color = rd_color
@@ -107,18 +94,18 @@ class MemoryMap(VGroup):
             center_addr = ceil((rd_left_addr + rd_right_addr) / 2)
             block_offset = (center_addr - self.left_addr) * scale_factor
             self.read_rect.append(
-                Rectangle(color=rd_color, height=0.5, width=block_width, fill_opacity=0.5)
-                    .move_to(self.mem_map_rect.get_left() + RIGHT * block_offset + UP * 0.25))
+                Rectangle(color=rd_color, height=0.34, width=block_width, fill_opacity=0.25)
+                    .move_to(self.mem_map_rect.get_left() + RIGHT * block_offset + UP * 0.33))
 
         for wr_left_addr, wr_right_addr in self.wr_range:
             block_width = (wr_right_addr - wr_left_addr) * scale_factor
             center_addr = ceil((wr_left_addr + wr_right_addr) / 2)
             block_offset = (center_addr - self.left_addr) * scale_factor
             self.write_rect.append(
-                Rectangle(color=wr_color, height=0.5, width=block_width, fill_opacity=0.5)
-                    .move_to(self.mem_map_rect.get_left() + RIGHT * block_offset + DOWN * 0.25))
+                Rectangle(color=wr_color, height=0.66, width=block_width, fill_opacity=0.50)
+                    .move_to(self.mem_map_rect.get_left() + RIGHT * block_offset + DOWN * 0.17))
 
-        super().__init__(**kwargs)
+        super().__init__()
         self.add(self.mem_map_rect, self.left_text, self.right_text,
                  *self.write_rect, *self.read_rect)
 
@@ -143,14 +130,16 @@ class MemoryMap(VGroup):
         if len(ranges) > 0:
             min_value = min(x[0] for x in ranges)
             range_left_addr = (min_value // align) * align
-            left_addr_ = min(left_addr, range_left_addr)
+            left_addr_ = range_left_addr if left_addr == right_addr else \
+                min(left_addr, range_left_addr)
         else:
             left_addr_ = left_addr
 
         if len(ranges) > 0:
             max_value = max(x[1] for x in ranges)
             range_right_addr = ceil(max_value / align) * align
-            right_addr_ = max(right_addr, range_right_addr)
+            right_addr_ = range_right_addr if left_addr == right_addr else \
+                max(right_addr, range_right_addr)
         else:
             right_addr_ = right_addr
 
@@ -181,6 +170,33 @@ class MemoryMap(VGroup):
 
         return new_range
 
+    def add_range(self, laddr: int, raddr: int) -> Self:
+        """
+        Add one memory range accessed.
+
+        Args:
+            laddr: Left address of new access.
+            raddr: Right address of new access.
+
+        Return:
+            one new memory map.
+        """
+        left_addr, right_addr = self._adjust_range(align=self.align,
+                                                   left_addr=laddr,
+                                                   right_addr=raddr,
+                                                   ranges=self.rd_range + self.wr_range)
+
+        return MemoryMap(color=self.mem_map_color,
+                         rd_color=self.rd_rect_color,
+                         wr_color=self.wr_rect_color,
+                         width=self.mem_map_rect.width,
+                         align=self.align,
+                         left_addr=left_addr,
+                         right_addr=right_addr,
+                         rd_range=self.rd_range,
+                         wr_range=self.wr_range)
+
+
     def add_rd_range(self, laddr: int, raddr: int) -> Self:
         """
         Add one memory range accessed.
@@ -202,8 +218,7 @@ class MemoryMap(VGroup):
                          left_addr=self.left_addr,
                          right_addr=self.right_addr,
                          rd_range=new_rd_range,
-                         wr_range=self.wr_range,
-                         **self.kwargs)
+                         wr_range=self.wr_range)
 
     def add_wr_range(self, laddr: int, raddr: int) -> Self:
         """
@@ -226,6 +241,22 @@ class MemoryMap(VGroup):
                          left_addr=self.left_addr,
                          right_addr=self.right_addr,
                          rd_range=self.rd_range,
-                         wr_range=new_wr_range,
-                         **self.kwargs)
+                         wr_range=new_wr_range)
 
+    def get_addr_triangle(self, addr: int, color: Color) -> Triangle:
+        """
+        Get an triangle point to correct position in memory map.
+        
+        Args:
+            addr: Address.
+            color: Color of address trangle.
+        """
+        if self.right_addr != self.left_addr:
+            scale_factor = self.mem_map_rect.width / (self.right_addr - self.left_addr)
+        else:
+            scale_factor = 1
+
+        block_offset = (addr + 0.5 - self.left_addr) * scale_factor
+        return Triangle(color=color, fill_opacity=0.5).scale(0.2) \
+            .move_to(self.mem_map_rect.get_left() + RIGHT * block_offset + UP * 0.7) \
+            .rotate(60*DEGREES)

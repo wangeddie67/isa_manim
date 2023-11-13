@@ -38,7 +38,8 @@ class OneDimRegElem(VGroup):
                  color: Color,
                  width: int,
                  value = None,
-                 **kwargs):
+                 fill_opacity = 0.5,
+                 font_size = DEFAULT_FONT_SIZE):
         """
         Constructor an element.
 
@@ -47,22 +48,8 @@ class OneDimRegElem(VGroup):
             width: Width of register, in bit.
             value: Value of this register, which should be an integer or UInt defined by
                 isa_sim_utils.
-            **kwargs: Arguments to new register rectangle.
-
-        kwargs accept flowing arguments:
-
-            * font_size: Font size of value text.
+            font_size: Font size of value text.
         """
-        # Font size
-        if "font_size" in kwargs:
-            font_size = kwargs["font_size"]
-            del kwargs["font_size"]
-        else:
-            font_size = DEFAULT_FONT_SIZE
-
-        if "fill_opacity" not in kwargs:
-            kwargs["fill_opacity"] = 0.5
-
         # Element value
         self.value = value
 
@@ -73,7 +60,7 @@ class OneDimRegElem(VGroup):
         self.elem_rect = Rectangle(color=color,
                                   height=1.0,
                                   width=width * get_scene_ratio(),
-                                  **kwargs)
+                                  fill_opacity=fill_opacity)
 
         # Value text
         self.value_text = Text(text="" if self.value is None else str(self.value),
@@ -85,7 +72,7 @@ class OneDimRegElem(VGroup):
             value_text_scale = self.elem_rect.width / self.value_text.width
             self.value_text.scale(value_text_scale)
 
-        super().__init__(**kwargs)
+        super().__init__()
         self.add(self.elem_rect, self.value_text)
 
     def align_points_with_larger(self, larger_mobject):

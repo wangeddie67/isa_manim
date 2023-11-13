@@ -38,7 +38,7 @@ class MemoryUnit(VGroup):
                  color: Color,
                  addr_width: int,
                  data_width: int,
-                 **kwargs):
+                 font_size = DEFAULT_FONT_SIZE):
         """
         Constructor an function call.
 
@@ -46,27 +46,15 @@ class MemoryUnit(VGroup):
             color: Color of memory unit.
             addr_width: Width of address, in bit
             data_width: Width of data, in bit
-            **kwargs: Arguments to memory unit.
-
-        kwargs:
-
-            * font_size: Font size of value text.
+            font_size: Font size of value text.
         """
-        # Font size
-        if "font_size" in kwargs:
-            font_size = kwargs["font_size"]
-            del kwargs["font_size"]
-        else:
-            font_size = DEFAULT_FONT_SIZE
-
         # address width
         self.addr_width = addr_width
         # data width
         self.data_width = data_width
 
         # memory rectangle
-        self.mem_rect = RoundedRectangle(
-            color=color, height=3.0, width=4, **kwargs)
+        self.mem_rect = RoundedRectangle(color=color, height=3.0, width=4)
 
         # Label text
         self.label_text = Text(
@@ -90,7 +78,7 @@ class MemoryUnit(VGroup):
             .move_to(self.data_rect.get_center() + UP)
 
         self.mem_map_width = self.addr_rect.width + self.data_rect.width + self.mem_rect.width + 2
-        self.mem_map_rect = Rectangle(color=color, height=1.0, width=self.mem_map_width, **kwargs)
+        self.mem_map_rect = Rectangle(color=color, height=1.0, width=self.mem_map_width)
         self.mem_map_rect.shift(self.addr_rect.get_left() - self.mem_map_rect.get_left())
         self.mem_map_rect.shift(DOWN * 3)
 
@@ -103,7 +91,7 @@ class MemoryUnit(VGroup):
 
         self.mem_map_object : MemoryMap = None
 
-        super().__init__(**kwargs)
+        super().__init__()
         self.add(self.mem_rect, self.label_text,
                  self.addr_rect, self.addr_label_text, self.data_rect, self.data_label_text,
                  self.mem_map_rect, self.mem_map_left_brace, self.mem_map_right_brace)

@@ -51,7 +51,8 @@ class OneDimReg(VGroup):
                  width: int,
                  elements: int = 1,
                  value = None,
-                 **kwargs):
+                 font_size = DEFAULT_FONT_SIZE,
+                 lobel_pos = None):
         """
         Constructor an scalar register.
 
@@ -62,22 +63,10 @@ class OneDimReg(VGroup):
             elements: Number of elements.
             value: Value of this register, which should be an integer or UInt defined by
                 isa_sim_utils.
-            **kwargs: Arguments to new register rectangle.
-
-        kwargs accept flowing arguments:
-
-        * label_pos: position of label text. By default, the position of label text is defined as
-          close to the left boundary of register rectangle.
-        * font_size: Font size of label. By default, the font size is defined by configuration.
-
+            font_size: Font size of label. By default, the font size is defined by configuration.
+            label_pos: position of label text. By default, the position of label text is defined as
+                close to the left boundary of register rectangle.
         """
-        # Font size
-        if "font_size" in kwargs:
-            font_size = kwargs["font_size"]
-            del kwargs["font_size"]
-        else:
-            font_size = DEFAULT_FONT_SIZE
-
         # Element value
         self.value = value
 
@@ -93,26 +82,23 @@ class OneDimReg(VGroup):
             self.reg_rect = Rectangle(color=color,
                                     height=1.0,
                                     width=width * get_scene_ratio(),
-                                    grid_xstep=self.elem_width * get_scene_ratio(),
-                                    **kwargs)
+                                    grid_xstep=self.elem_width * get_scene_ratio())
         else:
             self.reg_rect = Rectangle(color=color,
                                     height=1.0,
-                                    width=width * get_scene_ratio(),
-                                    **kwargs)
+                                    width=width * get_scene_ratio())
 
         # Label text
         self.label_text = Text(text=text,
                                color=color,
                                font_size=font_size)
-        if "label_pos" in kwargs:
-            label_pos = np.ndarray(kwargs["label_pos"])
+        if lobel_pos is not None:
+            label_pos = np.ndarray(lobel_pos)
         else:
-            label_pos = self.reg_rect.get_left() \
-                + self.label_text.get_left() + LEFT * 0.2
+            label_pos = self.reg_rect.get_left() + self.label_text.get_left() + LEFT * 0.2
         self.label_text.move_to(label_pos)
 
-        super().__init__(**kwargs)
+        super().__init__()
         self.add(self.reg_rect, self.label_text)
 
     def align_points_with_larger(self, larger_mobject):
@@ -142,8 +128,7 @@ class OneDimReg(VGroup):
                  color: Color,
                  elem_width: float = -1.0,
                  index: int = 0,
-                 value = None,
-                 **kwargs) -> Rectangle:
+                 value = None) -> Rectangle:
         """
         Return a rectangle of specified item. 
 
@@ -157,14 +142,11 @@ class OneDimReg(VGroup):
             elem_width: Width of data element in bits.
             index: Index of data element in register.
             value: Value of data element.
-            kwargs: Arguments to new elements.
         """
         if elem_width < 0:
             elem_width = self.elem_width
 
         return OneDimRegElem(color=color,
                              width=elem_width,
-                             fill_opacity=0.5,
-                             value=value,
-                             **kwargs) \
+                             value=value) \
             .move_to(self.get_elem_center(index=index, elem_width=elem_width))

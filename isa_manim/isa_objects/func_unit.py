@@ -37,7 +37,8 @@ class FunctionUnit(VGroup):
                  color: Color,
                  args_width: List[float],
                  res_width: float,
-                 **kwargs):
+                 args_value = None,
+                 font_size = DEFAULT_FONT_SIZE):
         """
         Constructor an function call.
 
@@ -46,25 +47,11 @@ class FunctionUnit(VGroup):
             color: Color of function call.
             args_width: Width of arguments, in bit
             res_width: Width of return value, in bit
-            **kwargs: Arguments to function ellipse.
-
-        kwargs:
-
-            * args_value: Text of each argument.
-            * font_size: Font size of value text.
+            args_value: Text of each argument.
+            font_size: Font size of value text.
         """
-        # Font size
-        if "font_size" in kwargs:
-            font_size = kwargs["font_size"]
-            del kwargs["font_size"]
-        else:
-            font_size = DEFAULT_FONT_SIZE
-
         # Argument Text
-        if "args_value" in kwargs:
-            args_value = kwargs["args_value"]
-            del kwargs["args_value"]
-        else:
+        if args_value is None:
             args_value = ["" for _ in args_width]
 
         # argument width
@@ -83,10 +70,10 @@ class FunctionUnit(VGroup):
                     for i in range(0, len(args_scene_width))]
 
         # function ellipse
+        ellipse_width = max(func_width, self.res_width * get_scene_ratio())
         self.func_ellipse = Ellipse(color=color,
                                     height=1.0,
-                                    width=func_width,
-                                    **kwargs)
+                                    width=ellipse_width)
 
         # Label text
         self.label_text = Text(text=text,
@@ -123,7 +110,7 @@ class FunctionUnit(VGroup):
                                      width=res_width * get_scene_ratio())) \
                 .move_to(DOWN * 2.0)
 
-        super().__init__(**kwargs)
+        super().__init__()
         self.add(
             self.func_ellipse, self.label_text,
             *self.args_rect_list, *self.args_text_list, self.res_rect)

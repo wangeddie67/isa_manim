@@ -291,6 +291,36 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         self._set_item_producer(new_elem, animation_item)
         return new_elem
 
+    #
+    # Function behavior
+    #
+    def decl_function(self,
+                      func: str,
+                      args_width: List[float],
+                      res_size: float,
+                      isa_hash: str = None,
+                      **kwargs) -> FunctionUnit:
+        """
+        Animation of declare function call.
+        
+        Used to control placement and animation.
+        """
+        if not isa_hash:
+            isa_hash = self._traceback_hash()
+
+        if self.placement_has_object(isa_hash):
+            func_unit = self.placement_get_object(isa_hash)
+        else:
+            func_color = self.colormap_default_color
+            func_unit = FunctionUnit(text=func, color=func_color, args_width=args_width,
+                                     res_width=res_size)
+            self.placement_add_object(func_unit, isa_hash)
+
+            self.animation_add_animation(
+                animate=decl_func_call(func_unit), src=None, dst=func_unit)
+
+        return func_unit
+
     def function_call(self,
                       func: str,
                       args: List[OneDimRegElem],
@@ -300,25 +330,15 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         """
         Animate of Function call.
         """
-        if not isa_hash:
-            isa_hash = self._traceback_hash()
+        func_unit = self.decl_function(func=func,
+                                       args_width=[item.elem_width for item in args],
+                                       res_size=res_size,
+                                       isa_hash=isa_hash)
 
         func_kwargs = dict()
         if "args_value" in kwargs:
             func_kwargs["args_value"] = kwargs["args_value"]
             del kwargs["args_value"]
-
-        if self.placement_has_object(isa_hash):
-            func_unit = self.placement_get_object(isa_hash)
-        else:
-            args_width = [item.elem_width for item in args]
-            func_color = self.colormap_default_color
-            func_unit = FunctionUnit(text=func, color=func_color, args_width=args_width,
-                                     res_width=res_size)
-            self.placement_add_object(func_unit, isa_hash)
-
-            self.animation_add_animation(
-                animate=decl_func_call(func_unit), src=None, dst=func_unit)
 
         if "color_hash" in kwargs:
             hash_str = kwargs["color_hash"]
@@ -348,6 +368,34 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         self._set_item_producer(res_elem, animation_item)
         return res_elem
 
+    #
+    # Memory
+    #
+    def decl_memory(self,
+                    addr_width: float,
+                    data_width: float,
+                    isa_hash: str = None,
+                    **kwargs
+                    ) -> MemoryUnit:
+        """
+        Animation of declare memory.
+        
+        Used to control placement and animation.
+        """
+        if not isa_hash:
+            isa_hash = "Memory"
+
+        if self.placement_has_object(isa_hash):
+            mem_unit = self.placement_get_object(isa_hash)
+        else:
+            mem_unit = MemoryUnit(color=WHITE, addr_width=addr_width, data_width=data_width)
+            self.placement_add_object(mem_unit, "Memory")
+
+            self.animation_add_animation(
+                animate=decl_memory_unit(mem_unit), src=None, dst=mem_unit)
+
+        return mem_unit
+
     def read_memory(self,
                     addr: OneDimRegElem,
                     size: int,
@@ -356,17 +404,15 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         """
         Animate of read memory.
         """
-        if not isa_hash:
-            isa_hash = "Memory"
-
-        if self.placement_has_object(isa_hash):
-            mem_unit = self.placement_get_object(isa_hash)
-        else:
-            mem_unit = MemoryUnit(color=WHITE, addr_width=64, data_width=128)
-            self.placement_add_object(mem_unit, "Memory")
-
-            self.animation_add_animation(
-                animate=decl_memory_unit(mem_unit), src=None, dst=mem_unit)
+        addr_width = 64
+        data_width = 128
+        if "addr_width" in kwargs:
+            addr_width = kwargs["addr_width"]
+            del kwargs[addr_width]
+        if "data_width" in kwargs:
+            data_width = kwargs["data_width"]
+            del kwargs[data_width]
+        mem_unit = self.decl_memory(addr_width=addr_width, data_width=data_width, isa_hash=isa_hash)
 
         if "color_hash" in kwargs:
             hash_str = kwargs["color_hash"]
@@ -419,17 +465,15 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         """
         Animate of write memory.
         """
-        if not isa_hash:
-            isa_hash = "Memory"
-
-        if self.placement_has_object(isa_hash):
-            mem_unit = self.placement_get_object(isa_hash)
-        else:
-            mem_unit = MemoryUnit(color=WHITE, addr_width=64, data_width=128)
-            self.placement_add_object(mem_unit, "Memory")
-
-            self.animation_add_animation(
-                animate=decl_memory_unit(mem_unit), src=None, dst=mem_unit)
+        addr_width = 64
+        data_width = 128
+        if "addr_width" in kwargs:
+            addr_width = kwargs["addr_width"]
+            del kwargs[addr_width]
+        if "data_width" in kwargs:
+            data_width = kwargs["data_width"]
+            del kwargs[data_width]
+        mem_unit = self.decl_memory(addr_width=addr_width, data_width=data_width, isa_hash=isa_hash)
 
         old_dep = []
         if addr in self.last_dep_map:
