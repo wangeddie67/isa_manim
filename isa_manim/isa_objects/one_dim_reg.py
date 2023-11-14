@@ -52,7 +52,7 @@ class OneDimReg(VGroup):
                  elements: int = 1,
                  value = None,
                  font_size = DEFAULT_FONT_SIZE,
-                 lobel_pos = None):
+                 label_pos = None):
         """
         Constructor an scalar register.
 
@@ -92,8 +92,8 @@ class OneDimReg(VGroup):
         self.label_text = Text(text=text,
                                color=color,
                                font_size=font_size)
-        if lobel_pos is not None:
-            label_pos = np.ndarray(lobel_pos)
+        if label_pos is not None:
+            label_pos = np.ndarray(label_pos)
         else:
             label_pos = self.reg_rect.get_left() + self.label_text.get_left() + LEFT * 0.2
         self.label_text.move_to(label_pos)

@@ -54,7 +54,7 @@ class TwoDimReg(VGroup):
                  elements: int = 1,
                  value: list = None,
                  font_size = DEFAULT_FONT_SIZE,
-                 lobel_pos = None):
+                 label_pos = None):
         """
         Constructor an two-dimension register.
 
@@ -108,8 +108,8 @@ class TwoDimReg(VGroup):
                                      color=color,
                                      font_size=font_size)
                                 for i in range(0, len(text))]
-        if lobel_pos is not None:
-            label_pos = np.ndarray(lobel_pos)
+        if label_pos is not None:
+            label_pos = np.ndarray(label_pos)
         else:
             for i in range(0, len(text)):
                 label_pos = self.reg_rect_list[i].get_left() \

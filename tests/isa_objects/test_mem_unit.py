@@ -4,7 +4,7 @@ Test object for function unit.
 
 import os
 import sys
-path = sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
 from isa_manim import (Scene, # pylint: disable=wrong-import-position
                        Dot, BraceBetweenPoints, Text, Arrow,
@@ -21,7 +21,8 @@ class TestMemoryUnit(Scene):
     Test object for function unit.
     """
     def construct(self):
-        mem_unit = MemoryUnit(color=WHITE, addr_width=64, data_width=32)
+        mem_unit = MemoryUnit(color=WHITE, addr_width=64, data_width=32, addr_align=64,
+                              mem_range=[[0, 0x1000], [0x4000, 0x5000]])
         dots = [Dot(color=GREEN)]
         self.add(mem_unit, *dots)
 
@@ -77,11 +78,11 @@ class TestMemoryUnit(Scene):
             data_down_brace.get_text("Bit width : " + str(mem_unit.data_width)).set_color(GREEN)
         self.add(data_down_brace, data_down_brace_text)
 
-        mem_map_down_brace = BraceBetweenPoints(mem_unit.mem_map_rect.get_left() + DOWN * 0.5,
-                                                mem_unit.mem_map_rect.get_right() + DOWN * 0.5,
+        mem_map_down_brace = BraceBetweenPoints(mem_unit.mem_map_list[0].get_left() + DOWN * 0.5,
+                                                mem_unit.mem_map_list[0].get_right() + DOWN * 0.5,
                                                 color=GREEN)
         mem_map_down_brace_text = \
-            mem_map_down_brace.get_text("Scene : " + str(mem_unit.mem_map_rect.width)) \
+            mem_map_down_brace.get_text("Scene : " + str(mem_unit.mem_map_list[0].width)) \
                 .set_color(GREEN)
         self.add(mem_map_down_brace, mem_map_down_brace_text)
 
@@ -104,13 +105,13 @@ class TestMemoryUnit(Scene):
         args_space_brace_text = args_space_brace.get_text("Scene : 1.0").set_color(GREEN)
 
         res_right_brace = BraceBetweenPoints(mem_unit.data_rect.get_right() + DOWN * 1.5,
-                                             mem_unit.mem_map_rect.get_right() + UP * 0.5,
+                                             mem_unit.mem_map_list[0].get_right() + UP * 0.5,
                                              color=GREEN,
                                              direction=RIGHT)
         res_right_brace_text = res_right_brace.get_text("Scene : 1.0").set_color(GREEN)
 
-        res_space_brace = BraceBetweenPoints(mem_unit.mem_map_rect.get_right() + UP * 0.5,
-                                             mem_unit.mem_map_rect.get_right() + DOWN * 0.5,
+        res_space_brace = BraceBetweenPoints(mem_unit.mem_map_list[0].get_right() + UP * 0.5,
+                                             mem_unit.mem_map_list[0].get_right() + DOWN * 0.5,
                                              color=GREEN,
                                              direction=RIGHT)
         res_space_brace_text = res_space_brace.get_text("Scene : 1.0").set_color(GREEN)
@@ -144,7 +145,7 @@ class TestMemoryUnit(Scene):
         self.add(data_rect_label, data_rect_arrow)
 
         mem_map_label = Text("mem_map_rect", color=YELLOW) \
-            .move_to(mem_unit.mem_map_rect.get_bottom() + DOWN * 2 + RIGHT * 5)
+            .move_to(mem_unit.mem_map_list[0].get_bottom() + DOWN * 2 + RIGHT * 5)
         mem_map_arrow = Arrow(
-            mem_map_label.get_left(), mem_unit.mem_map_rect.get_bottom() + RIGHT, color=YELLOW)
+            mem_map_label.get_left(), mem_unit.mem_map_list[0].get_bottom() + RIGHT, color=YELLOW)
         self.add(mem_map_label, mem_map_arrow)

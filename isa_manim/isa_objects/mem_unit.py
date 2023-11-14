@@ -7,14 +7,15 @@ Graphic object is a VGroup containing one Round rectangle objects, several recta
 Cubic Bezier lines and several Text objects.
 """
 
+from math import ceil
 import numpy as np
-from manim import (VGroup, Text, Rectangle, DashedVMobject, RoundedRectangle,
+from typing import List, Tuple
+from manim import (VGroup, Text, Rectangle, DashedVMobject, RoundedRectangle, Triangle,
                    CubicBezier,
-                   LEFT, RIGHT, UP, DOWN,
+                   LEFT, RIGHT, UP, DOWN, DEGREES,
                    DEFAULT_FONT_SIZE)
 from colour import Color
 from ..isa_config import get_scene_ratio
-from .mem_map import MemoryMap
 
 class MemoryUnit(VGroup):
     """
@@ -38,6 +39,8 @@ class MemoryUnit(VGroup):
                  color: Color,
                  addr_width: int,
                  data_width: int,
+                 addr_align: int,
+                 mem_range: List[Tuple[int]] = [tuple([0, 0x1000])],
                  font_size = DEFAULT_FONT_SIZE):
         """
         Constructor an function call.
@@ -46,6 +49,8 @@ class MemoryUnit(VGroup):
             color: Color of memory unit.
             addr_width: Width of address, in bit
             data_width: Width of data, in bit
+            addr_align: Alignment of memory range address, default is 64.
+            mem_range: Memory range
             font_size: Font size of value text.
         """
         # address width
@@ -77,24 +82,44 @@ class MemoryUnit(VGroup):
         self.data_label_text = Text(text="Data", color=color, font_size=font_size) \
             .move_to(self.data_rect.get_center() + UP)
 
+        # Memory map
         self.mem_map_width = self.addr_rect.width + self.data_rect.width + self.mem_rect.width + 2
-        self.mem_map_rect = Rectangle(color=color, height=1.0, width=self.mem_map_width)
-        self.mem_map_rect.shift(self.addr_rect.get_left() - self.mem_map_rect.get_left())
-        self.mem_map_rect.shift(DOWN * 3)
 
+        self.mem_range = []
+        self.mem_map_list = []
+        self.mem_map_text = []
+        mem_map_idx = 0
+        for laddr, raddr in mem_range:
+            laddr = (laddr // addr_align) * addr_align
+            raddr = ceil(raddr / addr_align) * addr_align
+
+            mem_map_rect = Rectangle(color=color, height=1.0, width=self.mem_map_width)
+            mem_map_rect.shift(self.addr_rect.get_left() - mem_map_rect.get_left())
+            mem_map_rect.shift(DOWN * (3 + 2 * mem_map_idx))
+
+            left_text = Text(hex(laddr), font_size=font_size * 0.75)
+            right_text = Text(hex(raddr), font_size=font_size * 0.75)
+            left_text.move_to(mem_map_rect.get_left() + DOWN * 1)
+            right_text.move_to(mem_map_rect.get_right() + DOWN * 1)
+
+            self.mem_map_list.append(mem_map_rect)
+            self.mem_map_text.extend([left_text, right_text])
+            self.mem_range.append([laddr, raddr])
+            mem_map_idx += 1
+
+        # Brace
         self.mem_map_left_brace = CubicBezier(
-            self.mem_map_rect.get_left() + UP * 0.7, self.mem_map_rect.get_left() + UP * 1.25,
+            self.mem_map_list[0].get_left() + UP * 0.7, self.mem_map_list[0].get_left() + UP * 1.25,
             self.mem_rect.get_left() + DOWN * 2.25, self.mem_rect.get_left() + DOWN * 1.5)
         self.mem_map_right_brace = CubicBezier(
-            self.mem_map_rect.get_right() + UP * 0.7, self.mem_map_rect.get_right() + UP * 1.25,
+            self.mem_map_list[0].get_right() + UP * 0.7, self.mem_map_list[0].get_right() + UP * 1.25,
             self.mem_rect.get_right() + DOWN * 2.25, self.mem_rect.get_right() + DOWN * 1.5)
-
-        self.mem_map_object : MemoryMap = None
 
         super().__init__()
         self.add(self.mem_rect, self.label_text,
                  self.addr_rect, self.addr_label_text, self.data_rect, self.data_label_text,
-                 self.mem_map_rect, self.mem_map_left_brace, self.mem_map_right_brace)
+                 *self.mem_map_list, *self.mem_map_text,
+                 self.mem_map_left_brace, self.mem_map_right_brace)
 
     def align_points_with_larger(self, larger_mobject):
         raise NotImplementedError("Please override in a child class.")
@@ -122,3 +147,106 @@ class MemoryUnit(VGroup):
             return self.data_rect.get_right() + LEFT * width * get_scene_ratio() / 2
         else:
             return self.data_rect.get_center()
+
+    def _index_of_mem_range(self, addr: int) -> int:
+        """
+        Check whether given address is covered in memory range.
+        
+        Args:
+            addr: given address.
+        """
+        idx = 0
+        for laddr, raddr in self.mem_range:
+            if laddr <= addr < raddr:
+                return idx
+            else:
+                idx = idx + 1
+
+        return -1
+
+
+    def is_mem_range_cover(self, addr: int) -> bool:
+        """
+        Check whether given address is covered in memory range.
+        
+        Args:
+            addr: given address.
+        """
+        return True if self._index_of_mem_range(addr) >= 0 else False
+
+    def get_addr_mark(self,
+                      addr: int,
+                      color: Color) -> Triangle:
+        """
+        Get a mark of address.
+        
+        Args:
+            addr: given address.
+            color: Color of address mark.
+        """
+        mem_range_idx = self._index_of_mem_range(addr)
+        mem_range_rect = self.mem_map_list[mem_range_idx]
+        scale_factor = \
+            mem_range_rect.width / (self.mem_range[mem_range_idx][1] - self.mem_range[mem_range_idx][0])
+
+        addr_offset = addr - self.mem_range[mem_range_idx][0] + 0.5
+        addr_mark = Triangle(color=color).scale(0.2).rotate(60 * DEGREES).move_to(
+            mem_range_rect.get_left() + (addr_offset * scale_factor) * RIGHT + UP * 0.6)
+        
+        return addr_mark
+
+    def get_rd_mem_mark(self,
+                        laddr: int,
+                        raddr: int,
+                        color: Color) -> Rectangle:
+        """
+        Get a mark of accessed memory range.
+        
+        Args:
+            addr: given address.
+            color: Color of address mark.
+        """
+        mem_range_idx = self._index_of_mem_range(laddr)
+        mem_range_rect = self.mem_map_list[mem_range_idx]
+        scale_factor = \
+            mem_range_rect.width / (self.mem_range[mem_range_idx][1] - self.mem_range[mem_range_idx][0])
+
+        laddr_offset = laddr - self.mem_range[mem_range_idx][0]
+        addr_range = min(raddr, self.mem_range[mem_range_idx][1]) - laddr
+        mem_mark = Rectangle(color=color,
+                             height=0.34,
+                             width=addr_range * scale_factor,
+                             fill_opacity=0.25).move_to(
+            mem_range_rect.get_left() + ((laddr_offset + addr_range / 2) * scale_factor) * RIGHT
+            + UP * 0.33)
+        
+        return mem_mark
+
+    def get_wt_mem_mark(self,
+                        laddr: int,
+                        raddr: int,
+                        color: Color) -> Rectangle:
+        """
+        Get a mark of accessed memory range.
+        
+        Args:
+            addr: given address.
+            color: Color of address mark.
+        """
+        mem_range_idx = self._index_of_mem_range(laddr)
+        mem_range_rect = self.mem_map_list[mem_range_idx]
+        scale_factor = \
+            mem_range_rect.width / (self.mem_range[mem_range_idx][1] - self.mem_range[mem_range_idx][0])
+
+        laddr_offset = laddr - self.mem_range[mem_range_idx][0]
+        addr_range = min(raddr, self.mem_range[mem_range_idx][1]) - laddr
+        mem_mark = Rectangle(color=color,
+                             height=0.66,
+                             width=addr_range * scale_factor,
+                             fill_opacity=0.5).move_to(
+            mem_range_rect.get_left() + ((laddr_offset + addr_range / 2) * scale_factor) * RIGHT
+            + DOWN * 0.17)
+        
+        return mem_mark
+
+        

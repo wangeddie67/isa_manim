@@ -3,14 +3,14 @@ Predefined Animations.
 """
 
 from typing import List, Union
-from manim import (AnimationGroup, Succession, FadeIn, FadeOut, Animation, Transform, 
+from manim import (AnimationGroup, Succession, FadeIn, FadeOut, Animation, Transform, Create,
+                   Rectangle, Triangle,
                    LEFT, RIGHT)
 from ..isa_objects import (OneDimReg,
                            OneDimRegElem,
                            TwoDimReg,
                            FunctionUnit,
-                           MemoryUnit,
-                           MemoryMap)
+                           MemoryUnit)
 from ..isa_config import get_scene_ratio
 
 #
@@ -226,11 +226,9 @@ def decl_memory_unit(mem_unit: MemoryUnit) -> Animation:
     """
     return FadeIn(mem_unit)
 
-def read_memory(mem_unit: MemoryUnit,
-                addr_item: OneDimRegElem,
-                data_item: OneDimRegElem,
-                old_mem_map: MemoryMap = None,
-                new_mem_map: MemoryMap = None) -> Animation:
+def read_memory_without_addr(mem_unit: MemoryUnit,
+                             addr_item: OneDimRegElem,
+                             data_item: OneDimRegElem) -> Animation:
     """
     Animation for calling one function.
 
@@ -238,8 +236,6 @@ def read_memory(mem_unit: MemoryUnit,
         mem_unit: Object of memory unit.
         addr_item: address item.
         data_item: data item.
-        old_mem_map: Old memory map.
-        new_mem_map: New memory map.
     """
     data_item.move_to(mem_unit.get_data_pos(data_item.elem_width))
 
@@ -250,24 +246,11 @@ def read_memory(mem_unit: MemoryUnit,
             FadeIn(data_item, shift=mem_unit.get_data_pos() - mem_unit.mem_rect.get_center()),
             FadeOut(addr_item, shift=mem_unit.mem_rect.get_center() - mem_unit.get_addr_pos()))
 
-    if new_mem_map:
-        new_mem_map.shift(
-            mem_unit.mem_map_rect.get_center() - new_mem_map.mem_map_rect.get_center())
-    if old_mem_map is None and new_mem_map is not None:
-        mem_map_animate = AnimationGroup(FadeIn(new_mem_map))
-    else:
-        mem_map_animate = AnimationGroup(FadeOut(old_mem_map), FadeIn(new_mem_map))
+    return Succession(move_animate, fade_animate)
 
-    if old_mem_map is None and new_mem_map is None:
-        return Succession(move_animate, fade_animate)
-    else:
-        return Succession(move_animate, AnimationGroup(mem_map_animate, fade_animate))
-
-def write_memory(mem_unit: MemoryUnit,
-                 addr_item: OneDimRegElem,
-                 data_item: OneDimRegElem,
-                 old_mem_map: MemoryMap = None,
-                 new_mem_map: MemoryMap = None) -> Animation:
+def write_memory_without_addr(mem_unit: MemoryUnit,
+                              addr_item: OneDimRegElem,
+                              data_item: OneDimRegElem) -> Animation:
     """
     Animation for calling one function.
 
@@ -286,15 +269,65 @@ def write_memory(mem_unit: MemoryUnit,
             FadeOut(data_item, shift=mem_unit.mem_rect.get_center() - mem_unit.get_data_pos()),
             FadeOut(addr_item, shift=mem_unit.mem_rect.get_center() - mem_unit.get_addr_pos()))
 
-    if new_mem_map:
-        new_mem_map.shift(
-            mem_unit.mem_map_rect.get_center() - new_mem_map.mem_map_rect.get_center())
-    if old_mem_map is None and new_mem_map is not None:
-        mem_map_animate = AnimationGroup(FadeIn(new_mem_map))
-    else:
-        mem_map_animate = AnimationGroup(FadeOut(old_mem_map), FadeIn(new_mem_map))
+    return Succession(move_animate, fade_animate)
 
-    if old_mem_map is None and new_mem_map is None:
-        return Succession(move_animate, fade_animate)
-    else:
-        return Succession(move_animate, AnimationGroup(mem_map_animate, fade_animate))
+def read_memory(mem_unit: MemoryUnit,
+                addr_item: OneDimRegElem,
+                data_item: OneDimRegElem,
+                addr_mark: Triangle,
+                mem_mark: Rectangle) -> Animation:
+    """
+    Animation for calling one function.
+
+    Args:
+        mem_unit: Object of memory unit.
+        addr_item: address item.
+        data_item: data item.
+        old_mem_map: Old memory map.
+        new_mem_map: New memory map.
+    """
+    # Move address to argument position.
+    move_animate = \
+        AnimationGroup(addr_item.animate.move_to(mem_unit.get_addr_pos(addr_item.elem_width)))
+
+    # Address mark.
+    addr_animate = AnimationGroup(Transform(addr_item, addr_mark))
+
+    # Data item.
+    data_item.move_to(mem_unit.get_data_pos(data_item.elem_width))
+    data_animate = \
+        AnimationGroup(
+            FadeOut(addr_item), Create(mem_mark),
+            FadeIn(data_item, shift=mem_unit.get_data_pos() - mem_mark.get_center()))
+
+    return Succession(move_animate, addr_animate, data_animate)
+
+def write_memory(mem_unit: MemoryUnit,
+                 addr_item: OneDimRegElem,
+                 data_item: OneDimRegElem,
+                 addr_mark: Triangle,
+                 mem_mark: Rectangle) -> Animation:
+    """
+    Animation for calling one function.
+
+    Args:
+        mem_unit: Object of memory unit.
+        addr_item: address item.
+        data_item: data item.
+        old_mem_map: Old memory map.
+        new_mem_map: New memory map.
+    """
+    # Move address and data to argument position.
+    move_animate = \
+        AnimationGroup(addr_item.animate.move_to(mem_unit.get_addr_pos(addr_item.elem_width)),
+                       data_item.animate.move_to(mem_unit.get_data_pos(data_item.elem_width)))
+
+    # Address mark.
+    addr_animate = AnimationGroup(Transform(addr_item, addr_mark))
+
+    data_animate = \
+        AnimationGroup(
+            FadeOut(addr_item), Create(mem_mark),
+            FadeOut(data_item, shift=mem_mark.get_center() - mem_unit.get_data_pos()))
+
+    return Succession(move_animate, addr_animate, data_animate)

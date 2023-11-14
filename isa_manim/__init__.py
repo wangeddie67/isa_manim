@@ -22,6 +22,8 @@ from .isa_animate import (decl_register,
                           decl_func_call,
                           function_call,
                           decl_memory_unit,
+                          read_memory_without_addr,
+                          write_memory_without_addr,
                           read_memory,
                           write_memory)
 

@@ -4,7 +4,7 @@ Test animation for function, including declaring and calling function.
 
 import os
 import sys
-path = sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
 from isa_manim import (Scene, # pylint: disable=wrong-import-position
                        config,
@@ -13,7 +13,7 @@ from isa_manim import (Scene, # pylint: disable=wrong-import-position
                        Text,
                        OneDimRegElem, MemoryUnit,
                        FadeIn,
-                       decl_memory_unit, read_memory, write_memory)
+                       decl_memory_unit, read_memory_without_addr, write_memory_without_addr)
 
 config.frame_height = 6
 config.frame_width = 30
@@ -29,7 +29,7 @@ class TestMemUnitAnimation(Scene):
         self.add(addr_elem, data_elem)
 
         # Declare memory.
-        memory_unit = MemoryUnit(color=WHITE, addr_width=64, data_width=64)
+        memory_unit = MemoryUnit(color=WHITE, addr_width=64, data_width=64, addr_align=64)
         memory_animate = decl_memory_unit(memory_unit)
         decl_memory_unit_label = Text("decl_memory_unit", color=YELLOW) \
             .move_to(memory_unit.mem_rect.get_right() + RIGHT * 4 + UP * 2)
@@ -40,9 +40,9 @@ class TestMemUnitAnimation(Scene):
         self.remove(decl_memory_unit_label)
 
         # Write memory.
-        write_memory_animate = write_memory(mem_unit=memory_unit,
-                                            addr_item=addr_elem,
-                                            data_item=data_elem)
+        write_memory_animate = write_memory_without_addr(mem_unit=memory_unit,
+                                                         addr_item=addr_elem,
+                                                         data_item=data_elem)
         write_memory_label = Text("write_memory", color=YELLOW) \
             .move_to(memory_unit.mem_rect.get_right() + RIGHT * 4 + UP * 2)
 
@@ -57,9 +57,9 @@ class TestMemUnitAnimation(Scene):
 
         # Read memory.
         data_elem = OneDimRegElem(color=PURPLE, width=64)
-        read_memory_animate = read_memory(mem_unit=memory_unit,
-                                          addr_item=addr_elem,
-                                          data_item=data_elem)
+        read_memory_animate = read_memory_without_addr(mem_unit=memory_unit,
+                                                       addr_item=addr_elem,
+                                                       data_item=data_elem)
         read_memory_label = Text("read_memory", color=YELLOW) \
             .move_to(memory_unit.mem_rect.get_right() + RIGHT * 4 + UP * 2)
 

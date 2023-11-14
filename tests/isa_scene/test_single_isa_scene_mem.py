@@ -4,7 +4,7 @@ Test ISA scene with single instruction.
 
 import os
 import sys
-path = sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
 from isa_manim import SingleIsaScene # pylint: disable=wrong-import-position
 
@@ -39,17 +39,23 @@ class TestSingleIsaSceneMem(SingleIsaScene):
         xs_item = self.data_convert(elem=xs_item, size=64, value=xs_i)
         xd_item = self.data_convert(elem=xd_item, size=64, value=xd_i)
         xn_item = self.data_convert(elem=xn_item, size=64, value=xn_i)
+
+        self.decl_function(func="read_addr", args_width=[64, 64], res_size=64, isa_hash="read_addr")
+        self.decl_memory(addr_width=64, data_width=step * 8, addr_align=64, mem_range=[[0, 128]])
+        self.decl_function(func="write_addr", args_width=[64, 64], res_size=64, isa_hash="write_addr")
+
         self.end_section(fade_out=False)
 
         # CPYM
         while -xn_i >= step:
             rd_addr_item = self.function_call(
-                func="read_addr", args=[xs_item, xn_item], res_size=64, value=xs_i + xn_i,
-                isa_hash="read_addr")
-            data_item = self.read_memory(addr=rd_addr_item, size=step * 8, color_hash="data_item")
+                func="read_addr", args=[xs_item, xn_item], res_size=64, res_value=xs_i + xn_i,
+                func_isa_hash="read_addr")
+            data_item = self.read_memory(
+                addr=rd_addr_item, size=step * 8, res_color_hash="data_item")
             wr_addr_item = self.function_call(
-                func="write_addr", args=[xd_item, xn_item], res_size=64, value=xd_i + xn_i,
-                isa_hash="write_addr")
+                func="write_addr", args=[xd_item, xn_item], res_size=64, res_value=xd_i + xn_i,
+                func_isa_hash="write_addr")
             self.write_memory(addr=wr_addr_item, data=data_item)
 
             xn_i = xn_i + step
@@ -58,12 +64,13 @@ class TestSingleIsaSceneMem(SingleIsaScene):
 
         # CPYE
         rd_addr_item = self.function_call(
-            func="read_addr", args=[xs_item, xn_item], res_size=64, value=xs_i + xn_i,
-            isa_hash="read_addr")
-        data_item = self.read_memory(addr=rd_addr_item, size=-xn_i * 8, color_hash="data_item")
+            func="read_addr", args=[xs_item, xn_item], res_size=64, res_value=xs_i + xn_i,
+            func_isa_hash="read_addr")
+        data_item = self.read_memory(
+            addr=rd_addr_item, size=-xn_i * 8, res_color_hash="data_item")
         wr_addr_item = self.function_call(
-            func="write_addr", args=[xd_item, xn_item], res_size=64, value=xd_i + xn_i,
-            isa_hash="write_addr")
+            func="write_addr", args=[xd_item, xn_item], res_size=64, res_value=xd_i + xn_i,
+            func_isa_hash="write_addr")
         self.write_memory(addr=wr_addr_item, data=data_item)
 
         xn_item = self.data_convert(elem=xn_item, size=64, value=0)
