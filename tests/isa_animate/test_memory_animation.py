@@ -29,7 +29,8 @@ class TestMemUnitAnimation(Scene):
         self.add(addr_elem, data_elem)
 
         # Declare memory.
-        memory_unit = MemoryUnit(color=WHITE, addr_width=64, data_width=64, addr_align=64)
+        memory_unit = MemoryUnit(color=WHITE, addr_width=64, data_width=64, addr_align=64,
+                                 mem_range=[[0, 0x1000]])
         memory_animate = decl_memory_unit(memory_unit)
         decl_memory_unit_label = Text("decl_memory_unit", color=YELLOW) \
             .move_to(memory_unit.mem_rect.get_right() + RIGHT * 4 + UP * 2)

@@ -67,6 +67,11 @@ def _convert_value(value_str: str) -> Union[str, int, float, bool,
 
 isa_config = {
     "scene_ratio": (1/8),   # scene width / bit. Default 1.0 means 8 bit.
+    "mem_addr_width": 64,
+    "mem_data_width": 128,
+    "mem_range": [[0, 0x1000]], # 1KB page
+    "mem_align": 64,    # Memory address aligment 64B
+    "elem_value_format": "{:d}"
 }
 """
 Configuration structure to pass arguments of ISA. For example, element size and vector length.
@@ -102,13 +107,16 @@ def set_config(key: str, value: Any):
     global isa_config   # pylint: disable=global-variable-not-assigned,invalid-name
     isa_config[key] = value
 
-def get_config(key: str, default: Any) -> Any:
+def get_config(key: str, default: Any = None) -> Any:
     """
     Get configuration.
     """
     global isa_config   # pylint: disable=global-variable-not-assigned,invalid-name
     if key in isa_config:
         return isa_config[key]
-    else:
+    elif default is not None:
         return default
+    else:
+        err_msg = f"Cannot get value of {key}"
+        raise ValueError(err_msg)
 

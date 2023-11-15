@@ -19,10 +19,11 @@ from ..isa_animate import (decl_register,
                            write_memory_without_addr,
                            read_memory,
                            write_memory)
-from ..isa_objects import OneDimReg, OneDimRegElem, TwoDimReg, FunctionUnit, MemoryMap, MemoryUnit
+from ..isa_objects import OneDimReg, OneDimRegElem, TwoDimReg, FunctionUnit, MemoryUnit
 from .isa_animate import IsaAnimationMap, IsaAnimateItem
 from .isa_placement import IsaPlacementMap
 from .isa_color_map import IsaColorMap
+from ..isa_config import get_config
 
 class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
     """
@@ -192,7 +193,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                   color_hash = None,
                   value = None,
                   fill_opacity = 0.5,
-                  font_size = DEFAULT_FONT_SIZE):
+                  font_size = DEFAULT_FONT_SIZE,
+                  value_format = get_config("elem_value_format")):
         """
         Read element from register, return one Rectangle.
 
@@ -209,7 +211,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                              width=size,
                              value=value,
                              fill_opacity=fill_opacity,
-                             font_size=font_size)
+                             font_size=font_size,
+                             value_format=value_format)
 
         self.last_dep_map[elem] = vector
 
@@ -312,7 +315,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                      color_hash = None,
                      value = None,
                      fill_opacity = 0.5,
-                     font_size = DEFAULT_FONT_SIZE) -> OneDimRegElem:
+                     font_size = DEFAULT_FONT_SIZE,
+                     value_format = get_config("elem_value_format")) -> OneDimRegElem:
         """
         Animate of data convert.
         """
@@ -322,7 +326,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                                  width=size,
                                  value=value,
                                  fill_opacity=fill_opacity,
-                                 font_size=font_size)
+                                 font_size=font_size,
+                                 value_format=value_format)
 
         old_dep = None
         if elem in self.last_dep_map:
@@ -385,7 +390,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                       res_color_hash = None,
                       res_value = None,
                       res_fill_opacity = 0.5,
-                      res_font_size = DEFAULT_FONT_SIZE) -> OneDimRegElem:
+                      res_font_size = DEFAULT_FONT_SIZE,
+                      res_value_format = get_config("elem_value_format")) -> OneDimRegElem:
         """
         Animate of Function call.
         """
@@ -402,7 +408,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                                  width=res_size,
                                  value=res_value,
                                  fill_opacity=res_fill_opacity,
-                                 font_size=res_font_size)
+                                 font_size=res_font_size,
+                                 value_format=res_value_format)
 
         old_dep = []
         args_ = []
@@ -428,11 +435,11 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
     # Memory
     #
     def decl_memory(self,
-                    addr_width: float,
-                    data_width: float,
-                    addr_align: int = 64,
+                    addr_width: int = get_config("mem_addr_width"),
+                    data_width: int = get_config("mem_data_width"),
+                    addr_align: int = get_config("mem_align"),
                     isa_hash: str = None,
-                    mem_range: List[Tuple[int]] = [tuple([0, 0x1000])],
+                    mem_range: List[Tuple[int]] = get_config("mem_range"),
                     font_size = DEFAULT_FONT_SIZE) -> MemoryUnit:
         """
         Animation of declare memory.
@@ -465,16 +472,19 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                     res_value = None,
                     res_fill_opacity = 0.5,
                     res_font_size = DEFAULT_FONT_SIZE,
-                    mem_addr_width: int = 64,
-                    mem_data_width: int = 128,
+                    res_value_format = get_config("elem_value_format"),
+                    mem_addr_width: int = get_config("mem_addr_width"),
+                    mem_data_width: int = get_config("mem_data_width"),
+                    mem_addr_align: int = get_config("mem_align"),
                     mem_isa_hash: str = None,
-                    mem_mem_range: List[Tuple[int]] = [tuple([0, 0x1000])],
+                    mem_mem_range: List[Tuple[int]] = get_config("mem_range"),
                     mem_font_size = DEFAULT_FONT_SIZE) -> OneDimRegElem:
         """
         Animate of read memory.
         """
         mem_unit = self.decl_memory(addr_width=mem_addr_width,
                                     data_width=mem_data_width,
+                                    addr_align=mem_addr_align,
                                     isa_hash=mem_isa_hash,
                                     mem_range=mem_mem_range,
                                     font_size=mem_font_size)
@@ -485,7 +495,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                              width=size,
                              value=res_value,
                              fill_opacity=res_fill_opacity,
-                             font_size=res_font_size)
+                             font_size=res_font_size,
+                             value_format=res_value_format)
 
         old_dep = []
         if addr in self.last_dep_map:
@@ -527,16 +538,18 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
     def write_memory(self,
                      addr: OneDimRegElem,
                      data: OneDimRegElem,
-                     mem_addr_width: int = 64,
-                     mem_data_width: int = 128,
+                     mem_addr_width: int = get_config("mem_addr_width"),
+                     mem_data_width: int = get_config("mem_data_width"),
+                     mem_addr_align: int = get_config("mem_align"),
                      mem_isa_hash: str = None,
-                     mem_mem_range: List[Tuple[int]] = [tuple([0, 0x1000])],
+                     mem_mem_range: List[Tuple[int]] = get_config("mem_range"),
                      mem_font_size = DEFAULT_FONT_SIZE) -> None:
         """
         Animate of write memory.
         """
         mem_unit = self.decl_memory(addr_width=mem_addr_width,
                                     data_width=mem_data_width,
+                                    addr_align=mem_addr_align,
                                     isa_hash=mem_isa_hash,
                                     mem_range=mem_mem_range,
                                     font_size=mem_font_size)

@@ -37,7 +37,7 @@ class FunctionUnit(VGroup):
                  color: Color,
                  args_width: List[float],
                  res_width: float,
-                 args_value = None,
+                 args_value: List[str] = None,
                  font_size = DEFAULT_FONT_SIZE):
         """
         Constructor an function call.

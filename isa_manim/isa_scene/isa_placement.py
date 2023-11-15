@@ -117,7 +117,7 @@ class IsaPlacementItem:
         elif isinstance(self.isa_object, FunctionUnit):
             return 5
         elif isinstance(self.isa_object, MemoryUnit):
-            return 6
+            return 6 + 2 * (len(self.isa_object.mem_map_list) - 1)
         else:
             raise ValueError("Not ISA Object.")
 

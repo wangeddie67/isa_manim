@@ -19,7 +19,7 @@ from manim import (VGroup, Rectangle, Text,
                    LEFT,
                    DEFAULT_FONT_SIZE)
 from colour import Color
-from ..isa_config import get_scene_ratio
+from ..isa_config import get_scene_ratio, get_config
 
 class OneDimRegElem(VGroup):
     """
@@ -39,7 +39,8 @@ class OneDimRegElem(VGroup):
                  width: int,
                  value = None,
                  fill_opacity = 0.5,
-                 font_size = DEFAULT_FONT_SIZE):
+                 font_size = DEFAULT_FONT_SIZE,
+                 value_format = get_config("elem_value_format")):
         """
         Constructor an element.
 
@@ -63,7 +64,13 @@ class OneDimRegElem(VGroup):
                                   fill_opacity=fill_opacity)
 
         # Value text
-        self.value_text = Text(text="" if self.value is None else str(self.value),
+        if self.value is None:
+            value_str = ""
+        elif isinstance(self.value, (int, float)):
+            value_str = value_format.format(self.value)
+        else:
+            value_str = str(self.value)
+        self.value_text = Text(text=value_str,
                                color=color,
                                font_size=font_size)
 

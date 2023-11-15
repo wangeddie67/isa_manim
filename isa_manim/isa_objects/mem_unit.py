@@ -40,7 +40,7 @@ class MemoryUnit(VGroup):
                  addr_width: int,
                  data_width: int,
                  addr_align: int,
-                 mem_range: List[Tuple[int]] = [tuple([0, 0x1000])],
+                 mem_range: List[Tuple[int]],
                  font_size = DEFAULT_FONT_SIZE):
         """
         Constructor an function call.

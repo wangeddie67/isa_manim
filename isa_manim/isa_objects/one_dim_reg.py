@@ -24,7 +24,6 @@ from manim import (VGroup, Rectangle, Text,
                    LEFT,
                    DEFAULT_FONT_SIZE)
 from colour import Color
-from .one_dim_reg_elem import OneDimRegElem
 from ..isa_config import get_scene_ratio
 
 class OneDimReg(VGroup):
@@ -122,31 +121,3 @@ class OneDimReg(VGroup):
 
         return self.reg_rect.get_right() \
             + LEFT * (index + 0.5) * elem_width * get_scene_ratio()
-
-
-    def get_elem(self,
-                 color: Color,
-                 elem_width: float = -1.0,
-                 index: int = 0,
-                 value = None) -> Rectangle:
-        """
-        Return a rectangle of specified item. 
-
-        If not specified element width, new rectangle has same width as register.
-
-        If specified element width, new rectangle and original rectangle are
-        align right, if index is 0. Otherwise, move rectangle left by index.
-
-        Args:
-            color: Color of new rectangle.
-            elem_width: Width of data element in bits.
-            index: Index of data element in register.
-            value: Value of data element.
-        """
-        if elem_width < 0:
-            elem_width = self.elem_width
-
-        return OneDimRegElem(color=color,
-                             width=elem_width,
-                             value=value) \
-            .move_to(self.get_elem_center(index=index, elem_width=elem_width))
