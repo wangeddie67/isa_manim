@@ -5,6 +5,7 @@ Animation flow analysis.
 import numpy as np
 from typing import List, Tuple, Any
 from manim import Animation, Mobject, FadeOut
+from ..isa_objects import MemoryUnit
 
 class IsaAnimateItem:
     """
@@ -44,7 +45,7 @@ class IsaAnimateItem:
 
         # Add source object.
         if isinstance(src, list):
-            self.src_item_list = src
+            self.src_item_list = list(set(src))
         elif src is None:
             self.src_item_list = []
         else:
@@ -52,7 +53,7 @@ class IsaAnimateItem:
 
         # Add destination object.
         if isinstance(dst, list):
-            self.dst_item_list = dst
+            self.dst_item_list = list(set(dst))
         elif dst is None:
             self.dst_item_list = []
         else:
@@ -60,7 +61,7 @@ class IsaAnimateItem:
 
         # Add dependency object.
         if isinstance(dep, list):
-            self.dep_item_list = dep
+            self.dep_item_list = list(set(dep))
         elif dep is None:
             self.dep_item_list = []
         else:
@@ -156,12 +157,14 @@ class _IsaAnimateSection():
                  animate_list: List[IsaAnimateItem],
                  wait: int = 0,
                  fade_out: bool = True,
-                 camera_animate: Tuple[float, np.ndarray] = None):
+                 camera_animate: Tuple[float, np.ndarray] = None,
+                 keep_objects: List[Mobject] = None):
 
         self.animate_list = animate_list
         self.wait = wait
         self.fade_out = fade_out
         self.camera_animate = camera_animate
+        self.keep_objects = keep_objects
 
 class _IsaAnimateStep():
     """
@@ -207,14 +210,14 @@ class IsaAnimationMap:
         self.always_on_item_list: List[Mobject] = []
         self.isa_animation_step_list: List[_IsaAnimateStep] = []
 
-    def register_always_on_item(self, item: Mobject):
+    def register_always_on_item(self, *item: List[Mobject]):
         """
         Register one always-on item, which will not fade out when switch section.
 
         Args:
             item: Mobject to register.
         """
-        self.always_on_item_list.append(item)
+        self.always_on_item_list.extend(item)
 
     def animation_add_animation(self,
                                 animate: Animation,
@@ -256,7 +259,8 @@ class IsaAnimationMap:
     def switch_section(self,
                        wait: float = 0,
                        fade_out: bool = True,
-                       camera_animate: Tuple[float, np.ndarray] = None):
+                       camera_animate: Tuple[float, np.ndarray] = None,
+                       keep_objects: List[Mobject] = None):
         """
         Switch section. Save registered animate to an animate section and clear animation list.
 
@@ -271,7 +275,8 @@ class IsaAnimationMap:
                     animate_list=self._section_animate_list,
                     wait=wait,
                     fade_out=fade_out,
-                    camera_animate=camera_animate))
+                    camera_animate=camera_animate,
+                    keep_objects=keep_objects))
 
         self._section_animate_list = []
 
@@ -342,11 +347,17 @@ class IsaAnimationMap:
             if animation_section.fade_out:
                 item_list = step_item.copy()
                 step_item = []
+                always_on_item = self.always_on_item_list + animation_section.keep_objects \
+                    if animation_section.keep_objects else self.always_on_item_list
+                for item in always_on_item:
+                    if isinstance(item, MemoryUnit):
+                        always_on_item.extend(item.get_mem_mark_list())
+
                 # filter out always-on item.
-                for item in self.always_on_item_list:
+                for item in always_on_item:
                     if item in item_list:
                         item_list.remove(item)
-                        step_item.add(item)
+                        step_item.append(item)
                 if len(item_list) > 0:
                     self.isa_animation_step_list.append(_IsaAnimateStep(
                         animate_list=[FadeOut(*item_list)],

@@ -88,6 +88,7 @@ class MemoryUnit(VGroup):
         self.mem_range = []
         self.mem_map_list = []
         self.mem_map_text = []
+        self.mem_mark_list : List[Rectangle] = []
         mem_map_idx = 0
         for laddr, raddr in mem_range:
             laddr = (laddr // addr_align) * addr_align
@@ -246,7 +247,17 @@ class MemoryUnit(VGroup):
                              fill_opacity=0.5).move_to(
             mem_range_rect.get_left() + ((laddr_offset + addr_range / 2) * scale_factor) * RIGHT
             + DOWN * 0.17)
-        
+
         return mem_mark
 
-        
+    def get_mem_mark_list(self) -> List[Rectangle]:
+        """
+        Return memory mark list.
+        """
+        return self.mem_mark_list
+
+    def append_mem_mark_list(self, mark: Rectangle):
+        """
+        Append one mark to memory mark list.
+        """
+        self.mem_mark_list.append(mark)

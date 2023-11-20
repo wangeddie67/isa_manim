@@ -70,6 +70,8 @@ class IsaPlacementItem:
             self.isa_hash = isa_hash
         else:
             self.isa_hash = hash(self.isa_object)
+        self.row = 0
+        self.col = 0
 
     def __str__(self) -> str:
         string = f"[Object={str(self.isa_object)}, "
@@ -146,6 +148,9 @@ class IsaPlacementItem:
             row: Vertical ordinate of left-up corner.
             col: Horizontal ordinate of left-up corner.
         """
+        self.row = row
+        self.col = col
+
         if isinstance(self.isa_object, OneDimReg):
             x = col + self.get_width() - self.isa_object.reg_rect.width / 2
             y = row + 0.5
@@ -380,6 +385,25 @@ class IsaPlacementMap:
 
         return False
 
+    def place_item_into_map_force(self, placement_item: IsaPlacementItem) -> bool:
+        """
+        Place object into placement map at forces position.
+
+        Args:
+            placement_item: Item to place.
+        """
+        rect_width = placement_item.get_width()
+        rect_height = placement_item.get_height()
+        marker = placement_item.get_marker()
+
+        row = placement_item.row
+        col = placement_item.col
+        if self._placement_check_rect(row, col, rect_width, rect_height, marker):
+            self._placement_mark_rect(marker, row, col, rect_width, rect_height)
+            return True
+
+        return False
+
     def placement_has_object(self, place_hash: str) -> bool:
         """
         Check whether the object is existed.
@@ -410,12 +434,19 @@ class IsaPlacementMap:
 
         #
         isa_object_item = IsaPlacementItem(place_object, place_hash)
-        self._placement_object_dict[isa_object_item.isa_hash] = isa_object_item
+        self.placement_add_placement_item(isa_object_item)
+
+    def placement_add_placement_item(self,
+                                     placement_item: IsaPlacementItem):
+        """
+        Add placement item into map.
+        """
+        self._placement_object_dict[placement_item.isa_hash] = placement_item
 
         place_success = False
         while not place_success:
             # place item into scene
-            place_success = self.place_item_into_map(isa_object_item)
+            place_success = self.place_item_into_map(placement_item)
 
             # If place fail, resize map.
             if not place_success:
@@ -427,17 +458,54 @@ class IsaPlacementMap:
                     new_width = int(new_height / self._placement_hv_ratio)
                 self.placement_resize(new_width, new_height)
 
-    def placement_reset(self):
+    def placement_add_placement_item_force(self,
+                                           placement_item: IsaPlacementItem):
+        """
+        Add placement item into map at force position.
+        """
+        self._placement_object_dict[placement_item.isa_hash] = placement_item
+
+        place_success = False
+        while not place_success:
+            # place item into scene
+            place_success = self.place_item_into_map_force(placement_item)
+
+            # If place fail, resize map.
+            if not place_success:
+                if self._placement_hv_ratio > 1:
+                    new_width = int(self._placement_width + 1)
+                    new_height = int(new_width * self._placement_hv_ratio)
+                else:
+                    new_height = int(self._placement_height + 1)
+                    new_width = int(new_height / self._placement_hv_ratio)
+                self.placement_resize(new_width, new_height)
+
+    def placement_reset(self, keep_objects = None, keep_pos = True):
         """
         Reset placement map.
+        
+        Args:
+            keep_items: Items will not be changed.
+            keep_pos: True means keep the position of keep objects in new placement.
         """
+        keep_place_items = []
+        for keep_object in keep_objects:
+            for _, object in self._placement_object_dict.items():
+                if object.isa_object is keep_object:
+                    keep_place_items.append(object)
+
         self._placement_object_dict = dict()
         self._placement_map = []
         self._placement_width = 0
         self._placement_height = 0
 
-        self.placement_resize(new_width=config.frame_width,
-                                  new_height=config.frame_height)
+        self.placement_resize(new_width=config.frame_width, new_height=config.frame_height)
+
+        for object in keep_place_items:
+            if not keep_pos:
+                self.placement_add_placement_item(object)
+            else:
+                self.placement_add_placement_item_force(object)
 
     def placement_dump(self) -> str:
         """

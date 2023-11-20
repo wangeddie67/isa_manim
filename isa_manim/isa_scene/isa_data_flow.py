@@ -249,8 +249,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
 
         self.animation_add_animation(
             animate=assign_elem(elem=elem_, vector=vector, size=size, reg_idx=reg_idx, index=index),
-            src=elem_,
-            dst=elem_,
+            src=[elem, elem_],
+            dst=[elem, elem_],
             dep=[old_dep, vector] if old_dep else [vector])
 
     def counter_to_predicate(self,
@@ -339,7 +339,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
 
         animation_item = self.animation_add_animation(
             animate=replace_elem(old_elem=elem_, new_elem=new_elem, index=index, align="right"),
-            src=elem_,
+            src=[elem, elem_],
             dst=new_elem,
             dep=old_dep)
         self._set_item_producer(new_elem, animation_item)
@@ -425,7 +425,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
 
         animation_item = self.animation_add_animation(
             animate=function_call(func_unit=func_unit, args_list=args_, res_item=res_elem),
-            src=args_,
+            src=args + args_,
             dst=res_elem,
             dep=(old_dep + [func_unit]) if old_dep else [func_unit])
         self._set_item_producer(res_elem, animation_item)
@@ -514,13 +514,15 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
             mem_mark = mem_unit.get_rd_mem_mark(laddr=addr_value,
                                                 raddr=addr_value + size // 8,
                                                 color=data_color)
+            mem_unit.append_mem_mark_list(mem_mark)
+
             animation_item = self.animation_add_animation(
                 animate=read_memory(mem_unit=mem_unit,
                                     addr_item=addr_,
                                     data_item=data,
                                     addr_mark=addr_mark,
                                     mem_mark=mem_mark),
-                src=[addr],
+                src=[addr, addr_],
                 dst=[data, mem_mark],
                 dep=old_dep + [mem_unit])
             self._set_item_producer(data, animation_item)
@@ -528,7 +530,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
             animation_item = self.animation_add_animation(
                 animate=read_memory_without_addr(
                     mem_unit=mem_unit, addr_item=addr_, data_item=data),
-                src=[addr],
+                src=[addr, addr_],
                 dst=[data],
                 dep=old_dep + [mem_unit])
             self._set_item_producer(data, animation_item)
@@ -574,19 +576,21 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
             mem_mark = mem_unit.get_wt_mem_mark(laddr=addr_value,
                                                 raddr=addr_value + data.elem_width // 8,
                                                 color=data_.elem_rect.color)
+            mem_unit.append_mem_mark_list(mem_mark)
+
             self.animation_add_animation(
                 animate=write_memory(mem_unit=mem_unit,
                                      addr_item=addr_,
                                      data_item=data_,
                                      addr_mark=addr_mark,
                                      mem_mark=mem_mark),
-                src=[addr, data],
+                src=[addr, data, addr_, data_],
                 dst=[mem_mark],
                 dep=old_dep + [mem_unit])
         else:
             self.animation_add_animation(
                 animate=write_memory_without_addr(
                     mem_unit=mem_unit, addr_item=addr_, data_item=data_),
-                src=[addr, data],
+                src=[addr, data, addr_, data_],
                 dst=[],
                 dep=old_dep + [mem_unit])

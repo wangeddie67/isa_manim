@@ -6,7 +6,7 @@ from typing import Union, Tuple
 import numpy as np
 from manim import logger
 from manim import (Text,
-                   FadeIn,
+                   FadeIn, AnimationGroup,
                    ORIGIN, UP, DOWN, RIGHT,
                    ZoomedScene,
                    BLACK,
@@ -116,12 +116,13 @@ class MultiIsaScene(ZoomedScene, IsaDataFlow):
             subtitle: String of subtitle.
         """
         self.draw_subtitle(subtitle)
-        self.placement_reset()
         self.colormap_reset()
 
     def end_section(self,
                     wait: int = 1,
-                    fade_out: bool = True):
+                    fade_out: bool = True,
+                    keep_objects: list = None, 
+                    keep_pos: bool = True):
         """
         Terminate or temporary stop of section, and update camera.
 
@@ -132,7 +133,21 @@ class MultiIsaScene(ZoomedScene, IsaDataFlow):
         camera_animate = self._update_camera()
         self.switch_section(wait=wait,
                             fade_out=fade_out,
-                            camera_animate=camera_animate)
+                            camera_animate=camera_animate,
+                            keep_objects=keep_objects)
+
+        if fade_out:
+            always_on_item = self.always_on_item_list + keep_objects \
+                if keep_objects else self.always_on_item_list
+            self.placement_reset(keep_objects=always_on_item, keep_pos=keep_pos)
+        #if len(self.always_on_item_list) > 0:
+        #    self.animation_add_animation(
+        #        animate=AnimationGroup(*[
+        #            x.animate.move_to(x.get_center()) for x in self.always_on_item_list]),
+        #        src=self.always_on_item_list,
+        #        dst=self.always_on_item_list,
+        #        dep=[]
+        #    )
 
     def _update_camera(self) -> Union[Tuple[float, np.array], None]:
         """
