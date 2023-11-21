@@ -2,6 +2,7 @@
 Animation flow analysis.
 """
 
+import itertools
 import numpy as np
 from typing import List, Tuple, Any
 from manim import Animation, Mobject, FadeOut
@@ -30,7 +31,11 @@ class IsaAnimateItem:
                  animate: Animation,
                  src: List[Any],
                  dst: List[Any],
-                 dep: List[Any] = None
+                 dep: List[Any] = None,
+                 add_before: List[Any] = None,
+                 add_after: List[Any] = None,
+                 remove_before: List[Any] = None,
+                 remove_after: List[Any] = None
         ):
         """
         Construct one data structure for animate.
@@ -67,6 +72,11 @@ class IsaAnimateItem:
         else:
             self.dep_item_list = [dep]
 
+        self.add_before: List[Mobject] = [] if add_before is None else add_before
+        self.add_after: List[Mobject] = [] if add_after is None else add_after
+        self.remove_before: List[Mobject] = [] if remove_before is None else remove_before
+        self.remove_after: List[Mobject] = [] if remove_after is None else remove_after
+
         self.predecessor_list = []
         self.successor_list = []
 
@@ -80,14 +90,14 @@ class IsaAnimateItem:
         Check whether this item is the beginner.
         Return True if animate does not have source item.
         """
-        return self.src_item_list is None or self.src_item_list == []
+        return self.src_item_list is None or len(self.src_item_list) == 0
 
     def is_terminator(self):
         """
         Check whether this item is the beginner.
         Return True if animate does not have destination item.
         """
-        return self.dst_item_list is None or self.dst_item_list == []
+        return self.dst_item_list is None or len(self.dst_item_list) == 0
 
     def is_predecessor_of(self, post):
         """
@@ -183,12 +193,21 @@ class _IsaAnimateStep():
                  animate_list: List[IsaAnimateItem],
                  left_item_list: List[Mobject],
                  wait: int = 0,
-                 camera_animate: Tuple[float, np.ndarray] = None):
+                 camera_animate: Tuple[float, np.ndarray] = None,
+                 add_before: List[Any] = None,
+                 add_after: List[Any] = None,
+                 remove_before: List[Any] = None,
+                 remove_after: List[Any] = None):
 
         self.animate_list = animate_list
         self.left_item_list = left_item_list
         self.wait = wait
         self.camera_animate = camera_animate
+
+        self.add_before: List[Mobject] = [] if add_before is None else add_before
+        self.add_after: List[Mobject] = [] if add_after is None else add_after
+        self.remove_before: List[Mobject] = [] if remove_before is None else remove_before
+        self.remove_after: List[Mobject] = [] if remove_after is None else remove_after
 
 class IsaAnimationMap:
     """
@@ -223,14 +242,19 @@ class IsaAnimationMap:
                                 animate: Animation,
                                 src: List[Any],
                                 dst: List[Any],
-                                dep: List[Any] = None) -> IsaAnimateItem:
+                                dep: List[Any] = None,
+                                add_before: List[Any] = None,
+                                add_after: List[Any] = None,
+                                remove_before: List[Any] = None,
+                                remove_after: List[Any] = None) -> IsaAnimateItem:
         """
         Register animation to scene and build dependency.
 
         Args:
             animate: IsaAnimateItem or a list of IsaAnimateItem.
         """
-        animate_item = IsaAnimateItem(animate, src, dst, dep)
+        animate_item = IsaAnimateItem(animate, src, dst, dep,
+                                      add_before, add_after, remove_before, remove_after)
 
         for item in self._section_animate_list:
             # new animate is successor of one existed item.
@@ -333,10 +357,19 @@ class IsaAnimationMap:
                 iter_animate_list = new_iter_animate_list
                 step_camera_animate = \
                     animation_section.camera_animate if first_step_in_section else None
-                self.isa_animation_step_list.append(_IsaAnimateStep(
+                animation_step = _IsaAnimateStep(
                     animate_list=[item.animate for item in new_step_animate],
                     left_item_list=step_item.copy(),
-                    camera_animate=step_camera_animate))
+                    camera_animate=step_camera_animate,
+                    add_before=itertools.chain.from_iterable(
+                        [item.add_before for item in new_step_animate]),
+                    add_after=itertools.chain.from_iterable(
+                        [item.add_after for item in new_step_animate]),
+                    remove_before=itertools.chain.from_iterable(
+                        [item.remove_before for item in new_step_animate]),
+                    remove_after=itertools.chain.from_iterable(
+                        [item.remove_after for item in new_step_animate]))
+                self.isa_animation_step_list.append(animation_step)
 
                 first_step_in_section = False
 

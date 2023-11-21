@@ -37,18 +37,18 @@ class TestFunctionUnit(Scene):
             .set_color(GREEN).shift(UP * 0.25)
         self.add(func_down_brace, func_down_brace_text)
 
-        for i in range(0, len(function.args_width)):
+        for i in range(0, len(function.func_args_width)):
             arg_up_brace = BraceBetweenPoints(function.args_rect_list[i].get_left() + UP * 0.5,
                                               function.args_rect_list[i].get_right() + UP * 0.5,
                                               color=BLUE,
                                               direction=UP)
             if i == 0:
                 arg_up_brace_text = \
-                    arg_up_brace.get_text("Bit width : " + str(function.args_width[i])) \
+                    arg_up_brace.get_text("Bit width : " + str(function.func_args_width[i])) \
                         .set_color(BLUE).shift(LEFT * 1.0)
             else:
                 arg_up_brace_text = \
-                    arg_up_brace.get_text(str(function.args_width[i])).set_color(BLUE)
+                    arg_up_brace.get_text(str(function.func_args_width[i])).set_color(BLUE)
             self.add(arg_up_brace, arg_up_brace_text)
 
             arg_down_brace = BraceBetweenPoints(function.args_rect_list[i].get_left() + DOWN * 0.5,
@@ -76,7 +76,7 @@ class TestFunctionUnit(Scene):
         res_up_brace = BraceBetweenPoints(function.res_rect.get_left() + UP * 0.5,
                                           function.res_rect.get_right() + UP * 0.5,
                                           color=BLUE)
-        res_up_brace_text = res_up_brace.get_text("Bit width : " + str(function.res_width)) \
+        res_up_brace_text = res_up_brace.get_text("Bit width : " + str(function.func_res_width)) \
             .set_color(BLUE).shift(UP * 0.25)
         self.add(res_up_brace, res_up_brace_text)
 

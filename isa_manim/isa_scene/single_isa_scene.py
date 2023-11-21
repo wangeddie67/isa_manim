@@ -62,6 +62,8 @@ class SingleIsaScene(ZoomedScene, IsaDataFlow):
 
         # Analysis flow
         self.analysis_animation_flow()
+        msg = f"Register {len(self.isa_animation_step_list)} steps."
+        logger.info(msg)
 
         # Play flow
         # Play each section
@@ -74,7 +76,11 @@ class SingleIsaScene(ZoomedScene, IsaDataFlow):
                           .move_to(camera_target))
 
             # Play each step in section.
+            self.remove(*animation_step.remove_before)
+            self.add(*animation_step.add_before)
             self.play(*animation_step.animate_list)
+            self.remove(*animation_step.remove_after)
+            self.add(*animation_step.add_after)
 
             # Wait after animation.
             if animation_step.wait > 0:

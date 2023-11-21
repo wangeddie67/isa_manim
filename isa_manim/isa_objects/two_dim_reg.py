@@ -37,7 +37,6 @@ class TwoDimReg(VGroup):
         reg_width: register width in bit of one register.
         elem_width: element width in bit.
         elements: number of elements of one register.
-        value: Value of this register, which should be an integer or UInt defined by isa_sim_utils.
     """
 
     require_serialization = False
@@ -51,7 +50,6 @@ class TwoDimReg(VGroup):
                  nreg: int,
                  width: int,
                  elements: int = 1,
-                 value: list = None,
                  font_size = DEFAULT_FONT_SIZE,
                  label_pos = None):
         """
@@ -63,27 +61,17 @@ class TwoDimReg(VGroup):
             nreg: Number of registers.
             width: Width of register, in bits.
             elements: Number of elements in one register.
-            value: Value of this register, which should be an integer or UInt defined by
-                isa_sim_utils.
             font_size: Font size of label. By default, the font size is defined by configuration.
             label_pos: position of label text. By default, the position of label text is defined as
                 close to the left boundary of register rectangle.
 
         """
-        # Element value
-        if not isinstance(value, list):
-            self.value_list = [value]
-        else:
-            self.value_list = value
+        self.reg_font_size = font_size
 
         # register count
         self.reg_count = nreg
 
-        # element number:
-        self.elements = elements
-
         # Register width
-        self.reg_width = width
         self.elem_width = width // elements
 
         # Register rectangle
@@ -118,9 +106,28 @@ class TwoDimReg(VGroup):
         super().__init__()
         self.add(*self.reg_rect_list, *self.label_text_list)
 
+    # Property functions
+    @property
+    def reg_text(self) -> str:
+        return [label_text.text for label_text in self.label_text_list]
+
+    @property
+    def reg_color(self) -> Color:
+        return self.reg_rect_list[0].color
+
+    @property
+    def reg_width(self) -> int:
+        return int(self.reg_rect_list[0].width / get_scene_ratio())
+
+    @property
+    def reg_label_pos(self):
+        return self.label_text_list[0].get_center()
+
+    # Override function
     def align_points_with_larger(self, larger_mobject):
         raise NotImplementedError("Please override in a child class.")
 
+    # Get locations.
     def get_elem_center(self,
                         reg_idx: int,
                         index: int,

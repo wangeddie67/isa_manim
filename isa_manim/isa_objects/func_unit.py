@@ -35,10 +35,10 @@ class FunctionUnit(VGroup):
     def __init__(self,
                  text: str,
                  color: Color,
-                 args_width: List[float],
-                 res_width: float,
+                 args_width: List[int],
+                 res_width: int,
                  args_value: List[str] = None,
-                 font_size = DEFAULT_FONT_SIZE):
+                 font_size: int = DEFAULT_FONT_SIZE):
         """
         Constructor an function call.
 
@@ -50,35 +50,31 @@ class FunctionUnit(VGroup):
             args_value: Text of each argument.
             font_size: Font size of value text.
         """
+        self.func_font_size: int = font_size
+
         # Argument Text
         if args_value is None:
             args_value = ["" for _ in args_width]
-
-        # argument width
-        self.args_width = args_width
-        # result width
-        self.res_width = res_width
 
         args_scene_width = [width * get_scene_ratio() for width in args_width]
 
         # function width
         func_width = sum(args_scene_width) + len(args_scene_width) - 1
-        self.func_height = 4
         args_pos = [LEFT * (func_width / 2)
                         + RIGHT * (sum(args_scene_width[0:i]) + i + args_scene_width[i] / 2)
                         + UP * 1.5
                     for i in range(0, len(args_scene_width))]
 
         # function ellipse
-        ellipse_width = max(func_width, self.res_width * get_scene_ratio())
-        self.func_ellipse = Ellipse(color=color,
-                                    height=1.0,
-                                    width=ellipse_width)
+        ellipse_width = max(func_width, res_width * get_scene_ratio())
+        self.func_ellipse: Ellipse = Ellipse(color=color,
+                                              height=1.0,
+                                              width=ellipse_width)
 
         # Label text
-        self.label_text = Text(text=text,
-                               color=color,
-                               font_size=font_size)
+        self.label_text: Text = Text(text=text,
+                                     color=color,
+                                     font_size=font_size)
 
         # Scale
         if self.label_text.width > self.func_ellipse.width:
@@ -86,8 +82,8 @@ class FunctionUnit(VGroup):
             self.label_text.scale(value_text_scale)
 
         # Arguments Rectangle
-        self.args_rect_list = []
-        self.args_text_list = []
+        self.args_rect_list: List[Rectangle] = []
+        self.args_text_list: List[Text] = []
         for arg_pos, arg_width, arg_value in zip(args_pos, args_width, args_value):
             arg_rect = DashedVMobject(Rectangle(color=color,
                                                 height=1.0,
@@ -104,10 +100,9 @@ class FunctionUnit(VGroup):
             self.args_text_list.append(arg_text)
 
         # Result Rectangle
-        self.res_rect = \
-            DashedVMobject(Rectangle(color=color,
-                                     height=1.0,
-                                     width=res_width * get_scene_ratio())) \
+        self.res_rect: Rectangle = DashedVMobject(Rectangle(color=color,
+                                                            height=1.0,
+                                                            width=res_width * get_scene_ratio())) \
                 .move_to(DOWN * 2.0)
 
         super().__init__()
@@ -115,9 +110,32 @@ class FunctionUnit(VGroup):
             self.func_ellipse, self.label_text,
             *self.args_rect_list, *self.args_text_list, self.res_rect)
 
+    # Property functions
+    @property
+    def func_text(self) -> str:
+        return self.label_text.text
+
+    @property
+    def func_color(self) -> Color:
+        return self.func_ellipse.color
+
+    @property
+    def func_args_width(self) -> List[int]:
+        return [arg_rect.width / get_scene_ratio() for arg_rect in self.args_rect_list]
+
+    @property
+    def func_res_width(self) -> int:
+        return round(self.res_rect.width / get_scene_ratio())
+
+    @property
+    def func_args_value(self) -> List[str]:
+        return [arg_text.text for arg_text in self.args_text_list]
+
+    # Override function
     def align_points_with_larger(self, larger_mobject):
         raise NotImplementedError("Please override in a child class.")
 
+    # Get locations.
     def get_args_pos(self, index: int) -> np.ndarray:
         """
         Return center position of specified argument item.

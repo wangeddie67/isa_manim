@@ -2,7 +2,7 @@
 Define APIs for animation in ISA data flow, manage animation flow and object placement.
 """
 
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 from colour import Color
 import sys
 from manim import (WHITE, DEFAULT_FONT_SIZE)
@@ -30,10 +30,10 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
     Data flow of ISA, used to define API for ISA animation.
     """
     def __init__(self,
-                 strategy="RB",
-                 default_color=WHITE,
-                 color_scheme: List[Color]=None,
-                 default_font_size=40):
+                 strategy: str ="RB",
+                 default_color: Color = WHITE,
+                 color_scheme: List[Color] = None,
+                 default_font_size: int = 40):
         """
         Construct animation and placement manager.
 
@@ -48,29 +48,40 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         self.default_font_size = default_font_size
 
         self.last_dep_map = {}
-        self.elem_producer_copy = {}
-        self.elem_producer_map = {}
-        self.elem_refer_count = {}
+        self.elem_producer_copy: Dict[OneDimRegElem, OneDimRegElem] = {}
+        self.elem_producer_map: Dict[OneDimRegElem, IsaAnimateItem] = {}
+        self.elem_refer_count: Dict[OneDimRegElem, int] = {}
+        self.elem_last_consumer: Dict[OneDimRegElem, IsaAnimateItem] = {}
 
-    def _traceback_hash(self, depth = 2) -> int:
+    def _traceback_hash(self, depth: int = 2) -> int:
         """
         Return hash value according to traceback.
         """
         # frame 0 is _traceback_hash
         # frame 1 is animation API
         # frame 2 is the caller of animation API
-        frame = sys._getframe(depth)
+        frame = sys._getframe(depth)    # pylint: disable=protected-access
         return hash(str(frame))
 
     def _set_item_producer(self,
                            item: OneDimRegElem,
-                           producer: IsaAnimateItem):
+                           producer: IsaAnimateItem,
+                           copy_item: OneDimRegElem = None):
         """
         Set producer of element.
         """
         self.elem_producer_map[item] = producer
-        self.elem_producer_copy[item] = item.copy()
+        self.elem_producer_copy[item] = item.copy() if copy_item is None else copy_item.copy()
         self.elem_refer_count[item] = 0
+        self.elem_last_consumer[item] = None
+
+    def _set_item_cusumer(self,
+                          item: OneDimRegElem,
+                          consumer: IsaAnimateItem):
+        """
+        Set consumer of element.
+        """
+        self.elem_last_consumer[item] = consumer
 
     def _get_duplicate_item(self,
                             item: OneDimRegElem) -> OneDimRegElem:
@@ -85,6 +96,9 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         self.elem_refer_count[item] += 1
         self.elem_producer_map[item].add_copy_item(item_)
 
+        if self.elem_last_consumer[item] is not None:
+            self.elem_last_consumer[item].add_before.append(item_)
+
         return item_
 
     #
@@ -93,8 +107,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
     def decl_scalar(self,
                     text: str,
                     width: int,
-                    value = None,
-                    font_size = DEFAULT_FONT_SIZE,
+                    font_size: int = DEFAULT_FONT_SIZE,
                     label_pos = None) -> OneDimReg:
         """
         Declare scalar variables, return one-dim register.
@@ -104,7 +117,6 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                                color=color,
                                width=width,
                                elements=1,
-                               value=value,
                                font_size=font_size,
                                label_pos=label_pos)
         self.placement_add_object(scalar_reg)
@@ -116,8 +128,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                     text: str,
                     width: int,
                     elements: int = 1,
-                    value = None,
-                    font_size = DEFAULT_FONT_SIZE,
+                    font_size: int = DEFAULT_FONT_SIZE,
                     label_pos = None) -> OneDimReg:
         """
         Declare vector variables, return one-dim register.
@@ -127,7 +138,6 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                                color=color,
                                width=width,
                                elements=elements,
-                               value=value,
                                font_size=font_size,
                                label_pos=label_pos)
         self.placement_add_object(vector_reg)
@@ -139,8 +149,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                           text_list: List[str],
                           width: int,
                           elements: int = 1,
-                          value_list: list = None,
-                          font_size = DEFAULT_FONT_SIZE,
+                          font_size: int = DEFAULT_FONT_SIZE,
                           label_pos = None) -> TwoDimReg:
         """
         Declare a list of vector variables, return a two-dim register.
@@ -152,7 +161,6 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                                nreg=nreg,
                                width=width,
                                elements=elements,
-                               value=value_list,
                                font_size=font_size,
                                label_pos=label_pos)
         self.placement_add_object(vector_reg)
@@ -165,8 +173,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                        nreg: int,
                        width: int,
                        elements: int = 1,
-                       value: list = None,
-                       font_size = DEFAULT_FONT_SIZE,
+                       font_size: int = DEFAULT_FONT_SIZE,
                        label_pos = None) -> TwoDimReg:
         """
         Declare a 2D vector, return a two-dim register.
@@ -177,7 +184,6 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                                nreg=nreg,
                                width=width,
                                elements=elements,
-                               value=value,
                                font_size=font_size,
                                label_pos=label_pos)
         self.placement_add_object(vector_reg)
@@ -192,9 +198,9 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                   index: int = 0,
                   color_hash = None,
                   value = None,
-                  fill_opacity = 0.5,
-                  font_size = DEFAULT_FONT_SIZE,
-                  value_format = get_config("elem_value_format")):
+                  fill_opacity: float = 0.5,
+                  font_size: int = DEFAULT_FONT_SIZE,
+                  value_format: str = get_config("elem_value_format")):
         """
         Read element from register, return one Rectangle.
 
@@ -246,20 +252,32 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         self.last_dep_map[elem] = vector
 
         elem_ = self._get_duplicate_item(elem)
+        new_elem = OneDimRegElem(color=elem.elem_color,
+                                 width=elem.elem_width if size <= 0 else size,
+                                 value=elem.elem_value,
+                                 fill_opacity=elem.elem_fill_opacity,
+                                 font_size=elem.elem_font_size,
+                                 value_format=elem.elem_value_format)
 
-        self.animation_add_animation(
-            animate=assign_elem(elem=elem_, vector=vector, size=size, reg_idx=reg_idx, index=index),
+        animation_item = self.animation_add_animation(
+            animate=assign_elem(elem_, new_elem, vector, reg_idx, index),
             src=[elem, elem_],
-            dst=[elem, elem_],
+            dst=[elem_],
             dep=[old_dep, vector] if old_dep else [vector])
+        self._set_item_producer(elem_, animation_item, copy_item=new_elem)
+        self._set_item_cusumer(elem, animation_item)
+
+        if elem_ is not elem:
+            self.last_dep_map[elem_] = vector
+
+        return elem_
 
     def counter_to_predicate(self,
                              png_obj: OneDimReg,
                              text: str,
                              width: int,
                              elements: int = 1,
-                             value = None,
-                             font_size = DEFAULT_FONT_SIZE,
+                             font_size: int = DEFAULT_FONT_SIZE,
                              label_pos = None):
         """
         Animate of predict-as-counter to mask predicate.
@@ -269,7 +287,6 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                               color=color,
                               width=width,
                               elements=elements,
-                              value=value,
                               font_size=font_size,
                               label_pos=label_pos)
         self.animation_add_animation(
@@ -281,8 +298,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
     def concat_vector(self,
                       vector_list: List[OneDimReg],
                       text: str,
-                      value = None,
-                      font_size = DEFAULT_FONT_SIZE,
+                      font_size: int = DEFAULT_FONT_SIZE,
                       label_pos = None) -> OneDimReg:
         """
         Animate of vector concat.
@@ -297,7 +313,6 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                                color=color,
                                width=reg_width,
                                elements=elements,
-                               value=value,
                                font_size=font_size,
                                label_pos=label_pos)
         self.placement_add_object(new_vector)
@@ -314,9 +329,9 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                      index: int = 0,
                      color_hash = None,
                      value = None,
-                     fill_opacity = 0.5,
-                     font_size = DEFAULT_FONT_SIZE,
-                     value_format = get_config("elem_value_format")) -> OneDimRegElem:
+                     fill_opacity: float = 0.5,
+                     font_size: int = DEFAULT_FONT_SIZE,
+                     value_format: str = get_config("elem_value_format")) -> OneDimRegElem:
         """
         Animate of data convert.
         """
@@ -343,6 +358,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
             dst=new_elem,
             dep=old_dep)
         self._set_item_producer(new_elem, animation_item)
+        self._set_item_cusumer(elem, animation_item)
+
         return new_elem
 
     #
@@ -353,8 +370,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                       args_width: List[float],
                       res_size: float,
                       isa_hash: str = None,
-                      args_value = None,
-                      font_size = DEFAULT_FONT_SIZE) -> FunctionUnit:
+                      args_value: List[str] = None,
+                      font_size: int = DEFAULT_FONT_SIZE) -> FunctionUnit:
         """
         Animation of declare function call.
         
@@ -385,13 +402,13 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                       args: List[OneDimRegElem],
                       res_size: float,
                       func_isa_hash: str = None,
-                      func_args_value = None,
-                      func_font_size = DEFAULT_FONT_SIZE,
+                      func_args_value: List = None,
+                      func_font_size: int = DEFAULT_FONT_SIZE,
                       res_color_hash = None,
                       res_value = None,
-                      res_fill_opacity = 0.5,
-                      res_font_size = DEFAULT_FONT_SIZE,
-                      res_value_format = get_config("elem_value_format")) -> OneDimRegElem:
+                      res_fill_opacity: float = 0.5,
+                      res_font_size: int = DEFAULT_FONT_SIZE,
+                      res_value_format: str = get_config("elem_value_format")) -> OneDimRegElem:
         """
         Animate of Function call.
         """
@@ -429,12 +446,15 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
             dst=res_elem,
             dep=(old_dep + [func_unit]) if old_dep else [func_unit])
         self._set_item_producer(res_elem, animation_item)
+        for arg in args:
+            self._set_item_cusumer(arg, animation_item)
+
         return res_elem
 
     #
     # Memory
     #
-    def decl_memory(self,
+    def decl_memory(self,   # pylint: disable=dangerous-default-value
                     addr_width: int = get_config("mem_addr_width"),
                     data_width: int = get_config("mem_data_width"),
                     addr_align: int = get_config("mem_align"),
@@ -465,20 +485,20 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
 
         return mem_unit
 
-    def read_memory(self,
+    def read_memory(self,   # pylint: disable=dangerous-default-value
                     addr: OneDimRegElem,
                     size: int,
                     res_color_hash = None,
                     res_value = None,
-                    res_fill_opacity = 0.5,
-                    res_font_size = DEFAULT_FONT_SIZE,
-                    res_value_format = get_config("elem_value_format"),
+                    res_fill_opacity: float = 0.5,
+                    res_font_size: int = DEFAULT_FONT_SIZE,
+                    res_value_format: str = get_config("elem_value_format"),
                     mem_addr_width: int = get_config("mem_addr_width"),
                     mem_data_width: int = get_config("mem_data_width"),
                     mem_addr_align: int = get_config("mem_align"),
                     mem_isa_hash: str = None,
                     mem_mem_range: List[Tuple[int]] = get_config("mem_range"),
-                    mem_font_size = DEFAULT_FONT_SIZE) -> OneDimRegElem:
+                    mem_font_size: int = DEFAULT_FONT_SIZE) -> OneDimRegElem:
         """
         Animate of read memory.
         """
@@ -507,10 +527,10 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
 
         self.last_dep_map[data] = mem_unit
 
-        if addr.value is not None and mem_unit.is_mem_range_cover(int(addr.value)):
-            addr_value = int(addr.value)
+        if addr.elem_value is not None and mem_unit.is_mem_range_cover(int(addr.elem_value)):
+            addr_value = int(addr.elem_value)
             addr_mark = mem_unit.get_addr_mark(addr=addr_value,
-                                               color=addr_.elem_rect.color)
+                                               color=addr_.elem_color)
             mem_mark = mem_unit.get_rd_mem_mark(laddr=addr_value,
                                                 raddr=addr_value + size // 8,
                                                 color=data_color)
@@ -524,20 +544,24 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                                     mem_mark=mem_mark),
                 src=[addr, addr_],
                 dst=[data, mem_mark],
-                dep=old_dep + [mem_unit])
+                dep=old_dep + [mem_unit],
+                remove_after=[addr_])
             self._set_item_producer(data, animation_item)
+            self._set_item_cusumer(addr, animation_item)
         else:
             animation_item = self.animation_add_animation(
                 animate=read_memory_without_addr(
                     mem_unit=mem_unit, addr_item=addr_, data_item=data),
                 src=[addr, addr_],
                 dst=[data],
-                dep=old_dep + [mem_unit])
+                dep=old_dep + [mem_unit],
+                remove_after=[addr_])
             self._set_item_producer(data, animation_item)
+            self._set_item_cusumer(addr, animation_item)
 
         return data
 
-    def write_memory(self,
+    def write_memory(self,  # pylint: disable=dangerous-default-value
                      addr: OneDimRegElem,
                      data: OneDimRegElem,
                      mem_addr_width: int = get_config("mem_addr_width"),
@@ -545,7 +569,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                      mem_addr_align: int = get_config("mem_align"),
                      mem_isa_hash: str = None,
                      mem_mem_range: List[Tuple[int]] = get_config("mem_range"),
-                     mem_font_size = DEFAULT_FONT_SIZE) -> None:
+                     mem_font_size: int = DEFAULT_FONT_SIZE) -> None:
         """
         Animate of write memory.
         """
@@ -569,16 +593,16 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
 
         data_ = self._get_duplicate_item(data)
 
-        if addr.value is not None and mem_unit.is_mem_range_cover(int(addr.value)):
-            addr_value = int(addr.value)
+        if addr.elem_value is not None and mem_unit.is_mem_range_cover(int(addr.elem_value)):
+            addr_value = int(addr.elem_value)
             addr_mark = mem_unit.get_addr_mark(addr=addr_value,
-                                               color=addr_.elem_rect.color)
+                                               color=addr_.elem_color)
             mem_mark = mem_unit.get_wt_mem_mark(laddr=addr_value,
                                                 raddr=addr_value + data.elem_width // 8,
                                                 color=data_.elem_rect.color)
             mem_unit.append_mem_mark_list(mem_mark)
 
-            self.animation_add_animation(
+            animation_item = self.animation_add_animation(
                 animate=write_memory(mem_unit=mem_unit,
                                      addr_item=addr_,
                                      data_item=data_,
@@ -586,11 +610,17 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                                      mem_mark=mem_mark),
                 src=[addr, data, addr_, data_],
                 dst=[mem_mark],
-                dep=old_dep + [mem_unit])
+                dep=old_dep + [mem_unit],
+                remove_after=[addr_])
+            self._set_item_cusumer(addr, animation_item)
+            self._set_item_cusumer(data, animation_item)
         else:
-            self.animation_add_animation(
+            animation_item = self.animation_add_animation(
                 animate=write_memory_without_addr(
                     mem_unit=mem_unit, addr_item=addr_, data_item=data_),
                 src=[addr, data, addr_, data_],
                 dst=[],
-                dep=old_dep + [mem_unit])
+                dep=old_dep + [mem_unit],
+                remove_after=[addr_])
+            self._set_item_cusumer(addr, animation_item)
+            self._set_item_cusumer(data, animation_item)

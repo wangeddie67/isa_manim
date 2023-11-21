@@ -53,10 +53,20 @@ class TestElemAnimation(Scene):
         self.remove(read_elem_label)
 
         # Assign elements.
-        assign_scalar_animate = assign_elem(elem=vector_2d_elem, vector=scalar_reg)
-        assign_vector_animate = assign_elem(elem=scalar_elem, vector=vector_reg, index=4, size=16)
-        assign_vector_2d_animate = assign_elem(
-            elem=vector_elem, vector=vector_2d_reg, index=15, size=16)
+        new_vector_2d_elem = OneDimRegElem(color=vector_2d_elem.elem_color, width=16)
+        assign_scalar_animate = assign_elem(old_elem=vector_2d_elem,
+                                            new_elem=new_vector_2d_elem,
+                                            vector=scalar_reg)
+        new_scalar_elem = OneDimRegElem(color=scalar_elem.elem_color, width=8)
+        assign_vector_animate = assign_elem(old_elem=scalar_elem,
+                                            new_elem=new_scalar_elem,
+                                            vector=vector_reg,
+                                            index=4)
+        new_vector_elem = OneDimRegElem(color=vector_elem.elem_color, width=32)
+        assign_vector_2d_animate = assign_elem(old_elem=vector_elem,
+                                               new_elem=new_vector_elem,
+                                               vector=vector_2d_reg,
+                                               index=7)
 
         assign_elem_label = Text("assign_elem", color=YELLOW) \
             .move_to(scalar_reg.reg_rect.get_right() + RIGHT * 4)

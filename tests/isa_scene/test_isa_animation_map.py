@@ -60,8 +60,9 @@ class TestIsaAnimationMap(Scene):
                     src=[prod, sum_], dst=[sum__], dep=[add_unit])
                 sum_ = sum__
 
+            new_sum_ = OneDimRegElem(color=sum_.elem_color, width=sum_.elem_width)
             animation_map.animation_add_animation(
-                animate=assign_elem(elem=sum_, vector=zda, index=i),
+                animate=assign_elem(old_elem=sum_, new_elem=new_sum_, vector=zda, index=i),
                 src=[sum_], dst=[sum_], dep=[zda])
 
             if i == 0:

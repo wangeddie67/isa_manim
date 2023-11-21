@@ -6,7 +6,7 @@ from typing import Union, Tuple
 import numpy as np
 from manim import logger
 from manim import (Text,
-                   FadeIn, AnimationGroup,
+                   FadeIn,
                    ORIGIN, UP, DOWN, RIGHT,
                    ZoomedScene,
                    BLACK,
@@ -63,6 +63,8 @@ class MultiIsaScene(ZoomedScene, IsaDataFlow):
 
         # Analysis flow
         self.analysis_animation_flow()
+        msg = f"Register {len(self.isa_animation_step_list)} steps."
+        logger.info(msg)
 
         # Play flow
         # Play each section
@@ -75,7 +77,11 @@ class MultiIsaScene(ZoomedScene, IsaDataFlow):
                           .move_to(camera_target))
 
             # Play each step in section.
+            self.add(*animation_step.add_before)
+            self.remove(*animation_step.remove_before)
             self.play(*animation_step.animate_list)
+            self.add(*animation_step.add_after)
+            self.remove(*animation_step.remove_after)
 
             # Wait after animation.
             if animation_step.wait > 0:
@@ -121,7 +127,7 @@ class MultiIsaScene(ZoomedScene, IsaDataFlow):
     def end_section(self,
                     wait: int = 1,
                     fade_out: bool = True,
-                    keep_objects: list = None, 
+                    keep_objects: list = None,
                     keep_pos: bool = True):
         """
         Terminate or temporary stop of section, and update camera.

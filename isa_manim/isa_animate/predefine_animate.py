@@ -11,7 +11,6 @@ from ..isa_objects import (OneDimReg,
                            TwoDimReg,
                            FunctionUnit,
                            MemoryUnit)
-from ..isa_config import get_scene_ratio
 
 #
 # Animation with Registers.
@@ -97,19 +96,19 @@ def read_elem(vector: OneDimReg,
 
     if isinstance(vector, OneDimReg):
         elem.move_to(vector.get_elem_center(index=index, elem_width=elem.elem_width))
-        return FadeIn(elem)
     elif isinstance(vector, TwoDimReg):
         elem.move_to(vector.get_elem_center(reg_idx=reg_idx,
                                             index=index,
                                             elem_width=elem.elem_width))
-        return FadeIn(elem)
     else:
         error_str = f"vector is not right type. {str(vector)}"
         raise ValueError(error_str)
 
-def assign_elem(elem: OneDimRegElem,
+    return FadeIn(elem)
+
+def assign_elem(old_elem: OneDimRegElem,
+                new_elem: OneDimRegElem,
                 vector: OneDimReg,
-                size: int = -1.0,
                 reg_idx: int = 0,
                 index: int = 0) -> Animation:
     """
@@ -126,26 +125,19 @@ def assign_elem(elem: OneDimRegElem,
         reg_idx: register index.
         index: Index of element.
     """
-    if size < 0:
-        size = elem.elem_width
-
     if isinstance(vector, OneDimReg):
-        dest_pos = vector.get_elem_center(index=index, elem_width=size)
+        dest_pos = vector.get_elem_center(index=index, elem_width=new_elem.elem_width)
     elif isinstance(vector, TwoDimReg):
-        dest_pos = vector.get_elem_center(reg_idx=reg_idx, index=index, elem_width=size)
+        dest_pos = vector.get_elem_center(reg_idx=reg_idx,
+                                          index=index,
+                                          elem_width=new_elem.elem_width)
     else:
         error_str = f"vector is not right type. {str(vector)}"
         raise ValueError(error_str)
 
     # Calculate scaling factor
-    old_width = elem.get_elem_width() * get_scene_ratio()
-    new_width = size * get_scene_ratio()
-    scale = new_width / old_width
-
-    if scale != 1.0:
-        return elem.animate.move_to(dest_pos).stretch(scale, 0)
-    else:
-        return elem.animate.move_to(dest_pos)
+    new_elem.move_to(dest_pos)
+    return Transform(old_elem, new_elem)
 
 def replace_elem(old_elem: OneDimRegElem,
                  new_elem: OneDimRegElem,
@@ -173,8 +165,7 @@ def replace_elem(old_elem: OneDimRegElem,
 
     new_elem.move_to(new_pos)
 
-    return Succession(Transform(old_elem, new_elem),
-                      AnimationGroup(FadeIn(new_elem), FadeOut(old_elem)))
+    return Succession(Transform(old_elem, new_elem))
 
 #
 # Animation with functions.
@@ -297,7 +288,7 @@ def read_memory(mem_unit: MemoryUnit,
     data_item.move_to(mem_unit.get_data_pos(data_item.elem_width))
     data_animate = \
         AnimationGroup(
-            FadeOut(addr_item), Create(mem_mark),
+            Create(mem_mark),
             FadeIn(data_item, shift=mem_unit.get_data_pos() - mem_mark.get_center()))
 
     return Succession(move_animate, addr_animate, data_animate)
@@ -327,7 +318,7 @@ def write_memory(mem_unit: MemoryUnit,
 
     data_animate = \
         AnimationGroup(
-            FadeOut(addr_item), Create(mem_mark),
+            Create(mem_mark),
             FadeOut(data_item, shift=mem_mark.get_center() - mem_unit.get_data_pos()))
 
     return Succession(move_animate, addr_animate, data_animate)

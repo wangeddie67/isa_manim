@@ -14,6 +14,7 @@ Graphic object structure:
 * Value text and Element rectangle are central alignment.
 """
 
+from typing import Any
 import numpy as np
 from manim import (VGroup, Rectangle, Text,
                    LEFT,
@@ -37,10 +38,10 @@ class OneDimRegElem(VGroup):
     def __init__(self,
                  color: Color,
                  width: int,
-                 value = None,
-                 fill_opacity = 0.5,
-                 font_size = DEFAULT_FONT_SIZE,
-                 value_format = get_config("elem_value_format")):
+                 value: Any = None,
+                 fill_opacity: float = 0.5,
+                 font_size: int = DEFAULT_FONT_SIZE,
+                 value_format: str = get_config("elem_value_format")):
         """
         Constructor an element.
 
@@ -51,11 +52,9 @@ class OneDimRegElem(VGroup):
                 isa_sim_utils.
             font_size: Font size of value text.
         """
-        # Element value
-        self.value = value
-
-        # Register width
-        self.elem_width = width
+        self.elem_value_format: str = value_format
+        self.elem_font_size: int = font_size
+        self.elem_value: Any = value
 
         # Register rectangle
         self.elem_rect = Rectangle(color=color,
@@ -64,12 +63,12 @@ class OneDimRegElem(VGroup):
                                   fill_opacity=fill_opacity)
 
         # Value text
-        if self.value is None:
+        if value is None:
             value_str = ""
-        elif isinstance(self.value, (int, float)):
-            value_str = value_format.format(self.value)
+        elif isinstance(value, (int, float)):
+            value_str = value_format.format(value)
         else:
-            value_str = str(self.value)
+            value_str = str(value)
         self.value_text = Text(text=value_str,
                                color=color,
                                font_size=font_size)
@@ -82,9 +81,24 @@ class OneDimRegElem(VGroup):
         super().__init__()
         self.add(self.elem_rect, self.value_text)
 
+    # Property functions
+    @property
+    def elem_color(self) -> Color:
+        return self.elem_rect.color
+
+    @property
+    def elem_width(self) -> int:
+        return int(self.elem_rect.width / get_scene_ratio())
+
+    @property
+    def elem_fill_opacity(self) -> float:
+        return self.elem_rect.fill_opacity
+
+    # Override function
     def align_points_with_larger(self, larger_mobject):
         raise NotImplementedError("Please override in a child class.")
 
+    # Get locations.
     def get_sub_elem_center(self,
                             index: int,
                             elem_width: float = -1.0) -> np.ndarray:

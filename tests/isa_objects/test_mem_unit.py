@@ -68,14 +68,14 @@ class TestMemoryUnit(Scene):
                                              mem_unit.addr_rect.get_right() + DOWN * 0.5,
                                              color=GREEN)
         addr_down_brace_text = \
-            addr_down_brace.get_text("Bit width : " + str(mem_unit.addr_width)).set_color(GREEN)
+            addr_down_brace.get_text("Bit width : " + str(mem_unit.mem_addr_width)).set_color(GREEN)
         self.add(addr_down_brace, addr_down_brace_text)
 
         data_down_brace = BraceBetweenPoints(mem_unit.data_rect.get_left() + DOWN * 0.5,
                                              mem_unit.data_rect.get_right() + DOWN * 0.5,
                                              color=GREEN)
         data_down_brace_text = \
-            data_down_brace.get_text("Bit width : " + str(mem_unit.data_width)).set_color(GREEN)
+            data_down_brace.get_text("Bit width : " + str(mem_unit.mem_data_width)).set_color(GREEN)
         self.add(data_down_brace, data_down_brace_text)
 
         mem_map_down_brace = BraceBetweenPoints(mem_unit.mem_map_list[0].get_left() + DOWN * 0.5,

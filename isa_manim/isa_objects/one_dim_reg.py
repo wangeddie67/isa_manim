@@ -36,7 +36,6 @@ class OneDimReg(VGroup):
         reg_width: register width in bit.
         elem_width: element width in bit.
         elements: number of elements.
-        value: Value of this register, which should be an integer or UInt defined by isa_sim_utils.
     """
 
     require_serialization = False
@@ -49,8 +48,7 @@ class OneDimReg(VGroup):
                  color: Color,
                  width: int,
                  elements: int = 1,
-                 value = None,
-                 font_size = DEFAULT_FONT_SIZE,
+                 font_size: int = DEFAULT_FONT_SIZE,
                  label_pos = None):
         """
         Constructor an scalar register.
@@ -60,21 +58,12 @@ class OneDimReg(VGroup):
             color: Color of register.
             width: Width of register, in bits
             elements: Number of elements.
-            value: Value of this register, which should be an integer or UInt defined by
-                isa_sim_utils.
             font_size: Font size of label. By default, the font size is defined by configuration.
             label_pos: position of label text. By default, the position of label text is defined as
                 close to the left boundary of register rectangle.
         """
-        # Element value
-        self.value = value
-
-        # element number:
-        self.elements = elements
-
-        # Register width
-        self.reg_width = width
         self.elem_width = width // elements
+        self.reg_font_size = font_size
 
         # Register rectangle
         if elements > 1:
@@ -100,9 +89,28 @@ class OneDimReg(VGroup):
         super().__init__()
         self.add(self.reg_rect, self.label_text)
 
+    # Property functions
+    @property
+    def reg_text(self) -> str:
+        return self.label_text.text
+
+    @property
+    def reg_color(self) -> Color:
+        return self.reg_rect.color
+
+    @property
+    def reg_width(self) -> int:
+        return int(self.reg_rect.width / get_scene_ratio())
+
+    @property
+    def reg_label_pos(self):
+        return self.label_text.get_center()
+
+    # Override function
     def align_points_with_larger(self, larger_mobject):
         raise NotImplementedError("Please override in a child class.")
 
+    # Get locations.
     def get_elem_center(self,
                         index: int,
                         elem_width: float = -1.0) -> np.ndarray:
