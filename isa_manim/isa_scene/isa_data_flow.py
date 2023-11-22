@@ -263,14 +263,15 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
             animate=assign_elem(elem_, new_elem, vector, reg_idx, index),
             src=[elem, elem_],
             dst=[elem_],
-            dep=[old_dep, vector] if old_dep else [vector])
-        self._set_item_producer(elem_, animation_item, copy_item=new_elem)
+            dep=[old_dep, vector] if old_dep else [vector],
+            remove_after=[elem_],
+            add_after=[new_elem])
         self._set_item_cusumer(elem, animation_item)
+        self._set_item_producer(elem_, animation_item, copy_item=new_elem)
 
-        if elem_ is not elem:
-            self.last_dep_map[elem_] = vector
+        self.last_dep_map[new_elem] = vector
 
-        return elem_
+        return new_elem
 
     def counter_to_predicate(self,
                              png_obj: OneDimReg,
@@ -347,18 +348,21 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         old_dep = None
         if elem in self.last_dep_map:
             old_dep = self.last_dep_map[elem]
-        if old_dep:
-            self.last_dep_map[new_elem] = old_dep
 
         elem_ = self._get_duplicate_item(elem)
 
         animation_item = self.animation_add_animation(
             animate=replace_elem(old_elem=elem_, new_elem=new_elem, index=index, align="right"),
             src=[elem, elem_],
-            dst=new_elem,
-            dep=old_dep)
-        self._set_item_producer(new_elem, animation_item)
+            dst=elem_,
+            dep=old_dep,
+            remove_after=[elem_],
+            add_after=[new_elem])
         self._set_item_cusumer(elem, animation_item)
+        self._set_item_producer(new_elem, animation_item, copy_item=new_elem)
+
+        if old_dep:
+            self.last_dep_map[new_elem] = old_dep
 
         return new_elem
 
@@ -445,9 +449,9 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
             src=args + args_,
             dst=res_elem,
             dep=(old_dep + [func_unit]) if old_dep else [func_unit])
-        self._set_item_producer(res_elem, animation_item)
         for arg in args:
             self._set_item_cusumer(arg, animation_item)
+        self._set_item_producer(res_elem, animation_item)
 
         return res_elem
 
@@ -546,8 +550,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                 dst=[data, mem_mark],
                 dep=old_dep + [mem_unit],
                 remove_after=[addr_])
-            self._set_item_producer(data, animation_item)
             self._set_item_cusumer(addr, animation_item)
+            self._set_item_producer(data, animation_item)
         else:
             animation_item = self.animation_add_animation(
                 animate=read_memory_without_addr(
@@ -556,8 +560,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                 dst=[data],
                 dep=old_dep + [mem_unit],
                 remove_after=[addr_])
-            self._set_item_producer(data, animation_item)
             self._set_item_cusumer(addr, animation_item)
+            self._set_item_producer(data, animation_item)
 
         return data
 

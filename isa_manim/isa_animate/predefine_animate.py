@@ -135,7 +135,6 @@ def assign_elem(old_elem: OneDimRegElem,
         error_str = f"vector is not right type. {str(vector)}"
         raise ValueError(error_str)
 
-    # Calculate scaling factor
     new_elem.move_to(dest_pos)
     return Transform(old_elem, new_elem)
 
@@ -164,8 +163,7 @@ def replace_elem(old_elem: OneDimRegElem,
         raise ValueError("align can only be center/left/right.")
 
     new_elem.move_to(new_pos)
-
-    return Succession(Transform(old_elem, new_elem))
+    return Transform(old_elem, new_elem)
 
 #
 # Animation with functions.
