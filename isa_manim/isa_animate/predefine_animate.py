@@ -168,14 +168,14 @@ def replace_elem(old_elem: OneDimRegElem,
 #
 # Animation with functions.
 #
-def decl_func_call(func_unit: FunctionUnit) -> Animation:
+def decl_func_call(*func_unit: List[FunctionUnit]) -> Animation:
     """
     Animation for declare one object of function.
 
     Args:
         func_unit: Object of function.
     """
-    return FadeIn(func_unit)
+    return FadeIn(*func_unit)
 
 def function_call(func_unit: FunctionUnit,
                   args_list: List[OneDimRegElem],

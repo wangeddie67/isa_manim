@@ -48,6 +48,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         self.default_font_size = default_font_size
 
         self.last_dep_map = {}
+        self.elem_source_dict: Dict[OneDimRegElem, List] = {}
         self.elem_producer_copy: Dict[OneDimRegElem, OneDimRegElem] = {}
         self.elem_producer_map: Dict[OneDimRegElem, IsaAnimateItem] = {}
         self.elem_refer_count: Dict[OneDimRegElem, int] = {}
@@ -100,6 +101,26 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
             self.elem_last_consumer[item].add_before.append(item_)
 
         return item_
+
+    def _set_elem_source_elem(self,
+                              elem: OneDimRegElem,
+                              vector: OneDimReg,
+                              size: float,
+                              reg_idx: int,
+                              index: int):
+        self.elem_source_dict[elem] = [vector, size, reg_idx, index]
+
+    def _get_elem_source_elem(self,
+                              vector: OneDimReg,
+                              size: float = -1.0,
+                              reg_idx: int = 0,
+                              index: int = 0):
+        for elem, elem_src in self.elem_source_dict.items():
+            elem_src_vector, elem_src_size, elem_src_reg_idx, elem_src_index = elem_src
+            if elem_src_vector == vector and elem_src_size == size \
+                    and elem_src_reg_idx == reg_idx and elem_src_index == index:
+                return elem
+        return None
 
     #
     # Animations APIs
@@ -213,21 +234,26 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         """
         color = self.colormap_get_color(
             self._traceback_hash() if color_hash is None else color_hash)
-        elem = OneDimRegElem(color=color,
-                             width=size,
-                             value=value,
-                             fill_opacity=fill_opacity,
-                             font_size=font_size,
-                             value_format=value_format)
 
-        self.last_dep_map[elem] = vector
+        elem = self._get_elem_source_elem(vector=vector, size=size, reg_idx=reg_idx, index=index)
+        if elem is None:
+            elem = OneDimRegElem(color=color,
+                                width=size,
+                                value=value,
+                                fill_opacity=fill_opacity,
+                                font_size=font_size,
+                                value_format=value_format)
+            self._set_elem_source_elem(
+                elem=elem, vector=vector, size=size, reg_idx=reg_idx, index=index)
 
-        animation_item = self.animation_add_animation(
-            animate=read_elem(vector=vector, elem=elem, reg_idx=reg_idx, index=index),
-            src=vector,
-            dst=elem,
-            dep=[vector])
-        self._set_item_producer(elem, animation_item)
+            self.last_dep_map[elem] = vector
+
+            animation_item = self.animation_add_animation(
+                animate=read_elem(vector=vector, elem=elem, reg_idx=reg_idx, index=index),
+                src=vector,
+                dst=elem,
+                dep=[vector])
+            self._set_item_producer(elem, animation_item)
         return elem
 
     def move_elem(self,
@@ -262,12 +288,12 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         animation_item = self.animation_add_animation(
             animate=assign_elem(elem_, new_elem, vector, reg_idx, index),
             src=[elem, elem_],
-            dst=[elem_],
+            dst=new_elem,
             dep=[old_dep, vector] if old_dep else [vector],
             remove_after=[elem_],
             add_after=[new_elem])
         self._set_item_cusumer(elem, animation_item)
-        self._set_item_producer(elem_, animation_item, copy_item=new_elem)
+        self._set_item_producer(new_elem, animation_item, copy_item=new_elem)
 
         self.last_dep_map[new_elem] = vector
 
@@ -354,7 +380,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         animation_item = self.animation_add_animation(
             animate=replace_elem(old_elem=elem_, new_elem=new_elem, index=index, align="right"),
             src=[elem, elem_],
-            dst=elem_,
+            dst=new_elem,
             dep=old_dep,
             remove_after=[elem_],
             add_after=[new_elem])
@@ -400,6 +426,56 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                 animate=decl_func_call(func_unit), src=None, dst=func_unit)
 
         return func_unit
+
+    def decl_func_group(self,
+                        num_unit: List[int],
+                        func: str,
+                        args_width: List[float],
+                        res_size: float,
+                        isa_hash: str,
+                        args_value: List[str] = None,
+                        font_size: int = DEFAULT_FONT_SIZE) -> List[FunctionUnit]:
+        """
+        Animation of declare a group of function call.
+        
+        Used to control placement and animation.
+        """
+        if not isa_hash:
+            isa_hash = self._traceback_hash()
+            
+        if isinstance(num_unit, int):
+            num_unit = [num_unit]
+
+        func_unit_list = []
+        func_unit_hash = []
+        for numi, num_ in enumerate(num_unit):
+            func_unit_list_ = []
+            func_unit_hash_ = []
+            for index in range(0, num_):
+                func_color = self.colormap_default_color
+                func_unit = FunctionUnit(text=func,
+                                         color=func_color,
+                                         args_width=args_width,
+                                         res_width=res_size,
+                                         args_value=args_value,
+                                         font_size=font_size)
+                if len(num_unit) == 1:
+                    func_hash = str(isa_hash) + str(index)
+                else:
+                    func_hash = str(isa_hash) + str(numi) + "_" + str(index)
+
+                func_unit_list_.append(func_unit)
+                func_unit_hash_.append(func_hash)
+
+            func_unit_list.extend(func_unit_list_)
+            func_unit_hash.extend(func_unit_hash_)
+
+        self.placement_add_object_group(func_unit_list, func_unit_hash)
+
+        self.animation_add_animation(
+            animate=decl_func_call(*func_unit_list), src=None, dst=func_unit_list)
+
+        return func_unit_list
 
     def function_call(self,
                       func: str,

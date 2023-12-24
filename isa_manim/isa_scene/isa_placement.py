@@ -176,6 +176,59 @@ class IsaPlacementItem:
         else:
             raise ValueError("Not ISA Object.")
 
+class _IsaPlaceHolderItem:
+    """
+    Data structure for auto placement.
+    """
+
+    def __init__(self,
+                 width: int,
+                 height: int):
+        """
+        Construct one data structure for animate.
+        """
+        self.row = 0
+        self.col = 0
+        self.width = width
+        self.height = height
+
+    def __str__(self) -> str:
+        string = "[Object=PlaceHolder], "
+        return string
+
+    def __repr__(self) -> str:
+        string = "[Object=PlaceHolder], "
+        return string
+
+    def get_width(self) -> int:
+        """
+        Return width of item in integer for placement.
+        """
+        return self.width
+
+    def get_height(self) -> int:
+        """
+        Return height of item in integer for placement.
+        """
+        return self.height
+
+    def get_marker(self) -> int:
+        """
+        Return the marker of object.
+        """
+        return 0
+
+    def set_corner(self, row: int, col: int):
+        """
+        Set the position of object by the left-up corner position.
+
+        Args:
+            row: Vertical ordinate of left-up corner.
+            col: Horizontal ordinate of left-up corner.
+        """
+        self.row = row
+        self.col = col
+
 class IsaPlacementMap:
     """
     This class is used to analyse the order of animations.
@@ -309,7 +362,7 @@ class IsaPlacementMap:
                     return False
 
         # If the row is not empty, the exist item should be the same mark as new one.
-        if marker:
+        if marker is not None:
             for row in range(corner_row - 1, corner_row + rect_height + 1):
                 for col in range(0, corner_col - 1):
                     if self._placement_map[row][col] > 1 \
@@ -436,12 +489,67 @@ class IsaPlacementMap:
         isa_object_item = IsaPlacementItem(place_object, place_hash)
         self.placement_add_placement_item(isa_object_item)
 
+    def placement_add_object_group(self,
+                                   place_object_list: List[Mobject],
+                                   place_hash_list: List[str] = None):
+        """
+        Add a group of object into dictionary and place it into placement map.
+
+        Args:
+            place_object_list: List of object to place.
+            place_hash_list: Hash value of ISA object.
+        """
+        for place_object in place_object_list:
+            if not isinstance(place_object, Mobject):
+                raise ValueError("Argument must be Mobject.")
+
+        place_item_list = []
+        for place_object, place_hash in zip(place_object_list, place_hash_list):
+            isa_object_item = IsaPlacementItem(place_object, place_hash)
+            place_item_list.append(isa_object_item)
+
+        # Convert to matrix according to width of graphic
+        split = 1
+        while split < len(place_item_list):
+            temp_width = sum([item.get_width() for item in place_item_list[0:split]]) + split - 1
+            if temp_width > self._placement_width * 0.75:
+                break
+            else:
+                split *= 2
+
+        place_item_matrix = [place_item_list[left:left + split][::-1] \
+                for left in range(0, len(place_item_list), split)]
+
+        matrix_row_width_list = [sum([item.get_width() for item in row]) + len(row) - 1 \
+            for row in place_item_matrix]
+        matrix_width = max(matrix_row_width_list)
+        matrix_row_height_list = [max([item.get_height() for item in row]) \
+            for row in place_item_matrix]
+        matrix_height = sum(matrix_row_height_list) + len(place_item_matrix) - 1
+
+        # Add a group of item.
+        place_holder = _IsaPlaceHolderItem(matrix_width, matrix_height)
+        self.placement_add_placement_item(place_holder)
+        place_row_start = place_holder.row
+        place_col_start = place_holder.col
+
+        place_row = place_row_start
+        place_col = place_col_start
+        for row, row_height in zip(place_item_matrix, matrix_row_height_list):
+            place_col = place_col_start
+            for placement_item in row:
+                placement_item.set_corner(place_row, place_col)
+                self.placement_add_placement_item_force(placement_item)
+                place_col += placement_item.get_width() + 1
+            place_row += row_height + 1
+
     def placement_add_placement_item(self,
                                      placement_item: IsaPlacementItem):
         """
         Add placement item into map.
         """
-        self._placement_object_dict[placement_item.isa_hash] = placement_item
+        if not isinstance(placement_item, _IsaPlaceHolderItem):
+            self._placement_object_dict[placement_item.isa_hash] = placement_item
 
         place_success = False
         while not place_success:
