@@ -2,7 +2,8 @@
 Define APIs for animation in ISA data flow, manage animation flow and object placement.
 """
 
-from typing import List, Tuple, Dict
+import itertools
+from typing import List, Tuple, Dict, Union
 from colour import Color
 import sys
 from manim import (WHITE, DEFAULT_FONT_SIZE)
@@ -397,10 +398,10 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
     # Function behavior
     #
     def decl_function(self,
-                      func: str,
+                      isa_hash: str,
                       args_width: List[float],
                       res_size: float,
-                      isa_hash: str = None,
+                      func: str = None,
                       args_value: List[str] = None,
                       font_size: int = DEFAULT_FONT_SIZE) -> FunctionUnit:
         """
@@ -408,8 +409,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         
         Used to control placement and animation.
         """
-        if not isa_hash:
-            isa_hash = self._traceback_hash()
+        if not func:
+            func = isa_hash
 
         if self.placement_has_object(isa_hash):
             func_unit = self.placement_get_object(isa_hash)
@@ -429,11 +430,11 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         return func_unit
 
     def decl_func_group(self,
-                        num_unit: List[int],
-                        func: str,
+                        num_unit: Union[int, List[int]],
+                        isa_hash: Union[str, List[str]],
                         args_width: List[float],
                         res_size: float,
-                        isa_hash: str,
+                        func: Union[str, List[str]] = None,
                         args_value: List[str] = None,
                         font_size: int = DEFAULT_FONT_SIZE) -> List[FunctionUnit]:
         """
@@ -441,35 +442,46 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         
         Used to control placement and animation.
         """
-        if not isa_hash:
-            isa_hash = self._traceback_hash()
-            
+        if not func:
+            func = isa_hash
+
         if isinstance(num_unit, int):
             num_unit = [num_unit]
 
         func_unit_list = []
         func_unit_hash = []
-        for numi, num_ in enumerate(num_unit):
-            func_unit_list_ = []
-            func_unit_hash_ = []
-            for index in range(0, num_):
-                func_color = self.colormap_default_color
-                func_unit = FunctionUnit(text=func,
-                                         color=func_color,
-                                         args_width=args_width,
-                                         res_width=res_size,
-                                         args_value=args_value,
-                                         font_size=font_size)
-                if len(num_unit) == 1:
-                    func_hash = str(isa_hash) + str(index)
+        num_id_list = itertools.product(*[list(range(0, numi)) for numi in num_unit])
+        for num_id in num_id_list:
+            if func:
+                func_ = func
+                if isinstance(func, list):
+                    for sub_id in num_id:
+                        func_ = func_[sub_id]
+            else:
+                if not isinstance(isa_hash, list):
+                    func_ = isa_hash + "_".join([str(sub_id) for sub_id in num_id])
                 else:
-                    func_hash = str(isa_hash) + str(numi) + "_" + str(index)
+                    func_ = isa_hash
+                    for sub_id in num_id:
+                        func_ = func_[sub_id]
 
-                func_unit_list_.append(func_unit)
-                func_unit_hash_.append(func_hash)
+            func_color = self.colormap_default_color
+            func_unit = FunctionUnit(text=func_,
+                                     color=func_color,
+                                     args_width=args_width,
+                                     res_width=res_size,
+                                     args_value=args_value,
+                                     font_size=font_size)
 
-            func_unit_list.extend(func_unit_list_)
-            func_unit_hash.extend(func_unit_hash_)
+            if not isinstance(isa_hash, list):
+                func_hash = isa_hash + "_".join([str(sub_id) for sub_id in num_id])
+            else:
+                func_hash = isa_hash
+                for sub_id in num_id:
+                    func_hash = func_hash[sub_id]
+
+            func_unit_list.append(func_unit)
+            func_unit_hash.append(func_hash)
 
         self.placement_add_object_group(func_unit_list, func_unit_hash)
 
@@ -479,10 +491,10 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         return func_unit_list
 
     def function_call(self,
-                      func: str,
+                      func_isa_hash: str,
                       args: List[OneDimRegElem],
                       res_size: float,
-                      func_isa_hash: str = None,
+                      func: str = None,
                       func_args_value: List = None,
                       func_font_size: int = DEFAULT_FONT_SIZE,
                       res_color_hash = None,
@@ -493,10 +505,10 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         """
         Animate of Function call.
         """
-        func_unit = self.decl_function(func=func,
+        func_unit = self.decl_function(isa_hash=func_isa_hash,
                                        args_width=[item.elem_width for item in args],
                                        res_size=res_size,
-                                       isa_hash=func_isa_hash,
+                                       func=func,
                                        args_value=func_args_value,
                                        font_size=func_font_size)
 
