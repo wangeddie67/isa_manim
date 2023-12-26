@@ -146,14 +146,8 @@ class MultiIsaScene(ZoomedScene, IsaDataFlow):
             always_on_item = self.always_on_item_list + keep_objects \
                 if keep_objects else self.always_on_item_list
             self.placement_reset(keep_objects=always_on_item, keep_pos=keep_pos)
-        #if len(self.always_on_item_list) > 0:
-        #    self.animation_add_animation(
-        #        animate=AnimationGroup(*[
-        #            x.animate.move_to(x.get_center()) for x in self.always_on_item_list]),
-        #        src=self.always_on_item_list,
-        #        dst=self.always_on_item_list,
-        #        dep=[]
-        #    )
+
+        self.elem_source_dict.clear()
 
     def _update_camera(self) -> Union[Tuple[float, np.array], None]:
         """

@@ -117,6 +117,8 @@ class SingleIsaScene(ZoomedScene, IsaDataFlow):
                             fade_out=fade_out,
                             camera_animate=camera_animate)
 
+        self.elem_source_dict.clear()
+
     def _update_camera(self) -> Union[Tuple[float, np.array], None]:
         """
         Update location and scale factor of zoomed camera.
