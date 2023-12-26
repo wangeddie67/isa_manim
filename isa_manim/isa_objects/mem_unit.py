@@ -41,7 +41,9 @@ class MemoryUnit(VGroup):
                  data_width: int,
                  addr_align: int,
                  mem_range: List[Tuple[int]],
-                 font_size: int = DEFAULT_FONT_SIZE):
+                 font_size: int = DEFAULT_FONT_SIZE,
+                 para_enable: bool = False,
+                 mem_map_width: int = 0):
         """
         Constructor an function call.
 
@@ -53,6 +55,8 @@ class MemoryUnit(VGroup):
             mem_range: Memory range
             font_size: Font size of value text.
         """
+        self.require_serialization = not para_enable
+
         self.mem_font_size = font_size
 
         # memory rectangle
@@ -81,7 +85,8 @@ class MemoryUnit(VGroup):
             .move_to(self.data_rect.get_center() + UP)
 
         # Memory map
-        mem_map_width = self.addr_rect.width + self.data_rect.width + self.mem_rect.width + 2
+        mem_map_width = max(self.addr_rect.width + self.data_rect.width + self.mem_rect.width + 2,
+                            mem_map_width)
         self.mem_addr_align: int = addr_align
 
         self.mem_range: List[Tuple[int, int]] = []

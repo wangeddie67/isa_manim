@@ -13,6 +13,7 @@ from ..isa_animate import (decl_register,
                            assign_elem,
                            replace_elem,
                            decl_func_call,
+                           read_func_imm,
                            function_call,
                            decl_memory_unit,
                            read_memory_without_addr,
@@ -531,6 +532,42 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
 
         return res_elem
 
+    def read_func_imm(self,
+                      arg_idx: int,
+                      size: float,
+                      func_isa_hash: str = None,
+                      color_hash = None,
+                      value = None,
+                      fill_opacity: float = 0.5,
+                      font_size: int = DEFAULT_FONT_SIZE,
+                      value_format: str = get_config("elem_value_format")) -> OneDimRegElem:
+        """
+        Animate of Function call.
+        """
+        if not self.placement_has_object(func_isa_hash):
+            raise ValueError("Undefined function unit.")
+        func_unit = self.placement_get_object(func_isa_hash)
+
+        res_color = self.colormap_get_color(
+            self._traceback_hash() if color_hash is None else color_hash)
+        res_elem = OneDimRegElem(color=res_color,
+                                 width=size,
+                                 value=value,
+                                 fill_opacity=fill_opacity,
+                                 font_size=font_size,
+                                 value_format=value_format)
+
+        self.last_dep_map[res_elem] = func_unit
+
+        animation_item = self.animation_add_animation(
+            animate=read_func_imm(func_unit=func_unit, elem=res_elem, arg_idx=arg_idx),
+            src=func_unit,
+            dst=res_elem,
+            dep=[func_unit])
+        self._set_item_producer(res_elem, animation_item)
+
+        return res_elem
+
     #
     # Memory
     #
@@ -540,7 +577,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                     addr_align: int = get_config("mem_align"),
                     isa_hash: str = None,
                     mem_range: List[Tuple[int]] = get_config("mem_range"),
-                    font_size = DEFAULT_FONT_SIZE) -> MemoryUnit:
+                    font_size = DEFAULT_FONT_SIZE,
+                    para_enable = False) -> MemoryUnit:
         """
         Animation of declare memory.
 
@@ -557,7 +595,9 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                                   data_width=data_width,
                                   addr_align=addr_align,
                                   mem_range=mem_range,
-                                  font_size=font_size)
+                                  font_size=font_size,
+                                  para_enable=para_enable,
+                                  mem_map_width=self.placement_width() - 2)
             self.placement_add_object(mem_unit, "Memory")
 
             self.animation_add_animation(

@@ -177,6 +177,22 @@ def decl_func_call(*func_unit: List[FunctionUnit]) -> Animation:
     """
     return FadeIn(*func_unit)
 
+def read_func_imm(func_unit: FunctionUnit,
+                  elem: OneDimRegElem,
+                  arg_idx: int = 0) -> Animation:
+    """
+    Animation for set one argument as immediate. Fade in element at the specified location related
+    to the function unit..
+
+    Args:
+        func_unit: object of the function unit.
+        elem: object of the element.
+        index: argument index.
+    """
+
+    elem.move_to(func_unit.get_args_pos(arg_idx))
+    return FadeIn(elem)
+
 def function_call(func_unit: FunctionUnit,
                   args_list: List[OneDimRegElem],
                   res_item: OneDimRegElem) -> Animation:

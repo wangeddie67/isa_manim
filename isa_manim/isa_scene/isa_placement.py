@@ -510,9 +510,12 @@ class IsaPlacementMap:
 
         # Convert to matrix according to width of graphic
         split = 1
+        screen_factor = config.frame_width / config.frame_height
         while split < len(place_item_list):
             temp_width = sum([item.get_width() for item in place_item_list[0:split]]) + split - 1
-            if temp_width > self._placement_width * 0.75:
+            temp_height = place_item_list[0].get_height() * (len(place_item_list) // split) \
+                + (len(place_item_list) // split) - 1
+            if temp_width / temp_height > screen_factor:
                 break
             else:
                 split *= 2
