@@ -4,6 +4,7 @@ Predefined Animations.
 
 from typing import List, Union
 from manim import (AnimationGroup, Succession, FadeIn, FadeOut, Animation, Transform, Create,
+                   Indicate,
                    Rectangle, Triangle,
                    LEFT, RIGHT)
 from ..isa_objects import (OneDimReg,
@@ -292,18 +293,13 @@ def read_memory(mem_unit: MemoryUnit,
         new_mem_map: New memory map.
     """
     # Move address to argument position.
-    move_animate = \
-        AnimationGroup(addr_item.animate.move_to(mem_unit.get_addr_pos(addr_item.elem_width)))
+    move_animate = Indicate(addr_item)
 
     # Address mark.
-    addr_animate = AnimationGroup(Transform(addr_item, addr_mark))
+    addr_animate = Transform(addr_item, addr_mark)
 
     # Data item.
-    data_item.move_to(mem_unit.get_data_pos(data_item.elem_width))
-    data_animate = \
-        AnimationGroup(
-            Create(mem_mark),
-            FadeIn(data_item, shift=mem_unit.get_data_pos() - mem_mark.get_center()))
+    data_animate = Create(mem_mark)
 
     return Succession(move_animate, addr_animate, data_animate)
 
@@ -323,16 +319,12 @@ def write_memory(mem_unit: MemoryUnit,
         new_mem_map: New memory map.
     """
     # Move address and data to argument position.
-    move_animate = \
-        AnimationGroup(addr_item.animate.move_to(mem_unit.get_addr_pos(addr_item.elem_width)),
-                       data_item.animate.move_to(mem_unit.get_data_pos(data_item.elem_width)))
+    move_animate = Indicate(addr_item)
 
     # Address mark.
-    addr_animate = AnimationGroup(Transform(addr_item, addr_mark))
+    addr_animate = Transform(addr_item, addr_mark)
 
-    data_animate = \
-        AnimationGroup(
-            Create(mem_mark),
-            FadeOut(data_item, shift=mem_mark.get_center() - mem_unit.get_data_pos()))
+    # Data mark.
+    data_animate = Transform(data_item, mem_mark)
 
     return Succession(move_animate, addr_animate, data_animate)

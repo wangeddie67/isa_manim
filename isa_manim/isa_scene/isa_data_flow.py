@@ -667,6 +667,9 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                                                 raddr=addr_value + size // 8,
                                                 color=data_color)
             mem_unit.append_mem_mark_list(mem_mark)
+            data = data.scale_to_fit_width(mem_mark.width / data.width) \
+                .scale_to_fit_height(mem_mark.height / data.width) \
+                .move_to(mem_mark.get_center())
 
             animation_item = self.animation_add_animation(
                 animate=read_memory(mem_unit=mem_unit,
@@ -743,7 +746,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                 src=[addr, data, addr_, data_],
                 dst=[mem_mark],
                 dep=old_dep + [mem_unit],
-                remove_after=[addr_])
+                remove_after=[addr_, data_],
+                add_after=[mem_mark])
             self._set_item_cusumer(addr, animation_item)
             self._set_item_cusumer(data, animation_item)
         else:
