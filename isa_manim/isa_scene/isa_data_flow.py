@@ -436,7 +436,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                         res_size: float,
                         func: Union[str, List[str]] = None,
                         args_value: List[str] = None,
-                        font_size: int = DEFAULT_FONT_SIZE) -> List[FunctionUnit]:
+                        font_size: int = DEFAULT_FONT_SIZE,
+                        force_hw_ratio: bool = False) -> List[FunctionUnit]:
         """
         Animation of declare a group of function call.
         
@@ -483,7 +484,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
             func_unit_list.append(func_unit)
             func_unit_hash.append(func_hash)
 
-        self.placement_add_object_group(func_unit_list, func_unit_hash)
+        self.placement_add_object_group(func_unit_list, func_unit_hash,
+                                        force_hw_ratio=num_unit if force_hw_ratio else None)
 
         self.animation_add_animation(
             animate=decl_func_call(*func_unit_list), src=None, dst=func_unit_list)
@@ -495,9 +497,11 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                       args: List[OneDimRegElem],
                       res_size: float,
                       func: str = None,
+                      func_args_index: List[int] = None,
                       func_args_value: List = None,
                       func_font_size: int = DEFAULT_FONT_SIZE,
                       res_color_hash = None,
+                      res_index: int = None,
                       res_value = None,
                       res_fill_opacity: float = 0.5,
                       res_font_size: int = DEFAULT_FONT_SIZE,
@@ -533,8 +537,17 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
 
         self.last_dep_map[res_elem] = func_unit
 
+        if func_args_index is None:
+            func_args_index = [0 for _ in args]
+        if res_index is None:
+            res_index = 0
+
         animation_item = self.animation_add_animation(
-            animate=function_call(func_unit=func_unit, args_list=args_, res_item=res_elem),
+            animate=function_call(func_unit=func_unit,
+                                  args_list=args_,
+                                  res_item=res_elem,
+                                  func_args_index=func_args_index,
+                                  res_index=res_index),
             src=args + args_,
             dst=res_elem,
             dep=(old_dep + [func_unit]) if old_dep else [func_unit])

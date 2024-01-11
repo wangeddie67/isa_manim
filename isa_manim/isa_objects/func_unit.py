@@ -136,17 +136,25 @@ class FunctionUnit(VGroup):
         raise NotImplementedError("Please override in a child class.")
 
     # Get locations.
-    def get_args_pos(self, index: int) -> np.ndarray:
+    def get_args_pos(self, index: int, elem_width: float, elem_index: int) -> np.ndarray:
         """
-        Return center position of specified argument item.
+        Return position of specified argument item.
 
         Args:
             index: Index of arguments.
+            elem_width: Width of element.
+            elem_index: Index of element.
         """
-        return self.args_rect_list[index].get_center()
+        return self.args_rect_list[index].get_right()  \
+            + LEFT * (elem_index + 0.5) * elem_width * get_scene_ratio()
 
-    def get_dst_pos(self) -> np.ndarray:
+    def get_dst_pos(self, elem_width: float, elem_index: int) -> np.ndarray:
         """
-        Return center position of destination item.
+        Return position of destination item.
+        
+        Args:
+            elem_width: Width of element.
+            elem_index: Index of element.
         """
-        return self.res_rect.get_center()
+        return self.res_rect.get_right()  \
+            + LEFT * (elem_index + 0.5) * elem_width * get_scene_ratio()

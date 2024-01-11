@@ -4,7 +4,7 @@ Predefined Animations.
 
 from typing import List, Union
 from manim import (AnimationGroup, Succession, FadeIn, FadeOut, Animation, Transform, Create,
-                   Indicate,
+                   Indicate, Wait,
                    Rectangle, Triangle,
                    LEFT, RIGHT)
 from ..isa_objects import (OneDimReg,
@@ -180,7 +180,8 @@ def decl_func_call(*func_unit: List[FunctionUnit]) -> Animation:
 
 def read_func_imm(func_unit: FunctionUnit,
                   elem: OneDimRegElem,
-                  arg_idx: int = 0) -> Animation:
+                  arg_idx: int = 0,
+                  elem_index: int = 0) -> Animation:
     """
     Animation for set one argument as immediate. Fade in element at the specified location related
     to the function unit..
@@ -191,12 +192,14 @@ def read_func_imm(func_unit: FunctionUnit,
         index: argument index.
     """
 
-    elem.move_to(func_unit.get_args_pos(arg_idx))
+    elem.move_to(func_unit.get_args_pos(arg_idx, elem.elem_width, elem_index))
     return FadeIn(elem)
 
 def function_call(func_unit: FunctionUnit,
                   args_list: List[OneDimRegElem],
-                  res_item: OneDimRegElem) -> Animation:
+                  res_item: OneDimRegElem,
+                  func_args_index: List[int],
+                  res_index: int) -> Animation:
     """
     Animation for calling one function.
 
@@ -205,20 +208,23 @@ def function_call(func_unit: FunctionUnit,
         args_list: List of object of arguments.
         res_item: List of result item.
     """
-    res_item.move_to(func_unit.get_dst_pos())
+    res_item.move_to(func_unit.get_dst_pos(res_item.elem_width, res_index))
 
     move_animate = \
-        AnimationGroup(*[arg.animate.move_to(func_unit.get_args_pos(i))
+        AnimationGroup(*[arg.animate.move_to(func_unit.get_args_pos(
+                            i, arg.elem_width, func_args_index[i]))
                          for i, arg in enumerate(args_list)])
     fade_animate = \
         AnimationGroup(
             FadeIn(res_item,
-                   shift=func_unit.get_dst_pos() - func_unit.func_ellipse.get_center()),
+                   shift=func_unit.get_dst_pos(res_item.elem_width, res_index) - \
+                       func_unit.func_ellipse.get_center()),
             *[FadeOut(arg,
-                      shift=func_unit.func_ellipse.get_center() - func_unit.get_args_pos(i))
+                      shift=func_unit.func_ellipse.get_center() - \
+                          func_unit.get_args_pos(i, arg.elem_width, func_args_index[i]))
                for i, arg in enumerate(args_list)]
         )
-    return Succession(move_animate, fade_animate)
+    return Succession(move_animate, Wait(0.5), fade_animate)
 
 #
 # Animation with memory.

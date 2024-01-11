@@ -42,7 +42,7 @@ There are two strategies to search rectangle in the placement array:
 
 from math import ceil
 import numpy as np
-from typing import List, Dict
+from typing import List, Dict, Union
 from manim import Mobject, config, RIGHT, DOWN
 from ..isa_objects import (OneDimReg, TwoDimReg, OneDimRegElem, FunctionUnit, MemoryUnit)
 
@@ -491,7 +491,8 @@ class IsaPlacementMap:
 
     def placement_add_object_group(self,
                                    place_object_list: List[Mobject],
-                                   place_hash_list: List[str] = None):
+                                   place_hash_list: List[str] = None,
+                                   force_hw_ratio: Union[List[int], None] = None):
         """
         Add a group of object into dictionary and place it into placement map.
 
@@ -509,16 +510,19 @@ class IsaPlacementMap:
             place_item_list.append(isa_object_item)
 
         # Convert to matrix according to width of graphic
-        split = 1
-        screen_factor = config.frame_width / config.frame_height
-        while split < len(place_item_list):
-            temp_width = sum([item.get_width() for item in place_item_list[0:split]]) + split - 1
-            temp_height = place_item_list[0].get_height() * (len(place_item_list) // split) \
-                + (len(place_item_list) // split) - 1
-            if temp_width / temp_height > screen_factor:
-                break
-            else:
-                split *= 2
+        if force_hw_ratio is None:
+            split = 1
+            screen_factor = config.frame_width / config.frame_height
+            while split < len(place_item_list):
+                temp_width = sum([item.get_width() for item in place_item_list[0:split]]) + split - 1
+                temp_height = place_item_list[0].get_height() * (len(place_item_list) // split) \
+                    + (len(place_item_list) // split) - 1
+                if temp_width / temp_height > screen_factor:
+                    break
+                else:
+                    split *= 2
+        else:
+            split = force_hw_ratio[-1]
 
         place_item_matrix = [place_item_list[left:left + split][::-1] \
                 for left in range(0, len(place_item_list), split)]
