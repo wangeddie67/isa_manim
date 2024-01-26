@@ -152,7 +152,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                     width: int,
                     elements: int = 1,
                     font_size: int = DEFAULT_FONT_SIZE,
-                    label_pos = None) -> OneDimReg:
+                    label_pos = None,
+                    align_with = None) -> OneDimReg:
         """
         Declare vector variables, return one-dim register.
         """
@@ -163,7 +164,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                                elements=elements,
                                font_size=font_size,
                                label_pos=label_pos)
-        self.placement_add_object(vector_reg)
+        self.placement_add_object(vector_reg, align_with=align_with)
 
         self.animation_add_animation(animate=decl_register(vector_reg), src=None, dst=vector_reg)
         return vector_reg
@@ -219,6 +220,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                   size: float = -1.0,
                   reg_idx: int = 0,
                   index: int = 0,
+                  offset: int = 0,
                   color_hash = None,
                   value = None,
                   fill_opacity: float = 0.5,
@@ -240,18 +242,19 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         elem = self._get_elem_source_elem(vector=vector, size=size, reg_idx=reg_idx, index=index)
         if elem is None:
             elem = OneDimRegElem(color=color,
-                                width=size,
-                                value=value,
-                                fill_opacity=fill_opacity,
-                                font_size=font_size,
-                                value_format=value_format)
+                                 width=size,
+                                 value=value,
+                                 fill_opacity=fill_opacity,
+                                 font_size=font_size,
+                                 value_format=value_format)
             self._set_elem_source_elem(
                 elem=elem, vector=vector, size=size, reg_idx=reg_idx, index=index)
 
             self.last_dep_map[elem] = vector
 
             animation_item = self.animation_add_animation(
-                animate=read_elem(vector=vector, elem=elem, reg_idx=reg_idx, index=index),
+                animate=read_elem(
+                    vector=vector, elem=elem, reg_idx=reg_idx, index=index, offset=offset),
                 src=vector,
                 dst=elem,
                 dep=[vector])
@@ -263,7 +266,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                   vector: OneDimReg,
                   size: float = -1.0,
                   reg_idx: int = 0,
-                  index: int = 0):
+                  index: int = 0,
+                  offset: int = 0):
         """
         Move element to register, add animate to list.
 
@@ -288,7 +292,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                                  value_format=elem.elem_value_format)
 
         animation_item = self.animation_add_animation(
-            animate=assign_elem(elem_, new_elem, vector, reg_idx, index),
+            animate=assign_elem(elem_, new_elem, vector, reg_idx, index, offset),
             src=[elem, elem_],
             dst=new_elem,
             dep=[old_dep, vector] if old_dep else [vector],

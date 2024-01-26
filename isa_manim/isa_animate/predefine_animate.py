@@ -83,7 +83,8 @@ def concat_vector(vector_list: List[OneDimReg],
 def read_elem(vector: OneDimReg,
               elem: OneDimRegElem,
               reg_idx: int = 0,
-              index: int = 0) -> Animation:
+              index: int = 0,
+              offset: int = 0) -> Animation:
     """
     Animation for reading element from register. Fade in element at the specified location related
     to the register.
@@ -93,14 +94,15 @@ def read_elem(vector: OneDimReg,
         elem: object of the element.
         reg_idx: register index. Used only for two-dimension register.
         index: element index.
+        offset: Offset of lower bit.
     """
 
     if isinstance(vector, OneDimReg):
-        elem.move_to(vector.get_elem_center(index=index, elem_width=elem.elem_width))
+        elem.move_to(vector.get_elem_center(
+            index=index, offset=offset, elem_width=elem.elem_width))
     elif isinstance(vector, TwoDimReg):
-        elem.move_to(vector.get_elem_center(reg_idx=reg_idx,
-                                            index=index,
-                                            elem_width=elem.elem_width))
+        elem.move_to(vector.get_elem_center(
+            reg_idx=reg_idx, index=index, offset=offset, elem_width=elem.elem_width))
     else:
         error_str = f"vector is not right type. {str(vector)}"
         raise ValueError(error_str)
@@ -111,7 +113,8 @@ def assign_elem(old_elem: OneDimRegElem,
                 new_elem: OneDimRegElem,
                 vector: OneDimReg,
                 reg_idx: int = 0,
-                index: int = 0) -> Animation:
+                index: int = 0,
+                offset: int = 0) -> Animation:
     """
     Animation for assign element to register. Move element to the specified location related to
     the register.
@@ -125,13 +128,14 @@ def assign_elem(old_elem: OneDimRegElem,
         size: Width of destination element in bit.
         reg_idx: register index.
         index: Index of element.
+        offset: Offset of lower bit.
     """
     if isinstance(vector, OneDimReg):
-        dest_pos = vector.get_elem_center(index=index, elem_width=new_elem.elem_width)
+        dest_pos = vector.get_elem_center(
+            index=index, offset=offset, elem_width=new_elem.elem_width)
     elif isinstance(vector, TwoDimReg):
-        dest_pos = vector.get_elem_center(reg_idx=reg_idx,
-                                          index=index,
-                                          elem_width=new_elem.elem_width)
+        dest_pos = vector.get_elem_center(
+            reg_idx=reg_idx, index=index, offset=offset, elem_width=new_elem.elem_width)
     else:
         error_str = f"vector is not right type. {str(vector)}"
         raise ValueError(error_str)

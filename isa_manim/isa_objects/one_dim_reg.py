@@ -113,6 +113,7 @@ class OneDimReg(VGroup):
     # Get locations.
     def get_elem_center(self,
                         index: int,
+                        offset: int,
                         elem_width: float = -1.0) -> np.ndarray:
         """
         Return center position of specified item.
@@ -122,10 +123,12 @@ class OneDimReg(VGroup):
 
         Args:
             index: Index of elements.
+            offset: Offset of lower bits.
             elem_width: Width of element in bits.
         """
         if elem_width < 0:
             elem_width = self.elem_width
 
         return self.reg_rect.get_right() \
+            + LEFT * offset * get_scene_ratio() \
             + LEFT * (index + 0.5) * elem_width * get_scene_ratio()

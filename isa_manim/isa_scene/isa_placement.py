@@ -403,7 +403,9 @@ class IsaPlacementMap:
                 else:
                     self._placement_map[row][col] = marker
 
-    def place_item_into_map(self, placement_item: IsaPlacementItem) -> bool:
+    def place_item_into_map(self,
+                            placement_item: IsaPlacementItem,
+                            align_row: int = None) -> bool:
         """
         Place object into placement map.
 
@@ -414,8 +416,18 @@ class IsaPlacementMap:
         rect_height = placement_item.get_height()
         marker = placement_item.get_marker()
 
-        # BR strategy, first try to place item under exist item.
-        if self._placement_strategy == "RB":
+        # Align strategy, 
+        if align_row is not None:
+            for col in range(1, self._placement_width - rect_width + 1):
+                if self._placement_map[align_row][col] != 0:
+                    continue
+                if self._placement_check_rect(align_row, col, rect_width, rect_height, marker):
+                    placement_item.set_corner(align_row, col)
+                    self._placement_mark_rect(marker, align_row, col, rect_width, rect_height)
+                    return True
+            
+        # RB strategy, first try to place item under exist item.
+        elif self._placement_strategy == "RB":
             for row in range(1, self._placement_height - rect_height + 1):
                 for col in range(1, self._placement_width - rect_width + 1):
                     if self._placement_map[row][col] != 0:
@@ -474,7 +486,8 @@ class IsaPlacementMap:
 
     def placement_add_object(self,
                              place_object: Mobject,
-                             place_hash: str = None):
+                             place_hash: str = None,
+                             align_with = None):
         """
         Add object into dictionary and place it into placement map.
 
@@ -487,7 +500,7 @@ class IsaPlacementMap:
 
         #
         isa_object_item = IsaPlacementItem(place_object, place_hash)
-        self.placement_add_placement_item(isa_object_item)
+        self.placement_add_placement_item(isa_object_item, align_with=align_with)
 
     def placement_add_object_group(self,
                                    place_object_list: List[Mobject],
@@ -551,17 +564,31 @@ class IsaPlacementMap:
             place_row += row_height + 1
 
     def placement_add_placement_item(self,
-                                     placement_item: IsaPlacementItem):
+                                     placement_item: IsaPlacementItem,
+                                     align_with = None):
         """
         Add placement item into map.
         """
         if not isinstance(placement_item, _IsaPlaceHolderItem):
             self._placement_object_dict[placement_item.isa_hash] = placement_item
 
+        if align_with is None:
+            align_row = None
+        else:
+            if isinstance(align_with, Mobject):
+                align_with_hash = hash(align_with)
+            else:
+                align_with_hash = align_with
+            if align_with_hash in self._placement_object_dict:
+                align_with_item = self._placement_object_dict[align_with_hash]
+                align_row = align_with_item.row
+            else:
+                align_row = None
+
         place_success = False
         while not place_success:
             # place item into scene
-            place_success = self.place_item_into_map(placement_item)
+            place_success = self.place_item_into_map(placement_item, align_row=align_row)
 
             # If place fail, resize map.
             if not place_success:

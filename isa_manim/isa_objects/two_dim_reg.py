@@ -131,6 +131,7 @@ class TwoDimReg(VGroup):
     def get_elem_center(self,
                         reg_idx: int,
                         index: int,
+                        offset: int,
                         elem_width: float = -1.0) -> np.ndarray:
         """
         Return center position of specified item.
@@ -141,6 +142,7 @@ class TwoDimReg(VGroup):
         Args:
             reg_idx: Index of register.
             index: Index of elements.
+            offset: Offset of lower bits.
             elem_width: Width of element in bits.
         """
         if elem_width < 0:
@@ -154,4 +156,5 @@ class TwoDimReg(VGroup):
             reg_idx = reg_idx % self.reg_count
 
         return self.reg_rect_list[reg_idx].get_right() \
+            + LEFT * offset * get_scene_ratio() \
             + LEFT * (index + 0.5) * elem_width * get_scene_ratio()
