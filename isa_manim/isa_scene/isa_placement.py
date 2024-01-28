@@ -74,11 +74,11 @@ class IsaPlacementItem:
         self.col = 0
 
     def __str__(self) -> str:
-        string = f"[Object={str(self.isa_object)}, "
+        string = f"[Object={str(self.isa_object)}, row={self.row}, col={self.col}]"
         return string
 
     def __repr__(self) -> str:
-        string = f"[Object={str(self.isa_object)}, "
+        string = f"[Object={str(self.isa_object)}, row={self.row}, col={self.col}]"
         return string
 
     def get_width(self) -> int:

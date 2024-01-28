@@ -109,18 +109,22 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                               vector: OneDimReg,
                               size: float,
                               reg_idx: int,
-                              index: int):
-        self.elem_source_dict[elem] = [vector, size, reg_idx, index]
+                              index: int,
+                              offset: int):
+        self.elem_source_dict[elem] = [vector, size, reg_idx, index, offset]
 
     def _get_elem_source_elem(self,
                               vector: OneDimReg,
                               size: float = -1.0,
                               reg_idx: int = 0,
-                              index: int = 0):
+                              index: int = 0,
+                              offset: int = 0):
         for elem, elem_src in self.elem_source_dict.items():
-            elem_src_vector, elem_src_size, elem_src_reg_idx, elem_src_index = elem_src
+            elem_src_vector, elem_src_size, elem_src_reg_idx, elem_src_index, elem_src_offset = \
+                elem_src
             if elem_src_vector == vector and elem_src_size == size \
-                    and elem_src_reg_idx == reg_idx and elem_src_index == index:
+                    and elem_src_reg_idx == reg_idx and elem_src_index == index \
+                    and elem_src_offset == offset:
                 return elem
         return None
 
@@ -239,7 +243,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         color = self.colormap_get_color(
             self._traceback_hash() if color_hash is None else color_hash)
 
-        elem = self._get_elem_source_elem(vector=vector, size=size, reg_idx=reg_idx, index=index)
+        elem = self._get_elem_source_elem(
+            vector=vector, size=size, reg_idx=reg_idx, index=index, offset=offset)
         if elem is None:
             elem = OneDimRegElem(color=color,
                                  width=size,
@@ -248,7 +253,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                                  font_size=font_size,
                                  value_format=value_format)
             self._set_elem_source_elem(
-                elem=elem, vector=vector, size=size, reg_idx=reg_idx, index=index)
+                elem=elem, vector=vector, size=size, reg_idx=reg_idx, index=index, offset=offset)
 
             self.last_dep_map[elem] = vector
 
@@ -407,7 +412,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                       res_size: float,
                       func: str = None,
                       args_value: List[str] = None,
-                      font_size: int = DEFAULT_FONT_SIZE) -> FunctionUnit:
+                      font_size: int = DEFAULT_FONT_SIZE,
+                      align_with = None) -> FunctionUnit:
         """
         Animation of declare function call.
         
@@ -426,7 +432,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                                      res_width=res_size,
                                      args_value=args_value,
                                      font_size=font_size)
-            self.placement_add_object(func_unit, isa_hash)
+            self.placement_add_object(func_unit, isa_hash, align_with=align_with)
 
             self.animation_add_animation(
                 animate=decl_func_call(func_unit), src=None, dst=func_unit)

@@ -90,7 +90,7 @@ class FunctionUnit(VGroup):
                                                 width=arg_width * get_scene_ratio() )) \
                     .move_to(arg_pos + UP * 0.5)
             arg_text = Text(text=arg_value, color=color, font_size=font_size) \
-                    .move_to(arg_pos + UP * 0.5)
+                    .move_to(arg_pos + UP * 0.5 + DOWN * (0.5 + font_size / 200))
             # Scale
             if arg_text.width > arg_rect.width:
                 arg_text_scale = arg_rect.width / arg_text.width
