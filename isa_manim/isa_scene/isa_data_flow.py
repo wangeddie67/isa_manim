@@ -135,7 +135,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                     text: str,
                     width: int,
                     font_size: int = DEFAULT_FONT_SIZE,
-                    label_pos = None) -> OneDimReg:
+                    label_pos = None,
+                    align_with = None) -> OneDimReg:
         """
         Declare scalar variables, return one-dim register.
         """
@@ -146,7 +147,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                                elements=1,
                                font_size=font_size,
                                label_pos=label_pos)
-        self.placement_add_object(scalar_reg)
+        self.placement_add_object(scalar_reg, align_with=align_with)
 
         self.animation_add_animation(animate=decl_register(scalar_reg), src=None, dst=scalar_reg)
         return scalar_reg
@@ -519,8 +520,17 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         """
         Animate of Function call.
         """
+        args_item: List[OneDimRegElem] = []
+        args_item_exist: List[OneDimRegElem] = []
+        for item in args:
+            if isinstance(item, tuple):
+                args_item.append(item[0])
+            else:
+                args_item.append(item)
+                args_item_exist.append(item)
+
         func_unit = self.decl_function(isa_hash=func_isa_hash,
-                                       args_width=[item.elem_width for item in args],
+                                       args_width=[item.elem_width for item in args_item],
                                        res_size=res_size,
                                        func=func,
                                        args_value=func_args_value,
@@ -537,13 +547,18 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
 
         old_dep = []
         args_ = []
+        args_exist_ = []
         for arg in args:
-            if arg in self.last_dep_map:
-                old_dep.append(self.last_dep_map[arg])
-                del self.last_dep_map[arg]
+            if isinstance(arg, tuple):
+                args_.append(arg)
+            else:
+                if arg in self.last_dep_map:
+                    old_dep.append(self.last_dep_map[arg])
+                    del self.last_dep_map[arg]
 
-            arg_ = self._get_duplicate_item(arg)
-            args_.append(arg_)
+                arg_ = self._get_duplicate_item(arg)
+                args_.append(arg_)
+                args_exist_.append(arg_)
 
         self.last_dep_map[res_elem] = func_unit
 
@@ -558,19 +573,17 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                                   res_item=res_elem,
                                   func_args_index=func_args_index,
                                   res_index=res_index),
-            src=args + args_,
+            src=args_item_exist + args_exist_,
             dst=res_elem,
             dep=(old_dep + [func_unit]) if old_dep else [func_unit])
-        for arg in args:
+        for arg in args_item_exist:
             self._set_item_cusumer(arg, animation_item)
         self._set_item_producer(res_elem, animation_item)
 
         return res_elem
 
     def read_func_imm(self,
-                      arg_idx: int,
                       size: float,
-                      func_isa_hash: str = None,
                       color_hash = None,
                       value = None,
                       fill_opacity: float = 0.5,
@@ -579,10 +592,6 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         """
         Animate of Function call.
         """
-        if not self.placement_has_object(func_isa_hash):
-            raise ValueError("Undefined function unit.")
-        func_unit = self.placement_get_object(func_isa_hash)
-
         res_color = self.colormap_get_color(
             self._traceback_hash() if color_hash is None else color_hash)
         res_elem = OneDimRegElem(color=res_color,
@@ -592,16 +601,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                                  font_size=font_size,
                                  value_format=value_format)
 
-        self.last_dep_map[res_elem] = func_unit
-
-        animation_item = self.animation_add_animation(
-            animate=read_func_imm(func_unit=func_unit, elem=res_elem, arg_idx=arg_idx),
-            src=func_unit,
-            dst=res_elem,
-            dep=[func_unit])
-        self._set_item_producer(res_elem, animation_item)
-
-        return res_elem
+        return read_func_imm(elem=res_elem)
 
     #
     # Memory
@@ -690,9 +690,10 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                                                 raddr=addr_value + size // 8,
                                                 color=data_color)
             mem_unit.append_mem_mark_list(mem_mark)
-            data = data.stretch_to_fit_width(mem_mark.width) \
-                .stretch_to_fit_height(mem_mark.height) \
-                .move_to(mem_mark.get_center())
+            if not mem_unit.require_serialization:
+                data = data.stretch_to_fit_width(mem_mark.width) \
+                    .stretch_to_fit_height(mem_mark.height) \
+                    .move_to(mem_mark.get_center())
 
             animation_item = self.animation_add_animation(
                 animate=read_memory(mem_unit=mem_unit,

@@ -301,6 +301,18 @@ class IsaAnimationMap:
                     fade_out=fade_out,
                     camera_animate=camera_animate,
                     keep_objects=keep_objects))
+        elif len(self.isa_animation_section_list) > 0:
+            # If two end_section subquently, intersection.
+            self.isa_animation_section_list[-1].wait += wait
+            self.isa_animation_section_list[-1].fade_out |= fade_out
+            new_keep_objects = []
+            if self.isa_animation_section_list[-1].keep_objects and keep_objects:
+                for t_object in self.isa_animation_section_list[-1].keep_objects:
+                    if t_object in keep_objects:
+                        new_keep_objects.append(t_object)
+                self.isa_animation_section_list[-1].keep_objects = new_keep_objects
+            else:
+                self.isa_animation_section_list[-1].keep_objects = None
 
         self._section_animate_list = []
 

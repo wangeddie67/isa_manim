@@ -2,8 +2,9 @@
 Predefined Animations.
 """
 
-from typing import List, Union
-from manim import (AnimationGroup, Succession, FadeIn, FadeOut, Animation, Transform, Create,
+from typing import List, Union, Tuple
+from manim import (Mobject,
+                   AnimationGroup, Succession, FadeIn, FadeOut, Animation, Transform, Create,
                    Indicate, Wait,
                    Rectangle, Triangle,
                    LEFT, RIGHT)
@@ -182,22 +183,15 @@ def decl_func_call(*func_unit: List[FunctionUnit]) -> Animation:
     """
     return FadeIn(*func_unit)
 
-def read_func_imm(func_unit: FunctionUnit,
-                  elem: OneDimRegElem,
-                  arg_idx: int = 0,
-                  elem_index: int = 0) -> Animation:
+def read_func_imm(elem: OneDimRegElem) -> Tuple[Mobject, Animation]:
     """
     Animation for set one argument as immediate. Fade in element at the specified location related
     to the function unit..
 
     Args:
-        func_unit: object of the function unit.
         elem: object of the element.
-        index: argument index.
     """
-
-    elem.move_to(func_unit.get_args_pos(arg_idx, elem.elem_width, elem_index))
-    return FadeIn(elem)
+    return (elem, FadeIn(elem))
 
 def function_call(func_unit: FunctionUnit,
                   args_list: List[OneDimRegElem],
@@ -214,10 +208,20 @@ def function_call(func_unit: FunctionUnit,
     """
     res_item.move_to(func_unit.get_dst_pos(res_item.elem_width, res_index))
 
+    move_animate_list = []
+    args_list_ = []
+    for i, arg in enumerate(args_list):
+        if isinstance(arg, tuple):
+            arg[0].move_to(func_unit.get_args_pos(i, arg[0].elem_width, func_args_index[i]))
+            args_list_.append(arg[0])
+            move_animate_list.append(arg[1])
+        else:
+            args_list_.append(arg)
+            move_animate_list.append(
+                arg.animate.move_to(func_unit.get_args_pos(i, arg.elem_width, func_args_index[i])))
     move_animate = \
-        AnimationGroup(*[arg.animate.move_to(func_unit.get_args_pos(
-                            i, arg.elem_width, func_args_index[i]))
-                         for i, arg in enumerate(args_list)])
+        AnimationGroup(*move_animate_list)
+
     fade_animate = \
         AnimationGroup(
             FadeIn(res_item,
@@ -226,7 +230,7 @@ def function_call(func_unit: FunctionUnit,
             *[FadeOut(arg,
                       shift=func_unit.func_ellipse.get_center() - \
                           func_unit.get_args_pos(i, arg.elem_width, func_args_index[i]))
-               for i, arg in enumerate(args_list)]
+               for i, arg in enumerate(args_list_)]
         )
     return Succession(move_animate, Wait(0.5), fade_animate)
 
@@ -302,16 +306,31 @@ def read_memory(mem_unit: MemoryUnit,
         old_mem_map: Old memory map.
         new_mem_map: New memory map.
     """
-    # Move address to argument position.
-    move_animate = Indicate(addr_item)
+    if mem_unit.require_serialization:
+        # Move address to argument position.
+        move_animate = addr_item.animate.move_to(mem_unit.get_addr_pos(addr_item.elem_width))
 
-    # Address mark.
-    addr_animate = Transform(addr_item, addr_mark)
+        # Address mark.
+        addr_animate = AnimationGroup(Transform(addr_item, addr_mark))
 
-    # Data item.
-    data_animate = Create(mem_mark)
+        # Data item.
+        data_item.move_to(mem_unit.get_data_pos(data_item.elem_width))
+        data_animate = AnimationGroup(
+            FadeOut(addr_item), Create(mem_mark),
+            FadeIn(data_item, shift=mem_unit.get_data_pos() - mem_mark.get_center()))
 
-    return Succession(move_animate, addr_animate, data_animate)
+        return Succession(move_animate, addr_animate, data_animate)
+    else:
+        # Move address to argument position.
+        move_animate = Indicate(addr_item, color=addr_item.elem_color)
+
+        # Address mark.
+        addr_animate = Transform(addr_item, addr_mark)
+
+        # Data item.
+        data_animate = Create(mem_mark)
+
+        return Succession(move_animate, addr_animate, data_animate)
 
 def write_memory(mem_unit: MemoryUnit,
                  addr_item: OneDimRegElem,
@@ -328,13 +347,28 @@ def write_memory(mem_unit: MemoryUnit,
         old_mem_map: Old memory map.
         new_mem_map: New memory map.
     """
-    # Move address and data to argument position.
-    move_animate = Indicate(addr_item)
+    if mem_unit.require_serialization:
+        # Move address and data to argument position.
+        move_animate = \
+            AnimationGroup(addr_item.animate.move_to(mem_unit.get_addr_pos(addr_item.elem_width)),
+                           data_item.animate.move_to(mem_unit.get_data_pos(data_item.elem_width)))
 
-    # Address mark.
-    addr_animate = Transform(addr_item, addr_mark)
+        # Address mark.
+        addr_animate = Transform(addr_item, addr_mark)
 
-    # Data mark.
-    data_animate = Transform(data_item, mem_mark)
+        data_animate = AnimationGroup(
+            FadeOut(addr_item), Create(mem_mark),
+            FadeOut(data_item, shift=mem_mark.get_center() - mem_unit.get_data_pos()))
 
-    return Succession(move_animate, addr_animate, data_animate)
+        return Succession(move_animate, addr_animate, data_animate)
+    else:
+        # Move address and data to argument position.
+        move_animate = Indicate(addr_item, color=addr_item.elem_color)
+
+        # Address mark.
+        addr_animate = Transform(addr_item, addr_mark)
+
+        # Data mark.
+        data_animate = Transform(data_item, mem_mark)
+
+        return Succession(move_animate, addr_animate, data_animate)
