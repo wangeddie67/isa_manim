@@ -316,7 +316,7 @@ def read_memory(mem_unit: MemoryUnit,
         # Data item.
         data_item.move_to(mem_unit.get_data_pos(data_item.elem_width))
         data_animate = AnimationGroup(
-            FadeOut(addr_item), Create(mem_mark),
+            Create(mem_mark),
             FadeIn(data_item, shift=mem_unit.get_data_pos() - mem_mark.get_center()))
 
         return Succession(move_animate, addr_animate, data_animate)
@@ -357,7 +357,7 @@ def write_memory(mem_unit: MemoryUnit,
         addr_animate = Transform(addr_item, addr_mark)
 
         data_animate = AnimationGroup(
-            FadeOut(addr_item), Create(mem_mark),
+            Create(mem_mark),
             FadeOut(data_item, shift=mem_mark.get_center() - mem_unit.get_data_pos()))
 
         return Succession(move_animate, addr_animate, data_animate)
