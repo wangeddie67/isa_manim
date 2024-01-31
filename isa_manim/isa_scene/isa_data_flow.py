@@ -155,7 +155,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
     def decl_vector(self,
                     text: str,
                     width: int,
-                    elements: int = 1,
+                    elements: int,
                     font_size: int = DEFAULT_FONT_SIZE,
                     label_pos = None,
                     align_with = None) -> OneDimReg:
@@ -177,7 +177,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
     def decl_vector_group(self,
                           text_list: List[str],
                           width: int,
-                          elements: int = 1,
+                          elements: int,
                           font_size: int = DEFAULT_FONT_SIZE,
                           label_pos = None) -> TwoDimReg:
         """
@@ -609,9 +609,9 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
     def decl_memory(self,   # pylint: disable=dangerous-default-value
                     addr_width: int = get_config("mem_addr_width"),
                     data_width: int = get_config("mem_data_width"),
-                    addr_align: int = get_config("mem_align"),
-                    isa_hash: str = None,
                     mem_range: List[Tuple[int]] = get_config("mem_range"),
+                    isa_hash: str = None,
+                    addr_align: int = get_config("mem_align"),
                     font_size = DEFAULT_FONT_SIZE,
                     para_enable = False) -> MemoryUnit:
         """
