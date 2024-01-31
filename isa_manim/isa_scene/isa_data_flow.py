@@ -643,6 +643,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
     def read_memory(self,   # pylint: disable=dangerous-default-value
                     addr: OneDimRegElem,
                     size: int,
+                    addr_value: int = None,
+                    addr_match: bool = False,
                     res_color_hash = None,
                     res_value = None,
                     res_fill_opacity: float = 0.5,
@@ -664,6 +666,15 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                                     mem_range=mem_mem_range,
                                     font_size=mem_font_size)
 
+        if addr_value is None:
+            if addr.elem_value is not None and mem_unit.is_mem_range_cover(int(addr.elem_value)):
+                addr_value = int(addr.elem_value)
+                addr_match = True
+        else:
+            if addr.elem_value is not None and mem_unit.is_mem_range_cover(int(addr.elem_value)):
+                if addr_value == int(addr.elem_value):
+                    addr_match = True
+
         data_color = self.colormap_get_color(
             self._traceback_hash() if res_color_hash is None else res_color_hash)
         data = OneDimRegElem(color=data_color,
@@ -678,12 +689,14 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
             old_dep.append(self.last_dep_map[addr])
             del self.last_dep_map[addr]
 
-        addr_ = self._get_duplicate_item(addr)
+        if addr_match:
+            addr_ = self._get_duplicate_item(addr)
+        else:
+            addr_ = addr
 
         self.last_dep_map[data] = mem_unit
 
-        if addr.elem_value is not None and mem_unit.is_mem_range_cover(int(addr.elem_value)):
-            addr_value = int(addr.elem_value)
+        if addr_value is not None:
             addr_mark = mem_unit.get_addr_mark(addr=addr_value,
                                                color=addr_.elem_color)
             mem_mark = mem_unit.get_rd_mem_mark(laddr=addr_value,
@@ -700,11 +713,12 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                                     addr_item=addr_,
                                     data_item=data,
                                     addr_mark=addr_mark,
-                                    mem_mark=mem_mark),
+                                    mem_mark=mem_mark,
+                                    addr_match=addr_match),
                 src=[addr, addr_],
                 dst=[data, mem_mark],
                 dep=old_dep + [mem_unit],
-                remove_after=[addr_])
+                remove_after=[addr_] if addr_match else [addr_mark])
             self._set_item_cusumer(addr, animation_item)
             self._set_item_producer(data, animation_item)
         else:
@@ -723,6 +737,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
     def write_memory(self,  # pylint: disable=dangerous-default-value
                      addr: OneDimRegElem,
                      data: OneDimRegElem,
+                     addr_value: int = None,
+                     addr_match: bool = False,
                      mem_addr_width: int = get_config("mem_addr_width"),
                      mem_data_width: int = get_config("mem_data_width"),
                      mem_addr_align: int = get_config("mem_align"),
@@ -739,12 +755,25 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                                     mem_range=mem_mem_range,
                                     font_size=mem_font_size)
 
+        addr_match = False
+        if addr_value is None:
+            if addr.elem_value is not None and mem_unit.is_mem_range_cover(int(addr.elem_value)):
+                addr_value = int(addr.elem_value)
+                addr_match = True
+        else:
+            if addr.elem_value is not None and mem_unit.is_mem_range_cover(int(addr.elem_value)):
+                if addr_value == int(addr.elem_value):
+                    addr_match = True
+
         old_dep = []
         if addr in self.last_dep_map:
             old_dep.append(self.last_dep_map[addr])
             del self.last_dep_map[addr]
 
-        addr_ = self._get_duplicate_item(addr)
+        if addr_match:
+            addr_ = self._get_duplicate_item(addr)
+        else:
+            addr_ = addr
 
         if data in self.last_dep_map:
             old_dep.append(self.last_dep_map[data])
@@ -752,8 +781,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
 
         data_ = self._get_duplicate_item(data)
 
-        if addr.elem_value is not None and mem_unit.is_mem_range_cover(int(addr.elem_value)):
-            addr_value = int(addr.elem_value)
+        if addr_value is not None:
             addr_mark = mem_unit.get_addr_mark(addr=addr_value,
                                                color=addr_.elem_color)
             mem_mark = mem_unit.get_wt_mem_mark(laddr=addr_value,
@@ -766,11 +794,12 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                                      addr_item=addr_,
                                      data_item=data_,
                                      addr_mark=addr_mark,
-                                     mem_mark=mem_mark),
+                                     mem_mark=mem_mark,
+                                     addr_match=addr_match),
                 src=[addr, data, addr_, data_],
                 dst=[mem_mark],
                 dep=old_dep + [mem_unit],
-                remove_after=[addr_, data_],
+                remove_after=[addr_, data_] if addr_match else [addr_mark, data_],
                 add_after=[mem_mark])
             self._set_item_cusumer(addr, animation_item)
             self._set_item_cusumer(data, animation_item)

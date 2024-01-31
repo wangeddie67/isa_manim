@@ -295,7 +295,8 @@ def read_memory(mem_unit: MemoryUnit,
                 addr_item: OneDimRegElem,
                 data_item: OneDimRegElem,
                 addr_mark: Triangle,
-                mem_mark: Rectangle) -> Animation:
+                mem_mark: Rectangle,
+                addr_match: bool = True) -> Animation:
     """
     Animation for calling one function.
 
@@ -308,10 +309,16 @@ def read_memory(mem_unit: MemoryUnit,
     """
     if mem_unit.require_serialization:
         # Move address to argument position.
-        move_animate = addr_item.animate.move_to(mem_unit.get_addr_pos(addr_item.elem_width))
+        if addr_match:
+            move_animate = addr_item.animate.move_to(mem_unit.get_addr_pos(addr_item.elem_width))
+        else:
+            move_animate = Wait()
 
         # Address mark.
-        addr_animate = AnimationGroup(Transform(addr_item, addr_mark))
+        if addr_match:
+            addr_animate = Transform(addr_item, addr_mark)
+        else:
+            addr_animate = FadeIn(addr_mark, shift=addr_mark.get_center() - addr_item.get_center())
 
         # Data item.
         data_item.move_to(mem_unit.get_data_pos(data_item.elem_width))
@@ -322,10 +329,16 @@ def read_memory(mem_unit: MemoryUnit,
         return Succession(move_animate, addr_animate, data_animate)
     else:
         # Move address to argument position.
-        move_animate = Indicate(addr_item, color=addr_item.elem_color)
+        if addr_match:
+            move_animate = Indicate(addr_item, color=addr_item.elem_color)
+        else:
+            move_animate = Wait()
 
         # Address mark.
-        addr_animate = Transform(addr_item, addr_mark)
+        if addr_match:
+            addr_animate = Transform(addr_item, addr_mark)
+        else:
+            addr_animate = FadeIn(addr_mark, shift=addr_mark.get_center() - addr_item.get_center())
 
         # Data item.
         data_animate = Create(mem_mark)
@@ -336,7 +349,8 @@ def write_memory(mem_unit: MemoryUnit,
                  addr_item: OneDimRegElem,
                  data_item: OneDimRegElem,
                  addr_mark: Triangle,
-                 mem_mark: Rectangle) -> Animation:
+                 mem_mark: Rectangle,
+                 addr_match: bool = True) -> Animation:
     """
     Animation for calling one function.
 
@@ -349,24 +363,37 @@ def write_memory(mem_unit: MemoryUnit,
     """
     if mem_unit.require_serialization:
         # Move address and data to argument position.
-        move_animate = \
-            AnimationGroup(addr_item.animate.move_to(mem_unit.get_addr_pos(addr_item.elem_width)),
-                           data_item.animate.move_to(mem_unit.get_data_pos(data_item.elem_width)))
+        if addr_match:
+            move_animate = AnimationGroup(
+                addr_item.animate.move_to(mem_unit.get_addr_pos(addr_item.elem_width)),
+                data_item.animate.move_to(mem_unit.get_data_pos(data_item.elem_width)))
+        else:
+            move_animate = Wait()
 
         # Address mark.
-        addr_animate = Transform(addr_item, addr_mark)
+        if addr_match:
+            addr_animate = Transform(addr_item, addr_mark)
+        else:
+            addr_animate = FadeIn(addr_mark, shift=addr_mark.get_center() - addr_item.get_center())
 
+        # Data mark.
         data_animate = AnimationGroup(
             Create(mem_mark),
             FadeOut(data_item, shift=mem_mark.get_center() - mem_unit.get_data_pos()))
 
         return Succession(move_animate, addr_animate, data_animate)
     else:
-        # Move address and data to argument position.
-        move_animate = Indicate(addr_item, color=addr_item.elem_color)
+        # Move address to argument position.
+        if addr_match:
+            move_animate = Indicate(addr_item, color=addr_item.elem_color)
+        else:
+            move_animate = Wait()
 
         # Address mark.
-        addr_animate = Transform(addr_item, addr_mark)
+        if addr_match:
+            addr_animate = Transform(addr_item, addr_mark)
+        else:
+            addr_animate = FadeIn(addr_mark, shift=addr_mark.get_center() - addr_item.get_center())
 
         # Data mark.
         data_animate = Transform(data_item, mem_mark)
