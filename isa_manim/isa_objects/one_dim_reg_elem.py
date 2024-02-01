@@ -98,6 +98,54 @@ class OneDimRegElem(VGroup):
     def align_points_with_larger(self, larger_mobject):
         raise NotImplementedError("Please override in a child class.")
 
+    def set_paritial_value(self, size: int, offset: int, value: Any):
+        """
+        Set part of element as specified value.
+
+        Args:
+            size (int): Size of value.
+            offset (int): Offset from lower part.
+            value (Any): Value of that part.
+        """
+        # Register rectangle
+        paritial_elem_rect = Rectangle(color=self.elem_color,
+                                       height=1.0,
+                                       width=size * get_scene_ratio(),
+                                       fill_opacity=self.fill_opacity)
+
+        # Value text
+        if value is None:
+            value_str = ""
+        elif isinstance(value, (int, float)):
+            value_str = self.elem_value_format.format(value)
+        else:
+            value_str = str(value)
+        paritial_value_text = Text(text=value_str,
+                                   color=self.elem_color,
+                                   font_size=self.elem_font_size)
+
+        # Scale
+        if paritial_value_text.width > paritial_elem_rect.width:
+            value_text_scale = paritial_elem_rect.width / paritial_value_text.width
+            paritial_value_text.scale(value_text_scale)
+
+        # Position of paritial element
+        pos = self.elem_rect.get_right() + LEFT * (size * 0.5 + offset) * get_scene_ratio()
+        paritial_elem_rect.move_to(pos)
+        paritial_value_text.move_to(pos)
+
+        # Move value position
+        text_left = self.value_text.get_left()
+        text_right = self.value_text.get_right()
+        paritial_text_left = paritial_value_text.get_left()
+        paritial_text_right = paritial_value_text.get_left()
+        if text_left[0] < paritial_text_left[0] < text_right[0]:
+            self.value_text.shift(paritial_text_left - text_left)
+        if text_left[0] < paritial_text_right[0] < text_right[0]:
+            self.value_text.shift(paritial_text_right - text_right)
+
+        self.add(paritial_elem_rect, paritial_value_text)
+
     # Get locations.
     def get_sub_elem_center(self,
                             index: int,

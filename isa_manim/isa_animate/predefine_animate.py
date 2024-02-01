@@ -5,7 +5,7 @@ Predefined Animations.
 from typing import List, Union, Tuple
 from manim import (Mobject,
                    AnimationGroup, Succession, FadeIn, FadeOut, Animation, Transform, Create,
-                   Indicate, Wait,
+                   FadeTransformPieces, Indicate, Wait,
                    Rectangle, Triangle,
                    LEFT, RIGHT)
 from ..isa_objects import (OneDimReg,
@@ -169,7 +169,7 @@ def replace_elem(old_elem: OneDimRegElem,
         raise ValueError("align can only be center/left/right.")
 
     new_elem.move_to(new_pos)
-    return Transform(old_elem, new_elem)
+    return FadeTransformPieces(old_elem, new_elem)
 
 #
 # Animation with functions.

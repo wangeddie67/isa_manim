@@ -38,7 +38,8 @@ class FunctionUnit(VGroup):
                  args_width: List[int],
                  res_width: int,
                  args_value: List[str] = None,
-                 font_size: int = DEFAULT_FONT_SIZE):
+                 font_size: int = DEFAULT_FONT_SIZE,
+                 func = None):
         """
         Constructor an function call.
 
@@ -51,6 +52,7 @@ class FunctionUnit(VGroup):
             font_size: Font size of value text.
         """
         self.func_font_size: int = font_size
+        self.func = func
 
         # Argument Text
         if args_value is None:

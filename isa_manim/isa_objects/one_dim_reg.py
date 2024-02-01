@@ -49,7 +49,8 @@ class OneDimReg(VGroup):
                  width: int,
                  elements: int = 1,
                  font_size: int = DEFAULT_FONT_SIZE,
-                 label_pos = None):
+                 label_pos = None,
+                 value = None):
         """
         Constructor an scalar register.
 
@@ -64,6 +65,7 @@ class OneDimReg(VGroup):
         """
         self.elem_width = width // elements
         self.reg_font_size = font_size
+        self.reg_value = value
 
         # Register rectangle
         if elements > 1:
@@ -132,3 +134,19 @@ class OneDimReg(VGroup):
         return self.reg_rect.get_right() \
             + LEFT * offset * get_scene_ratio() \
             + LEFT * (index + 0.5) * elem_width * get_scene_ratio()
+
+    def get_elem_value(self,
+                       index: int):
+        """
+        Return value of specified item.
+        
+        Args:
+            index: Index of elements.
+        """
+        if self.reg_value is None:
+            return None
+
+        if isinstance(self.reg_value, list):
+            return self.reg_value[index % len(self.reg_value)]
+        else:
+            return self.reg_value

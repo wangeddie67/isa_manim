@@ -51,7 +51,8 @@ class TwoDimReg(VGroup):
                  width: int,
                  elements: int = 1,
                  font_size = DEFAULT_FONT_SIZE,
-                 label_pos = None):
+                 label_pos = None,
+                 value = None):
         """
         Constructor an two-dimension register.
 
@@ -67,6 +68,7 @@ class TwoDimReg(VGroup):
 
         """
         self.reg_font_size = font_size
+        self.reg_value = value
 
         # register count
         self.reg_count = nreg
@@ -158,3 +160,25 @@ class TwoDimReg(VGroup):
         return self.reg_rect_list[reg_idx].get_right() \
             + LEFT * offset * get_scene_ratio() \
             + LEFT * (index + 0.5) * elem_width * get_scene_ratio()
+
+    def get_elem_value(self,
+                       reg_idx: int,
+                       index: int):
+        """
+        Return value of specified item.
+        
+        Args:
+            index: Index of elements.
+        """
+        if self.reg_value is None:
+            return None
+
+        if isinstance(self.reg_value, list):
+            if isinstance(self.reg_value[0], list):
+                sub_reg_value = self.reg_value[reg_idx % len(self.reg_value)]
+                return sub_reg_value[index % len(sub_reg_value)]
+            else:
+                elem_count = self.reg_width // self.elem_width
+                return self.reg_value[(reg_idx * elem_count + index) % len(self.reg_value)]
+        else:
+            return self.reg_value

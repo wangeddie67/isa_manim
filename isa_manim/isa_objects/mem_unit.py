@@ -96,7 +96,8 @@ class MemoryUnit(VGroup):
         mem_map_idx = 0
         for laddr, raddr in mem_range:
             laddr = (laddr // addr_align) * addr_align
-            raddr = ceil(raddr / addr_align) * addr_align
+            raddr = ((raddr // addr_align) + 1) * addr_align if raddr % addr_align > 0 else \
+                    (raddr // addr_align) * addr_align
 
             mem_map_rect = Rectangle(color=color, height=1.0, width=mem_map_width)
             mem_map_rect.shift(self.addr_rect.get_left() - mem_map_rect.get_left())
