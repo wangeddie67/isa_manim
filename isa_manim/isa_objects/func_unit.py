@@ -37,7 +37,7 @@ class FunctionUnit(VGroup):
                  color: Color,
                  args_width: List[int],
                  res_width: int,
-                 args_value: List[str] = None,
+                 args_name: List[str] = None,
                  font_size: int = DEFAULT_FONT_SIZE,
                  func = None):
         """
@@ -48,15 +48,15 @@ class FunctionUnit(VGroup):
             color: Color of function call.
             args_width: Width of arguments, in bit
             res_width: Width of return value, in bit
-            args_value: Text of each argument.
+            args_name: Text of each argument.
             font_size: Font size of value text.
         """
         self.func_font_size: int = font_size
         self.func = func
 
         # Argument Text
-        if args_value is None:
-            args_value = ["" for _ in args_width]
+        if args_name is None:
+            args_name = ["" for _ in args_width]
 
         args_scene_width = [width * get_scene_ratio() for width in args_width]
 
@@ -86,7 +86,7 @@ class FunctionUnit(VGroup):
         # Arguments Rectangle
         self.args_rect_list: List[Rectangle] = []
         self.args_text_list: List[Text] = []
-        for arg_pos, arg_width, arg_value in zip(args_pos, args_width, args_value):
+        for arg_pos, arg_width, arg_value in zip(args_pos, args_width, args_name):
             arg_rect = DashedVMobject(Rectangle(color=color,
                                                 height=1.0,
                                                 width=arg_width * get_scene_ratio() )) \

@@ -25,7 +25,7 @@ class TestFunctionUnit(Scene):
                                 color=WHITE,
                                 args_width=[16, 16, 32],
                                 res_width=32,
-                                args_value=["a", "b", "c"])
+                                args_name=["a", "b", "c"])
         dots = [Dot(color=GREEN)]
         self.add(function, *dots)
 

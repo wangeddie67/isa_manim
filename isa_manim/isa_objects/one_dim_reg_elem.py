@@ -16,8 +16,8 @@ Graphic object structure:
 
 from typing import Any
 import numpy as np
-from manim import (VGroup, Rectangle, Text,
-                   LEFT,
+from manim import (VGroup, Rectangle, Text, Line,
+                   LEFT, RIGHT, UP,
                    DEFAULT_FONT_SIZE)
 from colour import Color
 from ..isa_config import get_scene_ratio, get_config
@@ -41,7 +41,9 @@ class OneDimRegElem(VGroup):
                  value: Any = None,
                  fill_opacity: float = 0.5,
                  font_size: int = DEFAULT_FONT_SIZE,
-                 value_format: str = get_config("elem_value_format")):
+                 value_format: str = get_config("elem_value_format"),
+                 high_bits: int = 0,
+                 high_zero: bool = False):
         """
         Constructor an element.
 
@@ -56,30 +58,102 @@ class OneDimRegElem(VGroup):
         self.elem_font_size: int = font_size
         self.elem_value: Any = value
 
-        # Register rectangle
-        self.elem_rect = Rectangle(color=color,
-                                  height=1.0,
-                                  width=width * get_scene_ratio(),
-                                  fill_opacity=fill_opacity)
+        if high_bits == 0:
+            # Register rectangle
+            self.elem_rect = Rectangle(color=color,
+                                       height=1.0,
+                                       width=width * get_scene_ratio(),
+                                       fill_opacity=fill_opacity)
 
-        # Value text
-        if value is None:
-            value_str = ""
-        elif isinstance(value, (int, float)):
-            value_str = value_format.format(value)
+            # Value text
+            if value is None:
+                value_str = ""
+            elif isinstance(value, (int, float)):
+                value_str = value_format.format(value)
+            else:
+                value_str = str(value)
+            self.value_text = Text(text=value_str,
+                                color=color,
+                                font_size=font_size)
+
+            # Scale
+            if self.value_text.width > self.elem_rect.width:
+                value_text_scale = self.elem_rect.width / self.value_text.width
+                self.value_text.scale(value_text_scale)
+
+            super().__init__()
+            self.add(self.elem_rect, self.value_text)
+        elif high_zero:
+            # Register rectangle
+            self.elem_rect = Rectangle(color=color,
+                                       height=1.0,
+                                       width=width * get_scene_ratio())
+            fill_elem_rect = Rectangle(color=color,
+                                       height=1.0,
+                                       width=(width - high_bits) * get_scene_ratio(),
+                                       fill_opacity=fill_opacity)
+            fill_elem_rect.move_to(self.elem_rect.get_right() + \
+                                   LEFT * ((width - high_bits) * 0.5) * get_scene_ratio())
+
+            # Value text
+            if value is None:
+                value_str = ""
+            elif isinstance(value, (int, float)):
+                value_str = value_format.format(value)
+            else:
+                value_str = str(value)
+            self.value_text = Text(text=value_str,
+                                   color=color,
+                                   font_size=font_size)
+            self.value_text.move_to(fill_elem_rect.get_center())
+
+            fill_value_text = Text(text="0",
+                                   color=color,
+                                   font_size=font_size)
+            fill_value_text.move_to(self.elem_rect.get_left() + \
+                                    RIGHT * high_bits * 0.5 * get_scene_ratio())
+
+            # Scale
+            if self.value_text.width > fill_elem_rect.width:
+                value_text_scale = fill_elem_rect.width / self.value_text.width
+                self.value_text.scale(value_text_scale)
+            if fill_value_text.width > (self.elem_rect.width - fill_elem_rect.width):
+                value_text_scale = \
+                    (self.elem_rect.width - fill_elem_rect.width) / fill_value_text.width
+                self.value_text.scale(value_text_scale)
+
+            super().__init__()
+            self.add(fill_elem_rect, self.value_text, self.elem_rect, fill_value_text)
         else:
-            value_str = str(value)
-        self.value_text = Text(text=value_str,
-                               color=color,
-                               font_size=font_size)
+            # Register rectangle
+            self.elem_rect = Rectangle(color=color,
+                                       height=1.0,
+                                       width=width * get_scene_ratio(),
+                                       fill_opacity=fill_opacity)
 
-        # Scale
-        if self.value_text.width > self.elem_rect.width:
-            value_text_scale = self.elem_rect.width / self.value_text.width
-            self.value_text.scale(value_text_scale)
+            # Value text
+            if value is None:
+                value_str = ""
+            elif isinstance(value, (int, float)):
+                value_str = value_format.format(value)
+            else:
+                value_str = str(value)
+            self.value_text = Text(text=value_str,
+                                color=color,
+                                font_size=font_size)
 
-        super().__init__()
-        self.add(self.elem_rect, self.value_text)
+            # Scale
+            if self.value_text.width > self.elem_rect.width:
+                value_text_scale = self.elem_rect.width / self.value_text.width
+                self.value_text.scale(value_text_scale)
+
+            # Split line
+            Line(self.elem_rect.get_left() + RIGHT * high_bits + UP * 0.5,
+                 self.elem_rect.get_left() + RIGHT * high_bits + UP * 0.5,
+                 color=color)
+
+            super().__init__()
+            self.add(self.elem_rect, self.value_text)
 
     # Property functions
     @property
@@ -97,54 +171,6 @@ class OneDimRegElem(VGroup):
     # Override function
     def align_points_with_larger(self, larger_mobject):
         raise NotImplementedError("Please override in a child class.")
-
-    def set_paritial_value(self, size: int, offset: int, value: Any):
-        """
-        Set part of element as specified value.
-
-        Args:
-            size (int): Size of value.
-            offset (int): Offset from lower part.
-            value (Any): Value of that part.
-        """
-        # Register rectangle
-        paritial_elem_rect = Rectangle(color=self.elem_color,
-                                       height=1.0,
-                                       width=size * get_scene_ratio(),
-                                       fill_opacity=self.fill_opacity)
-
-        # Value text
-        if value is None:
-            value_str = ""
-        elif isinstance(value, (int, float)):
-            value_str = self.elem_value_format.format(value)
-        else:
-            value_str = str(value)
-        paritial_value_text = Text(text=value_str,
-                                   color=self.elem_color,
-                                   font_size=self.elem_font_size)
-
-        # Scale
-        if paritial_value_text.width > paritial_elem_rect.width:
-            value_text_scale = paritial_elem_rect.width / paritial_value_text.width
-            paritial_value_text.scale(value_text_scale)
-
-        # Position of paritial element
-        pos = self.elem_rect.get_right() + LEFT * (size * 0.5 + offset) * get_scene_ratio()
-        paritial_elem_rect.move_to(pos)
-        paritial_value_text.move_to(pos)
-
-        # Move value position
-        text_left = self.value_text.get_left()
-        text_right = self.value_text.get_right()
-        paritial_text_left = paritial_value_text.get_left()
-        paritial_text_right = paritial_value_text.get_left()
-        if text_left[0] < paritial_text_left[0] < text_right[0]:
-            self.value_text.shift(paritial_text_left - text_left)
-        if text_left[0] < paritial_text_right[0] < text_right[0]:
-            self.value_text.shift(paritial_text_right - text_right)
-
-        self.add(paritial_elem_rect, paritial_value_text)
 
     # Get locations.
     def get_sub_elem_center(self,

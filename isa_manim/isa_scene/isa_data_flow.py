@@ -160,7 +160,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                     elements: int,
                     font_size: int = DEFAULT_FONT_SIZE,
                     label_pos = None,
-                    align_with = None) -> OneDimReg:
+                    align_with = None,
+                    value = None) -> OneDimReg:
         """
         Declare vector variables, return one-dim register.
         """
@@ -170,7 +171,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                                width=width,
                                elements=elements,
                                font_size=font_size,
-                               label_pos=label_pos)
+                               label_pos=label_pos,
+                               value=value)
         self.placement_add_object(vector_reg, align_with=align_with)
 
         self.animation_add_animation(animate=decl_register(vector_reg), src=None, dst=vector_reg)
@@ -253,7 +255,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         if elem is None:
             elem = OneDimRegElem(color=color,
                                  width=size,
-                                 value=value if value is not None else vector.get_elem_value(index),
+                                 value=value if value is not None else \
+                                       vector.get_elem_value(reg_idx=reg_idx, index=index),
                                  fill_opacity=fill_opacity,
                                  font_size=font_size,
                                  value_format=value_format)
@@ -370,8 +373,6 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                     elem: OneDimRegElem,
                     size: float,
                     zero_extend: bool = False,
-                    shift: int = 0,
-                    color_hash = None,
                     value = None,
                     fill_opacity: float = 0.5,
                     font_size: int = DEFAULT_FONT_SIZE,
@@ -381,17 +382,17 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         """
         value_format = get_config("elem_value_format") if value_format is None else value_format
 
-        color = self.colormap_get_color(
-            self._traceback_hash() if color_hash is None else color_hash)
+        color = elem.elem_color
+        new_value = value if value is not None else elem.elem_value
         new_elem = OneDimRegElem(color=color,
                                  width=size,
-                                 value=value if value is not None else elem.elem_value,
+                                 value=new_value,
                                  fill_opacity=fill_opacity,
                                  font_size=font_size,
-                                 value_format=value_format)
-        if zero_extend:
-            new_elem.set_paritial_value(
-                size=size - (elem.elem_width - shift), offset=elem.elem_width - shift, value=0)
+                                 value_format=value_format,
+                                 high_bits=size - elem.elem_width if zero_extend else \
+                                           size - elem.elem_width + 1,
+                                 high_zero=zero_extend)
 
         old_dep = None
         if elem in self.last_dep_map:
@@ -422,7 +423,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                       args_width: List[float],
                       res_size: float,
                       func_name: str = None,
-                      args_value: List[str] = None,
+                      args_name: List[str] = None,
                       font_size: int = DEFAULT_FONT_SIZE,
                       align_with = None,
                       func = None) -> FunctionUnit:
@@ -442,7 +443,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                                      color=func_color,
                                      args_width=args_width,
                                      res_width=res_size,
-                                     args_value=args_value,
+                                     args_name=args_name,
                                      font_size=font_size,
                                      func=func)
             self.placement_add_object(func_unit, isa_hash, align_with=align_with)
@@ -495,7 +496,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                                      color=func_color,
                                      args_width=args_width,
                                      res_width=res_size,
-                                     args_value=args_value,
+                                     args_name=args_value,
                                      font_size=font_size,
                                      func=func)
 
@@ -660,7 +661,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
     def read_memory(self,   # pylint: disable=dangerous-default-value
                     addr: OneDimRegElem,
                     size: int,
-                    addr_value: int = None,
+                    offset: int = 0,
                     addr_match: bool = False,
                     res_color_hash = None,
                     res_value = None,
@@ -678,14 +679,12 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
             mem_isa_hash = "Memory"
         mem_unit = self.placement_get_object(mem_isa_hash)
 
-        if addr_value is None:
-            if addr.elem_value is not None and mem_unit.is_mem_range_cover(int(addr.elem_value)):
-                addr_value = int(addr.elem_value)
-                addr_match = True
-        else:
-            if addr.elem_value is not None and mem_unit.is_mem_range_cover(int(addr.elem_value)):
-                if addr_value == int(addr.elem_value):
-                    addr_match = True
+        addr_value = None
+        if addr.elem_value is not None:
+            addr_value = int(addr.elem_value) + offset
+            if not mem_unit.is_mem_range_cover(addr_value):
+                addr_value = None
+        addr_match = addr_value is not None and offset == 0
 
         data_color = self.colormap_get_color(
             self._traceback_hash() if res_color_hash is None else res_color_hash)
@@ -749,7 +748,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
     def write_memory(self,  # pylint: disable=dangerous-default-value
                      addr: OneDimRegElem,
                      data: OneDimRegElem,
-                     addr_value: int = None,
+                     offset: int = 0,
                      addr_match: bool = False,
                      mem_isa_hash: str = None) -> None:
         """
@@ -759,15 +758,12 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
             mem_isa_hash = "Memory"
         mem_unit = self.placement_get_object(mem_isa_hash)
 
-        addr_match = False
-        if addr_value is None:
-            if addr.elem_value is not None and mem_unit.is_mem_range_cover(int(addr.elem_value)):
-                addr_value = int(addr.elem_value)
-                addr_match = True
-        else:
-            if addr.elem_value is not None and mem_unit.is_mem_range_cover(int(addr.elem_value)):
-                if addr_value == int(addr.elem_value):
-                    addr_match = True
+        addr_value = None
+        if addr.elem_value is not None:
+            addr_value = int(addr.elem_value) + offset
+            if not mem_unit.is_mem_range_cover(addr_value):
+                addr_value = None
+        addr_match = addr_value is not None and offset == 0
 
         old_dep = []
         if addr in self.last_dep_map:

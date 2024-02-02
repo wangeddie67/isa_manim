@@ -70,13 +70,13 @@ class OneDimReg(VGroup):
         # Register rectangle
         if elements > 1:
             self.reg_rect = Rectangle(color=color,
-                                    height=1.0,
-                                    width=width * get_scene_ratio(),
-                                    grid_xstep=self.elem_width * get_scene_ratio())
+                                      height=1.0,
+                                      width=width * get_scene_ratio(),
+                                      grid_xstep=self.elem_width * get_scene_ratio())
         else:
             self.reg_rect = Rectangle(color=color,
-                                    height=1.0,
-                                    width=width * get_scene_ratio())
+                                      height=1.0,
+                                      width=width * get_scene_ratio())
 
         # Label text
         self.label_text = Text(text=text,
@@ -136,6 +136,7 @@ class OneDimReg(VGroup):
             + LEFT * (index + 0.5) * elem_width * get_scene_ratio()
 
     def get_elem_value(self,
+                       reg_idx: int,
                        index: int):
         """
         Return value of specified item.

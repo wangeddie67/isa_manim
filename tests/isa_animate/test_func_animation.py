@@ -32,7 +32,7 @@ class TestFuncAnimation(Scene):
                                      color=WHITE,
                                      args_width=[16, 16],
                                      res_width=32,
-                                     args_value=["a", "b"])
+                                     args_name=["a", "b"])
         function_animate = decl_func_call(function_item)
         def_func_call_label = Text("def_func_call", color=YELLOW) \
             .move_to(function_item.func_ellipse.get_right() + RIGHT * 4)
