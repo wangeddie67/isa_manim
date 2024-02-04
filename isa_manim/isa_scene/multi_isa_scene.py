@@ -136,6 +136,11 @@ class MultiIsaScene(ZoomedScene, IsaDataFlow):
             wait: Time of wait before end of section.
             fade_out: True means fade_out all items on scene except always-on items.
         """
+        if keep_objects is not None:
+            for i in range(0, len(keep_objects)):
+                if self.placement_has_object(keep_objects[i]):
+                    keep_objects[i] = self.placement_get_object(keep_objects[i])
+
         camera_animate = self._update_camera()
         self.switch_section(wait=wait,
                             fade_out=fade_out,

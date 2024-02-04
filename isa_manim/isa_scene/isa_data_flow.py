@@ -183,7 +183,9 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                           width: int,
                           elements: int,
                           font_size: int = DEFAULT_FONT_SIZE,
-                          label_pos = None) -> TwoDimReg:
+                          label_pos = None,
+                          align_with = None,
+                          value = None) -> TwoDimReg:
         """
         Declare a list of vector variables, return a two-dim register.
         """
@@ -195,8 +197,9 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                                width=width,
                                elements=elements,
                                font_size=font_size,
-                               label_pos=label_pos)
-        self.placement_add_object(vector_reg)
+                               label_pos=label_pos,
+                               value=value)
+        self.placement_add_object(vector_reg, align_with=align_with)
 
         self.animation_add_animation(animate=decl_register(vector_reg), src=None, dst=vector_reg)
         return vector_reg
@@ -290,6 +293,9 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
             size: Width of element in byte.
             e: Index of element.
         """
+        if elem.elem_value is not None:
+            vector.set_elem_value(value=elem.elem_value, reg_idx=reg_idx, index=index)
+
         old_dep = None
         if elem in self.last_dep_map:
             old_dep = self.last_dep_map[elem]

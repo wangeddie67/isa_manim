@@ -182,3 +182,34 @@ class TwoDimReg(VGroup):
                 return self.reg_value[(reg_idx * elem_count + index) % len(self.reg_value)]
         else:
             return self.reg_value
+
+    def set_elem_value(self,
+                       value,
+                       reg_idx: int,
+                       index: int):
+        """
+        Return value of specified item.
+        
+        Args:
+            index: Index of elements.
+        """
+        if value is None:
+            return
+
+        elem_count = self.reg_width // self.elem_width
+        if self.reg_value is None:
+            if elem_count == 1:
+                self.reg_value = [None for _ in range(0, self.reg_count)]
+            else:
+                self.reg_value = [[None for _ in range(0, elem_count)]
+                                  for _ in range(0, self.reg_count)]
+
+        if isinstance(self.reg_value, list):
+            if isinstance(self.reg_value[0], list):
+                sub_reg_value = self.reg_value[reg_idx % len(self.reg_value)]
+                sub_reg_value[index % len(sub_reg_value)] = value
+            else:
+                elem_count = self.reg_width // self.elem_width
+                self.reg_value[(reg_idx * elem_count + index) % len(self.reg_value)] = value
+        else:
+            self.reg_value = value

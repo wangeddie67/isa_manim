@@ -57,6 +57,7 @@ class OneDimRegElem(VGroup):
         self.elem_value_format: str = value_format
         self.elem_font_size: int = font_size
         self.elem_value: Any = value
+        self.elem_width: int = width
 
         if high_bits == 0:
             # Register rectangle
@@ -159,10 +160,6 @@ class OneDimRegElem(VGroup):
     @property
     def elem_color(self) -> Color:
         return self.elem_rect.color
-
-    @property
-    def elem_width(self) -> int:
-        return int(self.elem_rect.width / get_scene_ratio())
 
     @property
     def elem_fill_opacity(self) -> float:
