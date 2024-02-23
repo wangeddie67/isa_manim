@@ -34,10 +34,10 @@ class TestSingleIsaScene(SingleIsaScene):
                     vector=zm, size=esize // 2, index = 2 * i + j, color_hash="opb" + str(j))
                 prod = self.function_call(
                     func="*(a, b)", args=[opa, opb], res_size=esize, res_color_hash="prod" + str(j),
-                    func_isa_hash="prod" + str(j), func_args_value=["a", "b"])
+                    func_isa_hash="prod" + str(j), func_args_name=["a", "b"])
                 sum__ = self.function_call(
                     func="+(a, b)", args=[prod, sum_], res_size=esize, res_color_hash="add" + str(j),
-                    func_isa_hash="add" + str(j), func_args_value=["a", "b"])
+                    func_isa_hash="add" + str(j), func_args_name=["a", "b"])
                 sum_ = sum__
 
             self.move_elem(elem=sum_, vector=zda, index=i)

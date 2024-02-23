@@ -465,7 +465,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                         args_width: List[float],
                         res_size: float,
                         func_name: Union[str, List[str]] = None,
-                        args_value: List[str] = None,
+                        args_name: List[str] = None,
                         font_size: int = DEFAULT_FONT_SIZE,
                         force_hw_ratio: bool = False,
                         func = None) -> List[FunctionUnit]:
@@ -502,7 +502,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                                      color=func_color,
                                      args_width=args_width,
                                      res_width=res_size,
-                                     args_name=args_value,
+                                     args_name=args_name,
                                      font_size=font_size,
                                      func=func)
 
