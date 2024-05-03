@@ -27,11 +27,6 @@ all provided register objects.
 object with a new register object by fading out the old one and fading in the new one. The new
 object can be left/right/center-aligned with the old object.
 
-:py:func:`isa_manim.isa_animate.predefine_animate.concat_vector` concatenates registers into one
-new register. Besides a list of existing registers, one new register should be provided. Existing
-registers are moved to the new registers in the order specified by input arguments. The first 
-source register is ordered in the lowest bits.
-
 After source registers are ordered in the same location as the new register, the source registers
 are fading out while the new register is fading in.
 

@@ -11,7 +11,7 @@ from isa_manim import (Scene, # pylint: disable=wrong-import-position
                        WHITE, BLUE, GREEN, YELLOW, PURPLE,
                        UP, LEFT, RIGHT,
                        Text,
-                       OneDimRegElem, MemoryUnit,
+                       RegElemUnit, MemoryUnit,
                        FadeIn,
                        decl_memory_unit, read_memory_without_addr, write_memory_without_addr)
 
@@ -24,8 +24,8 @@ class TestMemUnitAnimation(Scene):
     """
     def construct(self):
         # Read elements.
-        addr_elem = OneDimRegElem(color=GREEN, width=64).move_to(UP * 4 + LEFT * 4)
-        data_elem = OneDimRegElem(color=BLUE, width=16).move_to(UP * 4 + RIGHT * 4)
+        addr_elem = RegElemUnit(color=GREEN, width=64).move_to(UP * 4 + LEFT * 4)
+        data_elem = RegElemUnit(color=BLUE, width=16).move_to(UP * 4 + RIGHT * 4)
         self.add(addr_elem, data_elem)
 
         # Declare memory.
@@ -57,7 +57,7 @@ class TestMemUnitAnimation(Scene):
         self.play(FadeIn(addr_elem))
 
         # Read memory.
-        data_elem = OneDimRegElem(color=PURPLE, width=64)
+        data_elem = RegElemUnit(color=PURPLE, width=64)
         read_memory_animate = read_memory_without_addr(mem_unit=memory_unit,
                                                        addr_item=addr_elem,
                                                        data_item=data_elem)

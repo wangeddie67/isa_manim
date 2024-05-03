@@ -6,7 +6,6 @@ By defining common animations, users do not need to choose animation each time.
 
 from .predefine_animate import (decl_register,
                                 replace_register,
-                                concat_vector,
                                 read_elem,
                                 assign_elem,
                                 replace_elem,

@@ -11,7 +11,7 @@ from isa_manim import (Scene, # pylint: disable=wrong-import-position
                        WHITE, RED, GREEN, BLUE, YELLOW, PURPLE,
                        LEFT, RIGHT, UP, DOWN,
                        read_elem, function_call, assign_elem,
-                       OneDimReg, OneDimRegElem, FunctionUnit,
+                       OneDimReg, RegElemUnit, FunctionUnit,
                        IsaAnimationMap)
 
 config.frame_height = 10
@@ -36,31 +36,31 @@ class TestIsaAnimationMap(Scene):
         self.add(zn, zm, zda, mul_unit, add_unit)
 
         for i in range(0, 4):
-            sum_ = OneDimRegElem(color=RED, width=32)
+            sum_ = RegElemUnit(color=RED, width=32)
             animation_map.animation_add_animation(
                 animate=read_elem(vector=zda, elem=sum_, index=i),
                 src=[], dst=[sum_], dep=[zda])
 
             for j in range(0, 2):
-                opa = OneDimRegElem(color=GREEN, width=16)
+                opa = RegElemUnit(color=GREEN, width=16)
                 animation_map.animation_add_animation(
                     animate=read_elem(vector=zn, elem=opa, index=i * 2 + j),
                     src=[], dst=[opa], dep=[zn])
-                opb = OneDimRegElem(color=BLUE, width=16)
+                opb = RegElemUnit(color=BLUE, width=16)
                 animation_map.animation_add_animation(
                     animate=read_elem(vector=zm, elem=opb, index=i * 2 + j),
                     src=[], dst=[opb], dep=[zm])
-                prod = OneDimRegElem(color=YELLOW, width=32)
+                prod = RegElemUnit(color=YELLOW, width=32)
                 animation_map.animation_add_animation(
                     animate=function_call(mul_unit, args_list=[opa, opb], res_item=prod),
                     src=[opa, opb], dst=[prod], dep=[mul_unit])
-                sum__ = OneDimRegElem(color=PURPLE, width=32)
+                sum__ = RegElemUnit(color=PURPLE, width=32)
                 animation_map.animation_add_animation(
                     animate=function_call(add_unit, args_list=[prod, sum_], res_item=sum__),
                     src=[prod, sum_], dst=[sum__], dep=[add_unit])
                 sum_ = sum__
 
-            new_sum_ = OneDimRegElem(color=sum_.elem_color, width=sum_.elem_width)
+            new_sum_ = RegElemUnit(color=sum_.elem_color, width=sum_.elem_width)
             animation_map.animation_add_animation(
                 animate=assign_elem(old_elem=sum_, new_elem=new_sum_, vector=zda, index=i),
                 src=[sum_], dst=[sum_], dep=[zda])

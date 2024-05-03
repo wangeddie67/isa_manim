@@ -71,3 +71,38 @@ class IsaColorMap:
             self._colormap_color_index = \
                 (self._colormap_color_index + 1) % len(self._colormap_color_list)
             return self._colormap_color_list[self._colormap_color_index]
+
+    def colormap_get_multi_color(self, num: int, color_hash = None) -> List[Color]:
+        """
+        Get color for multiple object. If one hash value is specified and the value is existed in the
+        dictionary, return assigned color from dictionary. Otherwise, if hash value is not specified
+        or the hash value is new, return next color in the color scheme. 
+
+        Args:
+            num: Count of item.
+            color_hash: hash for item.
+        """
+        if color_hash:
+            if color_hash in self._colormap_hash_dict:
+                # Return assigned color from dictionary.
+                ret_color = self._colormap_hash_dict[color_hash]
+                return ret_color if isinstance(ret_color, list) else [ret_color]
+            else:
+                # Get a list of color
+                color_list = []
+                for _ in range(0, num):
+                    self._colormap_color_index = \
+                        (self._colormap_color_index + 1) % len(self._colormap_color_list)
+                    color_list.append(self._colormap_color_list[self._colormap_color_index])
+                # Return color list and report object in the dictionary.
+                self._colormap_hash_dict[color_hash] = color_list
+                return color_list
+        else:
+            # Get a list of color
+            color_list = []
+            for _ in range(0, num):
+                self._colormap_color_index = \
+                    (self._colormap_color_index + 1) % len(self._colormap_color_list)
+                color_list.append(self._colormap_color_list[self._colormap_color_index])
+            # Return color list
+            return color_list

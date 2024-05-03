@@ -11,7 +11,7 @@ from isa_manim import (Scene, # pylint: disable=wrong-import-position
                        WHITE, BLUE, GREEN, PURPLE, YELLOW,
                        UP, LEFT, RIGHT,
                        Text,
-                       OneDimReg, TwoDimReg, OneDimRegElem,
+                       OneDimReg, RegUnit, RegElemUnit,
                        read_elem, assign_elem)
 
 config.frame_height = 6
@@ -25,7 +25,7 @@ class TestElemAnimation(Scene):
         # Declare Register.
         scalar_reg = OneDimReg(text="Rn", color=WHITE, width=32).shift(UP * 4 + LEFT * 2)
         vector_reg = OneDimReg(text="Vn", color=WHITE, width=128).shift(UP * 2 + LEFT * 2)
-        vector_2d_reg = TwoDimReg(text="Zn", color=WHITE, nreg=4, width=128).shift(LEFT * 2)
+        vector_2d_reg = RegUnit(text="Zn", color=WHITE, nreg=4, width=128).shift(LEFT * 2)
 
         # Play Animation.
         self.wait()
@@ -33,9 +33,9 @@ class TestElemAnimation(Scene):
         self.wait()
 
         # Elements.
-        scalar_elem = OneDimRegElem(color=BLUE, width=16)
-        vector_elem = OneDimRegElem(color=GREEN, width=16)
-        vector_2d_elem = OneDimRegElem(color=PURPLE, width=16)
+        scalar_elem = RegElemUnit(color=BLUE, width=16)
+        vector_elem = RegElemUnit(color=GREEN, width=16)
+        vector_2d_elem = RegElemUnit(color=PURPLE, width=16)
 
         # Read elements
         read_scalar_animate = read_elem(vector=scalar_reg, elem=scalar_elem)
@@ -53,16 +53,16 @@ class TestElemAnimation(Scene):
         self.remove(read_elem_label)
 
         # Assign elements.
-        new_vector_2d_elem = OneDimRegElem(color=vector_2d_elem.elem_color, width=16)
+        new_vector_2d_elem = RegElemUnit(color=vector_2d_elem.elem_color, width=16)
         assign_scalar_animate = assign_elem(old_elem=vector_2d_elem,
                                             new_elem=new_vector_2d_elem,
                                             vector=scalar_reg)
-        new_scalar_elem = OneDimRegElem(color=scalar_elem.elem_color, width=8)
+        new_scalar_elem = RegElemUnit(color=scalar_elem.elem_color, width=8)
         assign_vector_animate = assign_elem(old_elem=scalar_elem,
                                             new_elem=new_scalar_elem,
                                             vector=vector_reg,
                                             index=4)
-        new_vector_elem = OneDimRegElem(color=vector_elem.elem_color, width=32)
+        new_vector_elem = RegElemUnit(color=vector_elem.elem_color, width=32)
         assign_vector_2d_animate = assign_elem(old_elem=vector_elem,
                                                new_elem=new_vector_elem,
                                                vector=vector_2d_reg,

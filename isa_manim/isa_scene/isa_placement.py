@@ -43,8 +43,8 @@ There are two strategies to search rectangle in the placement array:
 from math import ceil
 import numpy as np
 from typing import List, Dict, Union
-from manim import Mobject, config, RIGHT, DOWN
-from ..isa_objects import (OneDimReg, TwoDimReg, OneDimRegElem, FunctionUnit, MemoryUnit)
+from manim import Mobject, config, RIGHT, DOWN, UP, LEFT
+from ..isa_objects import (RegUnit, RegElemUnit, FunctionUnit, MemoryUnit)
 
 class IsaPlacementItem:
     """
@@ -85,19 +85,14 @@ class IsaPlacementItem:
         """
         Return width of item in integer for placement.
         """
-        if isinstance(self.isa_object, OneDimReg):
-            if self.isa_object.label_text.width < 2:
-                return ceil(self.isa_object.reg_rect.width + 2)
-            else:
-                return ceil(self.isa_object.reg_rect.width + self.isa_object.label_text.width)
-        elif isinstance(self.isa_object, TwoDimReg):
+        if isinstance(self.isa_object, RegUnit):
             label_text_width = max([item.width for item in self.isa_object.label_text_list])
-            reg_rect_width = max([item.width for item in self.isa_object.reg_rect_list])
+            reg_rect_width = self.isa_object.reg_rect.width
             if label_text_width < 2:
                 return ceil(2 + reg_rect_width)
             else:
                 return ceil(label_text_width + reg_rect_width)
-        elif isinstance(self.isa_object, OneDimRegElem):
+        elif isinstance(self.isa_object, RegElemUnit):
             return ceil(self.isa_object.elem_rect.width)
         elif isinstance(self.isa_object, FunctionUnit):
             return ceil(self.isa_object.func_ellipse.width)
@@ -110,11 +105,9 @@ class IsaPlacementItem:
         """
         Return height of item in integer for placement.
         """
-        if isinstance(self.isa_object, OneDimReg):
-            return 1
-        elif isinstance(self.isa_object, TwoDimReg):
+        if isinstance(self.isa_object, RegUnit):
             return int(self.isa_object.reg_count)
-        elif isinstance(self.isa_object, OneDimRegElem):
+        elif isinstance(self.isa_object, RegElemUnit):
             return 1
         elif isinstance(self.isa_object, FunctionUnit):
             return 5
@@ -127,11 +120,9 @@ class IsaPlacementItem:
         """
         Return the marker of object.
         """
-        if isinstance(self.isa_object, OneDimReg):
+        if isinstance(self.isa_object, RegUnit):
             return 2
-        elif isinstance(self.isa_object, TwoDimReg):
-            return 2
-        elif isinstance(self.isa_object, OneDimRegElem):
+        elif isinstance(self.isa_object, RegElemUnit):
             return 2
         elif isinstance(self.isa_object, FunctionUnit):
             return 3
@@ -151,16 +142,12 @@ class IsaPlacementItem:
         self.row = row
         self.col = col
 
-        if isinstance(self.isa_object, OneDimReg):
-            x = col + self.get_width() - self.isa_object.reg_rect.width / 2
-            y = row + 0.5
-            self.isa_object.shift(RIGHT * x + DOWN * y - self.isa_object.reg_rect.get_center())
-        elif isinstance(self.isa_object, TwoDimReg):
-            x = col + self.get_width() - self.isa_object.reg_rect_list[0].width / 2
-            y = row + 0.5
+        if isinstance(self.isa_object, RegUnit):
+            x = col + self.get_width() - self.isa_object.reg_rect.width
+            y = row
             self.isa_object.shift(
-                RIGHT * x + DOWN * y - self.isa_object.reg_rect_list[0].get_center())
-        elif isinstance(self.isa_object, OneDimRegElem):
+                RIGHT * x + DOWN * y - self.isa_object.reg_rect.get_corner(UP + LEFT))
+        elif isinstance(self.isa_object, RegElemUnit):
             x = col + self.get_width() / 2
             y = row + 0.5
             self.isa_object.move_to(RIGHT * x + DOWN * y)
@@ -425,7 +412,7 @@ class IsaPlacementMap:
                     placement_item.set_corner(align_row, col)
                     self._placement_mark_rect(marker, align_row, col, rect_width, rect_height)
                     return True
-            
+
         # RB strategy, first try to place item under exist item.
         elif self._placement_strategy == "RB":
             for row in range(1, self._placement_height - rect_height + 1):

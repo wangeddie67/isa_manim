@@ -11,7 +11,7 @@ from isa_manim import (Scene, # pylint: disable=wrong-import-position
                        WHITE, BLUE, GREEN, PURPLE, YELLOW,
                        UP, LEFT, RIGHT,
                        Text,
-                       OneDimRegElem, FunctionUnit,
+                       RegElemUnit, FunctionUnit,
                        decl_func_call, function_call)
 
 config.frame_height = 6
@@ -23,8 +23,8 @@ class TestFuncAnimation(Scene):
     """
     def construct(self):
         # Read elements.
-        r1_elem = OneDimRegElem(color=GREEN, width=16).move_to(UP * 4 + LEFT * 2)
-        r2_elem = OneDimRegElem(color=BLUE, width=16).move_to(UP * 4 + RIGHT * 2)
+        r1_elem = RegElemUnit(color=GREEN, width=16).move_to(UP * 4 + LEFT * 2)
+        r2_elem = RegElemUnit(color=BLUE, width=16).move_to(UP * 4 + RIGHT * 2)
         self.add(r1_elem, r2_elem)
 
         # Declare function.
@@ -43,7 +43,7 @@ class TestFuncAnimation(Scene):
         self.remove(def_func_call_label)
 
         # Function call.
-        res_elem = OneDimRegElem(color=PURPLE, width=32)
+        res_elem = RegElemUnit(color=PURPLE, width=32)
         func_call_animate = function_call(func_unit=function_item,
                                           args_list=[r1_elem, r2_elem],
                                           res_item=res_elem)

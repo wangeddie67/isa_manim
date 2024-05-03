@@ -8,11 +8,10 @@ Graphic object is a VGroup containing one Ellipse objects, several rectangle obj
 and several Text objects.
 """
 
-from typing import List
+from typing import List, Union, Callable
 import numpy as np
 from manim import (VGroup, Ellipse, Text, Rectangle, DashedVMobject,
-                   LEFT, RIGHT, UP, DOWN,
-                   DEFAULT_FONT_SIZE)
+                   LEFT, RIGHT, UP, DOWN)
 from colour import Color
 from ..isa_config import get_scene_ratio
 
@@ -36,10 +35,11 @@ class FunctionUnit(VGroup):
                  text: str,
                  color: Color,
                  args_width: List[int],
-                 res_width: int,
-                 args_name: List[str] = None,
-                 font_size: int = DEFAULT_FONT_SIZE,
-                 func = None):
+                 res_width: List[int],
+                 args_name: List[str],
+                 font_size: int,
+                 value_format: str,
+                 func_callee: Callable):
         """
         Constructor an function call.
 
@@ -52,26 +52,38 @@ class FunctionUnit(VGroup):
             font_size: Font size of value text.
         """
         self.func_font_size: int = font_size
-        self.func = func
+        self.func_value_format: str = value_format
+        self.func_callee = func_callee
+        self.func_args_width: List[int] = args_width
+        self.func_res_width: List[int] = res_width
+        self.func_args_count: int = len(args_width)
+        self.func_res_count: int = len(res_width)
 
         # Argument Text
         if args_name is None:
             args_name = ["" for _ in args_width]
 
+        # Arguments width
         args_scene_width = [width * get_scene_ratio() for width in args_width]
-
-        # function width
-        func_width = sum(args_scene_width) + len(args_scene_width) - 1
-        args_pos = [LEFT * (func_width / 2)
+        all_args_width = sum(args_scene_width) + len(args_scene_width) - 1
+        args_pos = [LEFT * (all_args_width / 2)
                         + RIGHT * (sum(args_scene_width[0:i]) + i + args_scene_width[i] / 2)
-                        + UP * 1.5
+                        + UP * 2.0
                     for i in range(0, len(args_scene_width))]
 
+        # Result width
+        res_scene_width = [width * get_scene_ratio() for width in res_width]
+        all_func_width = sum(res_scene_width) + len(res_scene_width) - 1
+        res_pos = [LEFT * (all_func_width / 2)
+                        + RIGHT * (sum(res_scene_width[0:i]) + i + res_scene_width[i] / 2)
+                        + DOWN * 2.0
+                    for i in range(0, len(res_scene_width))]
+
         # function ellipse
-        ellipse_width = max(func_width, res_width * get_scene_ratio())
+        ellipse_width = max(all_args_width, all_func_width)
         self.func_ellipse: Ellipse = Ellipse(color=color,
-                                              height=1.0,
-                                              width=ellipse_width)
+                                             height=1.0,
+                                             width=ellipse_width)
 
         # Label text
         self.label_text: Text = Text(text=text,
@@ -90,9 +102,9 @@ class FunctionUnit(VGroup):
             arg_rect = DashedVMobject(Rectangle(color=color,
                                                 height=1.0,
                                                 width=arg_width * get_scene_ratio() )) \
-                    .move_to(arg_pos + UP * 0.5)
+                    .move_to(arg_pos)
             arg_text = Text(text=arg_value, color=color, font_size=font_size) \
-                    .move_to(arg_pos + UP * 0.5 + DOWN * (0.5 + font_size / 200))
+                    .move_to(arg_pos + DOWN * (0.5 + font_size / 200))
             # Scale
             if arg_text.width > arg_rect.width:
                 arg_text_scale = arg_rect.width / arg_text.width
@@ -102,15 +114,19 @@ class FunctionUnit(VGroup):
             self.args_text_list.append(arg_text)
 
         # Result Rectangle
-        self.res_rect: Rectangle = DashedVMobject(Rectangle(color=color,
-                                                            height=1.0,
-                                                            width=res_width * get_scene_ratio())) \
-                .move_to(DOWN * 2.0)
+        self.res_rect_list: List[Rectangle] = []
+        for res_pos, res_width in zip(res_pos, res_width):
+            res_rect = DashedVMobject(Rectangle(color=color,
+                                                height=1.0,
+                                                width=res_width * get_scene_ratio())) \
+                    .move_to(res_pos)
+
+            self.res_rect_list.append(res_rect)
 
         super().__init__()
         self.add(
             self.func_ellipse, self.label_text,
-            *self.args_rect_list, *self.args_text_list, self.res_rect)
+            *self.args_rect_list, *self.args_text_list, *self.res_rect_list)
 
     # Property functions
     @property
@@ -120,14 +136,6 @@ class FunctionUnit(VGroup):
     @property
     def func_color(self) -> Color:
         return self.func_ellipse.color
-
-    @property
-    def func_args_width(self) -> List[int]:
-        return [arg_rect.width / get_scene_ratio() for arg_rect in self.args_rect_list]
-
-    @property
-    def func_res_width(self) -> int:
-        return round(self.res_rect.width / get_scene_ratio())
 
     @property
     def func_args_value(self) -> List[str]:
@@ -150,7 +158,7 @@ class FunctionUnit(VGroup):
         return self.args_rect_list[index].get_right()  \
             + LEFT * (elem_index + 0.5) * elem_width * get_scene_ratio()
 
-    def get_dst_pos(self, elem_width: float, elem_index: int) -> np.ndarray:
+    def get_dst_pos(self, index: int, elem_width: float, elem_index: int) -> np.ndarray:
         """
         Return position of destination item.
         
@@ -158,5 +166,5 @@ class FunctionUnit(VGroup):
             elem_width: Width of element.
             elem_index: Index of element.
         """
-        return self.res_rect.get_right()  \
+        return self.res_rect_list[index].get_right()  \
             + LEFT * (elem_index + 0.5) * elem_width * get_scene_ratio()

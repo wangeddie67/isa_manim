@@ -11,7 +11,7 @@ from isa_manim import (Scene, # pylint: disable=wrong-import-position
                        config,
                        RED, GREEN, BLUE, YELLOW,
                        LEFT, RIGHT, UP, DOWN,
-                       OneDimRegElem)
+                       RegElemUnit)
 
 config.frame_height = 6
 config.frame_width = 24
@@ -21,7 +21,7 @@ class TestOneDimRegElem(Scene):
     Test object for register element.
     """
     def construct(self):
-        elem = OneDimRegElem(color=RED, width=16, value="0x5F5F")
+        elem = RegElemUnit(color=RED, width=16, value="0x5F5F")
         dots = [Dot(color=GREEN)]
         self.add(elem, *dots)
 

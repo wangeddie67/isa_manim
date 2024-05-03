@@ -3,13 +3,12 @@ Define APIs for animation in ISA data flow, manage animation flow and object pla
 """
 
 import itertools
-from typing import List, Tuple, Dict, Union
+from typing import Any, List, Tuple, Dict, Union
+from typing import overload
 from colour import Color
 import sys
 from manim import (WHITE, DEFAULT_FONT_SIZE)
 from ..isa_animate import (decl_register,
-                           replace_register,
-                           concat_vector,
                            read_elem,
                            assign_elem,
                            replace_elem,
@@ -21,7 +20,7 @@ from ..isa_animate import (decl_register,
                            write_memory_without_addr,
                            read_memory,
                            write_memory)
-from ..isa_objects import OneDimReg, OneDimRegElem, TwoDimReg, FunctionUnit, MemoryUnit
+from ..isa_objects import RegElemUnit, RegUnit, FunctionUnit, MemoryUnit
 from .isa_animate import IsaAnimationMap, IsaAnimateItem
 from .isa_placement import IsaPlacementMap
 from .isa_color_map import IsaColorMap
@@ -50,11 +49,11 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         self.default_font_size = default_font_size
 
         self.last_dep_map = {}
-        self.elem_source_dict: Dict[OneDimRegElem, List] = {}
-        self.elem_producer_copy: Dict[OneDimRegElem, OneDimRegElem] = {}
-        self.elem_producer_map: Dict[OneDimRegElem, IsaAnimateItem] = {}
-        self.elem_refer_count: Dict[OneDimRegElem, int] = {}
-        self.elem_last_consumer: Dict[OneDimRegElem, IsaAnimateItem] = {}
+        self.elem_source_dict: Dict[RegElemUnit, List] = {}
+        self.elem_producer_copy: Dict[RegElemUnit, RegElemUnit] = {}
+        self.elem_producer_map: Dict[RegElemUnit, IsaAnimateItem] = {}
+        self.elem_refer_count: Dict[RegElemUnit, int] = {}
+        self.elem_last_consumer: Dict[RegElemUnit, IsaAnimateItem] = {}
 
     def _traceback_hash(self, depth: int = 2) -> int:
         """
@@ -67,9 +66,9 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         return hash(str(frame))
 
     def _set_item_producer(self,
-                           item: OneDimRegElem,
+                           item: RegElemUnit,
                            producer: IsaAnimateItem,
-                           copy_item: OneDimRegElem = None):
+                           copy_item: RegElemUnit = None):
         """
         Set producer of element.
         """
@@ -79,7 +78,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         self.elem_last_consumer[item] = None
 
     def _set_item_cusumer(self,
-                          item: OneDimRegElem,
+                          item: RegElemUnit,
                           consumer: IsaAnimateItem):
         """
         Set consumer of element.
@@ -87,7 +86,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         self.elem_last_consumer[item] = consumer
 
     def _get_duplicate_item(self,
-                            item: OneDimRegElem) -> OneDimRegElem:
+                            item: RegElemUnit) -> RegElemUnit:
         """
         Get a copy of element if the element has been referenced.
         """
@@ -105,8 +104,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         return item_
 
     def _set_elem_source_elem(self,
-                              elem: OneDimRegElem,
-                              vector: OneDimReg,
+                              elem: RegElemUnit,
+                              vector: RegUnit,
                               size: float,
                               reg_idx: int,
                               index: int,
@@ -114,7 +113,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         self.elem_source_dict[elem] = [vector, size, reg_idx, index, offset]
 
     def _get_elem_source_elem(self,
-                              vector: OneDimReg,
+                              vector: RegUnit,
                               size: float = -1.0,
                               reg_idx: int = 0,
                               index: int = 0,
@@ -131,113 +130,121 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
     #
     # Animations APIs
     #
-    def decl_scalar(self,
-                    text: str,
-                    width: int,
-                    font_size: int = DEFAULT_FONT_SIZE,
-                    label_pos = None,
-                    align_with = None,
-                    value = None) -> OneDimReg:
+    @overload
+    def decl_register(self,
+                      text: str,
+                      width: int,
+                      elements: int,
+                      nreg: int,
+                      value: List[List[Any]] = None,
+                      font_size: int = DEFAULT_FONT_SIZE,
+                      value_format: str = None,
+                      align_with = None) -> RegUnit: ...
+
+    @overload
+    def decl_register(self,
+                      text: str,
+                      width: int,
+                      elements: int,
+                      value: List[Any] = None,
+                      font_size: int = DEFAULT_FONT_SIZE,
+                      value_format: str = None,
+                      align_with = None) -> RegUnit: ...
+
+    @overload
+    def decl_register(self,
+                      text: str,
+                      width: int,
+                      value: Any = None,
+                      font_size: int = DEFAULT_FONT_SIZE,
+                      value_format: str = None,
+                      align_with = None) -> RegUnit: ...
+
+    def decl_register(self,
+                      text: str,
+                      width: int,
+                      elements: int = 1,
+                      nreg: int = 1,
+                      value: List[List[Any]] = None,
+                      font_size: int = DEFAULT_FONT_SIZE,
+                      value_format: str = None,
+                      align_with = None) -> RegUnit:
         """
-        Declare scalar variables, return one-dim register.
+        Declare register unit.
+        
+        Attributes:
+            text: Name of this register.
+            width: Width of this register width, in bit.
+            elements: Elements count in this register, or horizontal size of this register.
+                Optional and positinal.
+            nreg: Number of registers, or vertical size of this register. Optional and positinal.
+            value: Value of this register, single element or 1-D/2-D array. Optional and keyword.
+            font_size: Font size of register name. Optional and keyword.
+            align_width: Align with specified element when placement.
         """
+        # Handle default value of arguments.
+        if value_format is None:
+            value_format = get_config("elem_value_format")
+
+        # Create register unit.
         color = self.colormap_default_color
-        scalar_reg = OneDimReg(text=text,
-                               color=color,
-                               width=width,
-                               elements=1,
-                               font_size=font_size,
-                               label_pos=label_pos,
-                               value=value)
-        self.placement_add_object(scalar_reg, align_with=align_with)
+        reg_unit = RegUnit(text, color, width, elements, nreg, value, font_size, value_format)
 
-        self.animation_add_animation(animate=decl_register(scalar_reg), src=None, dst=scalar_reg)
-        return scalar_reg
+        # Placement
+        self.placement_add_object(reg_unit, align_with=align_with)
+        # Animation
+        self.animation_add_animation(animate=decl_register(reg_unit), src=None, dst=reg_unit)
 
-    def decl_vector(self,
-                    text: str,
-                    width: int,
-                    elements: int,
-                    font_size: int = DEFAULT_FONT_SIZE,
-                    label_pos = None,
-                    align_with = None,
-                    value = None) -> OneDimReg:
-        """
-        Declare vector variables, return one-dim register.
-        """
-        color = self.colormap_default_color
-        vector_reg = OneDimReg(text=text,
-                               color=color,
-                               width=width,
-                               elements=elements,
-                               font_size=font_size,
-                               label_pos=label_pos,
-                               value=value)
-        self.placement_add_object(vector_reg, align_with=align_with)
+        # Return register unit.
+        return reg_unit
 
-        self.animation_add_animation(animate=decl_register(vector_reg), src=None, dst=vector_reg)
-        return vector_reg
-
-    def decl_vector_group(self,
-                          text_list: List[str],
-                          width: int,
-                          elements: int,
-                          font_size: int = DEFAULT_FONT_SIZE,
-                          label_pos = None,
-                          align_with = None,
-                          value = None) -> TwoDimReg:
-        """
-        Declare a list of vector variables, return a two-dim register.
-        """
-        color = self.colormap_default_color
-        nreg = len(text_list)
-        vector_reg = TwoDimReg(text=text_list,
-                               color=color,
-                               nreg=nreg,
-                               width=width,
-                               elements=elements,
-                               font_size=font_size,
-                               label_pos=label_pos,
-                               value=value)
-        self.placement_add_object(vector_reg, align_with=align_with)
-
-        self.animation_add_animation(animate=decl_register(vector_reg), src=None, dst=vector_reg)
-        return vector_reg
-
-    def decl_2d_vector(self,
-                       text: str,
-                       nreg: int,
-                       width: int,
-                       elements: int = 1,
-                       font_size: int = DEFAULT_FONT_SIZE,
-                       label_pos = None) -> TwoDimReg:
-        """
-        Declare a 2D vector, return a two-dim register.
-        """
-        color = self.colormap_default_color
-        vector_reg = TwoDimReg(text=text,
-                               color=color,
-                               nreg=nreg,
-                               width=width,
-                               elements=elements,
-                               font_size=font_size,
-                               label_pos=label_pos)
-        self.placement_add_object(vector_reg)
-
-        self.animation_add_animation(animate=decl_register(vector_reg), src=None, dst=vector_reg)
-        return vector_reg
-
+    @overload
     def read_elem(self,
-                  vector: OneDimReg,
-                  size: float = -1.0,
-                  reg_idx: int = 0,
-                  index: int = 0,
+                  vector: RegUnit,
+                  index: int,
+                  reg_idx: int,
                   offset: int = 0,
+                  size: float = -1.0,
                   color_hash = None,
                   value = None,
                   fill_opacity: float = 0.5,
                   font_size: int = DEFAULT_FONT_SIZE,
-                  value_format: str = None):
+                  value_format: str = None) -> RegElemUnit: ...
+
+    @overload
+    def read_elem(self,
+                  vector: RegUnit,
+                  index: int,
+                  offset: int = 0,
+                  size: float = -1.0,
+                  value = None,
+                  color_hash = None,
+                  fill_opacity: float = 0.5,
+                  font_size: int = DEFAULT_FONT_SIZE,
+                  value_format: str = None) -> RegElemUnit: ...
+
+    @overload
+    def read_elem(self,
+                  vector: RegUnit,
+                  offset: int = 0,
+                  size: float = -1.0,
+                  value = None,
+                  color_hash = None,
+                  fill_opacity: float = 0.5,
+                  font_size: int = DEFAULT_FONT_SIZE,
+                  value_format: str = None) -> RegElemUnit: ...
+
+    def read_elem(self,
+                  vector: RegUnit,
+                  index: int = 0,
+                  reg_idx: int = 0,
+                  offset: int = 0,
+                  size: float = -1.0,
+                  color_hash = None,
+                  value = None,
+                  fill_opacity: float = 0.5,
+                  font_size: int = DEFAULT_FONT_SIZE,
+                  value_format: str = None) -> RegElemUnit:
         """
         Read element from register, return one Rectangle.
 
@@ -248,7 +255,9 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
             e: Index of element.
             kargs: Arguments to new element.
         """
-        value_format = get_config("elem_value_format") if value_format is None else value_format
+        value_format = vector.reg_value_format if value_format is None else value_format
+        size = vector.elem_width if size < 0 else size
+        value = value if value is not None else vector.get_elem_value(index, reg_idx)
 
         color = self.colormap_get_color(
             self._traceback_hash() if color_hash is None else color_hash)
@@ -256,34 +265,44 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         elem = self._get_elem_source_elem(
             vector=vector, size=size, reg_idx=reg_idx, index=index, offset=offset)
         if elem is None:
-            elem = OneDimRegElem(color=color,
-                                 width=size,
-                                 value=value if value is not None else \
-                                       vector.get_elem_value(reg_idx=reg_idx, index=index),
-                                 fill_opacity=fill_opacity,
-                                 font_size=font_size,
-                                 value_format=value_format)
+            elem = RegElemUnit(color, size, value, fill_opacity, font_size, value_format, 0, False)
             self._set_elem_source_elem(
                 elem=elem, vector=vector, size=size, reg_idx=reg_idx, index=index, offset=offset)
 
             self.last_dep_map[elem] = vector
 
             animation_item = self.animation_add_animation(
-                animate=read_elem(
-                    vector=vector, elem=elem, reg_idx=reg_idx, index=index, offset=offset),
+                animate=read_elem(vector, elem, reg_idx=reg_idx, index=index, offset=offset),
                 src=vector,
                 dst=elem,
                 dep=[vector])
             self._set_item_producer(elem, animation_item)
         return elem
 
+    @overload
     def move_elem(self,
-                  elem: OneDimRegElem,
-                  vector: OneDimReg,
-                  size: float = -1.0,
-                  reg_idx: int = 0,
+                  elem: RegElemUnit,
+                  vector: RegUnit,
+                  index: int,
+                  reg_idx: int,
+                  offset: int = 0,
+                  size: float = -1.0): ...
+
+    @overload
+    def move_elem(self,
+                  elem: RegElemUnit,
+                  vector: RegUnit,
+                  index: int,
+                  offset: int = 0,
+                  size: float = -1.0): ...
+
+    def move_elem(self,
+                  elem: RegElemUnit,
+                  vector: RegUnit,
                   index: int = 0,
-                  offset: int = 0):
+                  reg_idx: int = 0,
+                  offset: int = 0,
+                  size: float = -1.0):
         """
         Move element to register, add animate to list.
 
@@ -294,7 +313,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
             e: Index of element.
         """
         if elem.elem_value is not None:
-            vector.set_elem_value(value=elem.elem_value, reg_idx=reg_idx, index=index)
+            vector.set_elem_value(elem.elem_value, index, reg_idx)
 
         old_dep = None
         if elem in self.last_dep_map:
@@ -303,12 +322,10 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         self.last_dep_map[elem] = vector
 
         elem_ = self._get_duplicate_item(elem)
-        new_elem = OneDimRegElem(color=elem.elem_color,
-                                 width=elem.elem_width if size <= 0 else size,
-                                 value=elem.elem_value,
-                                 fill_opacity=elem.elem_fill_opacity,
-                                 font_size=elem.elem_font_size,
-                                 value_format=elem.elem_value_format)
+        elem_width = elem.elem_width if size <= 0 else size
+        new_elem = RegElemUnit(
+            elem.elem_color, elem_width, elem.elem_value,
+            elem.elem_fill_opacity, elem.elem_font_size, elem.elem_value_format, 0, False)
 
         animation_item = self.animation_add_animation(
             animate=assign_elem(elem_, new_elem, vector, reg_idx, index, offset),
@@ -324,81 +341,22 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
 
         return new_elem
 
-    def counter_to_predicate(self,
-                             png_obj: OneDimReg,
-                             text: str,
-                             width: int,
-                             elements: int = 1,
-                             font_size: int = DEFAULT_FONT_SIZE,
-                             label_pos = None):
-        """
-        Animate of predict-as-counter to mask predicate.
-        """
-        color = self.colormap_default_color
-        mask_pred = OneDimReg(text=text,
-                              color=color,
-                              width=width,
-                              elements=elements,
-                              font_size=font_size,
-                              label_pos=label_pos)
-        self.animation_add_animation(
-            animate=replace_register(png_obj, mask_pred, align="left"),
-            src=png_obj,
-            dst=mask_pred)
-        return mask_pred
-
-    def concat_vector(self,
-                      vector_list: List[OneDimReg],
-                      text: str,
-                      font_size: int = DEFAULT_FONT_SIZE,
-                      label_pos = None) -> OneDimReg:
-        """
-        Animate of vector concat.
-        """
-        reg_width_list = [item.reg_width for item in vector_list]
-        reg_width = sum(reg_width_list)
-        elem_width = int(min([item.elem_width for item in vector_list]))
-        elements = int(reg_width / elem_width)
-
-        color = self.colormap_default_color
-        new_vector = OneDimReg(text=text,
-                               color=color,
-                               width=reg_width,
-                               elements=elements,
-                               font_size=font_size,
-                               label_pos=label_pos)
-        self.placement_add_object(new_vector)
-
-        self.animation_add_animation(
-            animate=concat_vector(vector_list=vector_list, new_vector=new_vector),
-            src=vector_list,
-            dst=new_vector)
-        return new_vector
-
     def data_extend(self,
-                    elem: OneDimRegElem,
+                    elem: RegElemUnit,
                     size: float,
                     zero_extend: bool = False,
-                    value = None,
-                    fill_opacity: float = 0.5,
-                    font_size: int = DEFAULT_FONT_SIZE,
-                    value_format: str = None) -> OneDimRegElem:
+                    value = None) -> RegElemUnit:
         """
         Animate of data convert.
         """
-        value_format = get_config("elem_value_format") if value_format is None else value_format
-
-        color = elem.elem_color
         new_value = value if value is not None else elem.elem_value
-        new_elem = OneDimRegElem(color=color,
-                                 width=size,
-                                 value=new_value,
-                                 fill_opacity=fill_opacity,
-                                 font_size=font_size,
-                                 value_format=value_format,
-                                 high_bits=size - elem.elem_width if zero_extend else \
-                                           size - elem.elem_width + 1,
-                                 high_zero=zero_extend)
+        if size > elem.elem_width:
+            high_bits = size - elem.elem_width if zero_extend else size - elem.elem_width + 1
+        else:
+            high_bits = 0
+        new_elem = RegElemUnit(elem.elem_color, size, new_value,
+                               elem.elem_fill_opacity, elem.elem_font_size, elem.elem_value_format,
+                               high_bits, zero_extend)
 
         old_dep = None
         if elem in self.last_dep_map:
@@ -427,31 +385,33 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
     def decl_function(self,
                       isa_hash: str,
                       args_width: List[float],
-                      res_size: float,
+                      res_size: Union[int, List[int]],
                       func_name: str = None,
                       args_name: List[str] = None,
                       font_size: int = DEFAULT_FONT_SIZE,
+                      value_format: str = None,
                       align_with = None,
-                      func = None) -> FunctionUnit:
+                      func_callee = None) -> FunctionUnit:
         """
         Animation of declare function call.
         
         Used to control placement and animation.
         """
+        # Handle default value of arguments.
         if not func_name:
             func_name = isa_hash
+        if value_format is None:
+            value_format = get_config("elem_value_format")
+        if not isinstance(res_size, list):
+            res_size = [res_size]
 
         if self.placement_has_object(isa_hash):
             func_unit = self.placement_get_object(isa_hash)
         else:
             func_color = self.colormap_default_color
-            func_unit = FunctionUnit(text=func_name,
-                                     color=func_color,
-                                     args_width=args_width,
-                                     res_width=res_size,
-                                     args_name=args_name,
-                                     font_size=font_size,
-                                     func=func)
+            func_unit = FunctionUnit(
+                func_name, func_color, args_width, res_size, args_name,
+                font_size, value_format, func_callee)
             self.placement_add_object(func_unit, isa_hash, align_with=align_with)
 
             self.animation_add_animation(
@@ -463,20 +423,25 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                         num_unit: Union[int, List[int]],
                         isa_hash: Union[str, List[str]],
                         args_width: List[float],
-                        res_size: float,
+                        res_size: Union[int, List[int]],
                         func_name: Union[str, List[str]] = None,
                         args_name: List[str] = None,
                         font_size: int = DEFAULT_FONT_SIZE,
+                        value_format: str = None,
                         force_hw_ratio: bool = False,
-                        func = None) -> List[FunctionUnit]:
+                        func_callee = None) -> List[FunctionUnit]:
         """
         Animation of declare a group of function call.
         
         Used to control placement and animation.
         """
+        # Handle default value of arguments.
         if not func_name:
             func_name = isa_hash
-
+        if not isinstance(res_size, list):
+            res_size = [res_size]
+        if value_format is None:
+            value_format = get_config("elem_value_format")
         if isinstance(num_unit, int):
             num_unit = [num_unit]
 
@@ -498,13 +463,9 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                         func_ = func_[sub_id]
 
             func_color = self.colormap_default_color
-            func_unit = FunctionUnit(text=func_,
-                                     color=func_color,
-                                     args_width=args_width,
-                                     res_width=res_size,
-                                     args_name=args_name,
-                                     font_size=font_size,
-                                     func=func)
+            func_unit = FunctionUnit(
+                func_, func_color, args_width, res_size, args_name,
+                font_size, value_format, func_callee)
 
             if not isinstance(isa_hash, list):
                 func_hash = isa_hash + "_".join([str(sub_id) for sub_id in num_id])
@@ -526,23 +487,27 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
 
     def function_call(self,
                       func_isa_hash: str,
-                      args: List[OneDimRegElem],
-                      res_size: float,
+                      args: List[RegElemUnit],
                       func_args_index: List[int] = None,
+                      res_width: Union[int, List[int]] = None,
                       res_color_hash = None,
-                      res_index: int = None,
-                      res_value = None,
+                      res_index: Union[int, List[int]] = None,
+                      res_value: Union[Any, List[Any]] = None,
                       res_fill_opacity: float = 0.5,
                       res_font_size: int = DEFAULT_FONT_SIZE,
-                      res_value_format: str = None) -> OneDimRegElem:
+                      res_value_format: str = None) -> Union[RegElemUnit, List[RegElemUnit]]:
         """
         Animate of Function call.
         """
-        res_value_format = get_config("elem_value_format") if res_value_format is None else \
-                           res_value_format
+        if res_width is not None and not isinstance(res_width, list):
+            res_width = [res_width]
+        if res_index is not None and not isinstance(res_index, list):
+            res_index = [res_index]
+        if res_value is not None and not isinstance(res_value, list):
+            res_value = [res_value]
 
-        args_item: List[OneDimRegElem] = []
-        args_item_exist: List[OneDimRegElem] = []
+        args_item: List[RegElemUnit] = []
+        args_item_exist: List[RegElemUnit] = []
         for item in args:
             if isinstance(item, tuple):
                 args_item.append(item[0])
@@ -551,20 +516,17 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                 args_item_exist.append(item)
 
         if self.placement_has_object(func_isa_hash):
-            func_unit = self.placement_get_object(func_isa_hash)
+            func_unit: FunctionUnit = self.placement_get_object(func_isa_hash)
+        if res_value_format is None:
+            res_value_format = func_unit.func_value_format
+        if res_width is None:
+            res_width = func_unit.func_res_width
+        if res_index is None:
+            res_index = [0 for _ in range (0, func_unit.func_res_count)]
+        if func_args_index is None:
+            func_args_index = [0 for _ in args]
 
-        res_color = self.colormap_get_color(
-            self._traceback_hash() if res_color_hash is None else res_color_hash)
-        args_item_value: List = [arg.elem_value for arg in args_item]
-        if (res_value is None) and (func_unit.func is not None) and (None not in args_item_value):
-            res_value = func_unit.func(*args_item_value)
-        res_elem = OneDimRegElem(color=res_color,
-                                 width=res_size,
-                                 value=res_value,
-                                 fill_opacity=res_fill_opacity,
-                                 font_size=res_font_size,
-                                 value_format=res_value_format)
-
+        # Arguments
         old_dep = []
         args_ = []
         args_exist_ = []
@@ -580,17 +542,30 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                 args_.append(arg_)
                 args_exist_.append(arg_)
 
-        self.last_dep_map[res_elem] = func_unit
+        # Function callee
+        args_item_value: List = [arg.elem_value for arg in args_item]
+        if (res_value is None) and (func_unit.func_callee is not None) \
+                and (None not in args_item_value):
+            res_value = func_unit.func_callee(*args_item_value)
+        if not isinstance(res_value, list):
+            res_value = [res_value] * len(res_width)
 
-        if func_args_index is None:
-            func_args_index = [0 for _ in args]
-        if res_index is None:
-            res_index = 0
+        # Result elements
+        res_color_list = self.colormap_get_multi_color(
+            len(res_width), self._traceback_hash() if res_color_hash is None else res_color_hash)
+        res_elem_list = []
+
+        for res_width_, res_value_, res_color in zip(res_width, res_value, res_color_list):
+            res_elem = RegElemUnit(
+                res_color, res_width_, res_value_,
+                res_fill_opacity, res_font_size, res_value_format, 0, False)
+            self.last_dep_map[res_elem] = func_unit
+            res_elem_list.append(res_elem)
 
         animation_item = self.animation_add_animation(
             animate=function_call(func_unit=func_unit,
                                   args_list=args_,
-                                  res_item=res_elem,
+                                  res_list=res_elem_list,
                                   func_args_index=func_args_index,
                                   res_index=res_index),
             src=args_item_exist + args_exist_,
@@ -598,9 +573,10 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
             dep=(old_dep + [func_unit]) if old_dep else [func_unit])
         for arg in args_item_exist:
             self._set_item_cusumer(arg, animation_item)
-        self._set_item_producer(res_elem, animation_item)
+        for res in res_elem_list:
+            self._set_item_producer(res, animation_item)
 
-        return res_elem
+        return res_elem_list[0] if len(res_elem_list) == 1 else res_elem_list
 
     def read_func_imm(self,
                       size: float,
@@ -608,20 +584,18 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                       value = None,
                       fill_opacity: float = 0.5,
                       font_size: int = DEFAULT_FONT_SIZE,
-                      value_format: str = None) -> OneDimRegElem:
+                      value_format: str = None) -> RegElemUnit:
         """
         Animate of Function call.
         """
-        value_format = get_config("elem_value_format") if value_format is None else value_format
+        # Handle default value of arguments.
+        if value_format is None:
+            value_format = get_config("elem_value_format")
 
         res_color = self.colormap_get_color(
             self._traceback_hash() if color_hash is None else color_hash)
-        res_elem = OneDimRegElem(color=res_color,
-                                 width=size,
-                                 value=value,
-                                 fill_opacity=fill_opacity,
-                                 font_size=font_size,
-                                 value_format=value_format)
+        res_elem = RegElemUnit(
+            res_color, size, value, fill_opacity, font_size, value_format, 0, False)
 
         return read_func_imm(elem=res_elem)
 
@@ -635,13 +609,18 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                     isa_hash: str = None,
                     addr_align: int = None,
                     font_size = DEFAULT_FONT_SIZE,
+                    value_format: str = None,
                     para_enable = False) -> MemoryUnit:
         """
         Animation of declare memory.
 
         Used to control placement and animation.
         """
-        addr_align = get_config("mem_align") if addr_align is None else addr_align
+        # Handle default value of arguments.
+        if addr_align is None:
+            addr_align = get_config("mem_align")
+        if value_format is None:
+            value_format = get_config("elem_value_format")
 
         if not isa_hash:
             isa_hash = "Memory"
@@ -655,6 +634,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                                   addr_align=addr_align,
                                   mem_range=mem_range,
                                   font_size=font_size,
+                                  value_format=value_format,
                                   para_enable=para_enable,
                                   mem_map_width=self.placement_width() - 2)
             self.placement_add_object(mem_unit, "Memory")
@@ -665,7 +645,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         return mem_unit
 
     def read_memory(self,   # pylint: disable=dangerous-default-value
-                    addr: OneDimRegElem,
+                    addr: RegElemUnit,
                     size: int,
                     offset: int = 0,
                     addr_match: bool = False,
@@ -674,16 +654,15 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                     res_fill_opacity: float = 0.5,
                     res_font_size: int = DEFAULT_FONT_SIZE,
                     res_value_format: str = None,
-                    mem_isa_hash: str = None) -> OneDimRegElem:
+                    mem_isa_hash: str = None) -> RegElemUnit:
         """
         Animate of read memory.
         """
-        res_value_format = get_config("elem_value_format") if res_value_format is None else \
-                           res_value_format
-
         if not mem_isa_hash:
             mem_isa_hash = "Memory"
-        mem_unit = self.placement_get_object(mem_isa_hash)
+        mem_unit: MemoryUnit = self.placement_get_object(mem_isa_hash)
+        res_value_format = mem_unit.mem_value_format if res_value_format is None else \
+                           res_value_format
 
         addr_value = None
         if addr.elem_value is not None:
@@ -694,12 +673,9 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
 
         data_color = self.colormap_get_color(
             self._traceback_hash() if res_color_hash is None else res_color_hash)
-        data = OneDimRegElem(color=data_color,
-                             width=size,
-                             value=res_value,
-                             fill_opacity=res_fill_opacity,
-                             font_size=res_font_size,
-                             value_format=res_value_format)
+        data = RegElemUnit(
+            data_color, size, res_value, res_fill_opacity, res_font_size, res_value_format,
+            0, False)
 
         old_dep = []
         if addr in self.last_dep_map:
@@ -752,8 +728,8 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         return data
 
     def write_memory(self,  # pylint: disable=dangerous-default-value
-                     addr: OneDimRegElem,
-                     data: OneDimRegElem,
+                     addr: RegElemUnit,
+                     data: RegElemUnit,
                      offset: int = 0,
                      addr_match: bool = False,
                      mem_isa_hash: str = None) -> None:
@@ -762,7 +738,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         """
         if not mem_isa_hash:
             mem_isa_hash = "Memory"
-        mem_unit = self.placement_get_object(mem_isa_hash)
+        mem_unit: MemoryUnit = self.placement_get_object(mem_isa_hash)
 
         addr_value = None
         if addr.elem_value is not None:

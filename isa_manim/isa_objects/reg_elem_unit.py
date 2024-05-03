@@ -15,76 +15,60 @@ Graphic object structure:
 """
 
 from typing import Any
-import numpy as np
-from manim import (VGroup, Rectangle, Text, Line,
-                   LEFT, RIGHT, UP,
+from manim import (VGroup, Rectangle, Text,
+                   LEFT, RIGHT,
                    DEFAULT_FONT_SIZE)
 from colour import Color
 from ..isa_config import get_scene_ratio, get_config
 
-class OneDimRegElem(VGroup):
+class RegElemUnit(VGroup):
     """
     Object for register element.
 
-    Attributes:
-        value_text: Value text object.
+    Public M-Objects:
         elem_rect: Register rectangle object.
-        elem_width: element width.
-        value: Value of this element, which should be an integer or UInt defined by isa_sim_utils.
+        value_text: Value text object.
+
+    Public attributes:
+        elem_value: Value of this element, which should be Any type rather than vector.
+        elem_fill_opacity: Fill opacity of this element.
+        elem_font_size: Font size of value text.
+        elem_value_format: Format to print data value.
     """
 
     require_serialization = False
+    """
+    Animation related with this object does not need to be serialized.
+    """
 
     def __init__(self,
                  color: Color,
                  width: int,
-                 value: Any = None,
-                 fill_opacity: float = 0.5,
-                 font_size: int = DEFAULT_FONT_SIZE,
-                 value_format: str = get_config("elem_value_format"),
-                 high_bits: int = 0,
-                 high_zero: bool = False):
+                 value: Any,
+                 fill_opacity: float,
+                 font_size: int,
+                 value_format: str,
+                 high_bits: int,
+                 high_zero: bool):
         """
         Constructor an element.
 
         Args:
-            color: Color of register.
-            width: Width of register, in bit.
-            value: Value of this register, which should be an integer or UInt defined by
-                isa_sim_utils.
+            color: Color of this element.
+            width: Width of this element, in bit.
+            value: Value of this element, which should be Any type rather than vector.
+            fill_opacity: Fill opacity of this element.
             font_size: Font size of value text.
+            value_format: Format to print data value.
+            high_bits: Specify a number of Most significant bits.
+            high_zero: True means the higher part of the register is forced to zero.
         """
         self.elem_value_format: str = value_format
         self.elem_font_size: int = font_size
         self.elem_value: Any = value
         self.elem_width: int = width
 
-        if high_bits == 0:
-            # Register rectangle
-            self.elem_rect = Rectangle(color=color,
-                                       height=1.0,
-                                       width=width * get_scene_ratio(),
-                                       fill_opacity=fill_opacity)
-
-            # Value text
-            if value is None:
-                value_str = ""
-            elif isinstance(value, (int, float)):
-                value_str = value_format.format(value)
-            else:
-                value_str = str(value)
-            self.value_text = Text(text=value_str,
-                                color=color,
-                                font_size=font_size)
-
-            # Scale
-            if self.value_text.width > self.elem_rect.width:
-                value_text_scale = self.elem_rect.width / self.value_text.width
-                self.value_text.scale(value_text_scale)
-
-            super().__init__()
-            self.add(self.elem_rect, self.value_text)
-        elif high_zero:
+        if high_bits > 0 and high_zero:
             # Register rectangle
             self.elem_rect = Rectangle(color=color,
                                        height=1.0,
@@ -140,18 +124,13 @@ class OneDimRegElem(VGroup):
             else:
                 value_str = str(value)
             self.value_text = Text(text=value_str,
-                                color=color,
-                                font_size=font_size)
+                                   color=color,
+                                   font_size=font_size)
 
-            # Scale
+            # Scale text
             if self.value_text.width > self.elem_rect.width:
                 value_text_scale = self.elem_rect.width / self.value_text.width
                 self.value_text.scale(value_text_scale)
-
-            # Split line
-            Line(self.elem_rect.get_left() + RIGHT * high_bits + UP * 0.5,
-                 self.elem_rect.get_left() + RIGHT * high_bits + UP * 0.5,
-                 color=color)
 
             super().__init__()
             self.add(self.elem_rect, self.value_text)
@@ -159,32 +138,24 @@ class OneDimRegElem(VGroup):
     # Property functions
     @property
     def elem_color(self) -> Color:
+        """
+        Return color of this element.
+        """
         return self.elem_rect.color
 
     @property
     def elem_fill_opacity(self) -> float:
+        """
+        Return fill opacity of this element.
+        """
         return self.elem_rect.fill_opacity
 
     # Override function
     def align_points_with_larger(self, larger_mobject):
         raise NotImplementedError("Please override in a child class.")
 
-    # Get locations.
-    def get_sub_elem_center(self,
-                            index: int,
-                            elem_width: float = -1.0) -> np.ndarray:
+    def __bool__(self):
         """
-        Return center position of specified sub-item.
-
-        If not specified element width, return one elem as same as definition.
-        Otherwise, return one element with specified width.
-
-        Args:
-            index: Index of elements.
-            elem_width: Width of element in byte.
+        Return whether the value of element is True of False. Used by predicate mask.
         """
-        if elem_width < 0:
-            elem_width = self.elem_width
-
-        return self.elem_rect.get_right() \
-            + LEFT * (index + 0.5) * elem_width * get_scene_ratio()
+        return bool(self.elem_value)

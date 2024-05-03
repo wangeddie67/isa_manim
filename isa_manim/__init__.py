@@ -5,17 +5,14 @@ Library to generate ISA behavior by Manim.
 from manim import *
 
 # Objects for ISA flow.
-from .isa_objects import (OneDimReg,
-                          TwoDimReg,
-                          OneDimRegElem,
+from .isa_objects import (RegUnit,
+                          RegElemUnit,
                           FunctionUnit,
-                          MemoryMap,
                           MemoryUnit)
 
 # Animation for ISA flow.
 from .isa_animate import (decl_register,
                           replace_register,
-                          concat_vector,
                           read_elem,
                           assign_elem,
                           replace_elem,

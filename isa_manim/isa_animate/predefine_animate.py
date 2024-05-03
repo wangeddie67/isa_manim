@@ -8,16 +8,15 @@ from manim import (Mobject,
                    FadeTransformPieces, Indicate, Wait,
                    Rectangle, Triangle,
                    LEFT, RIGHT)
-from ..isa_objects import (OneDimReg,
-                           OneDimRegElem,
-                           TwoDimReg,
+from ..isa_objects import (RegElemUnit,
+                           RegUnit,
                            FunctionUnit,
                            MemoryUnit)
 
 #
 # Animation with Registers.
 #
-def decl_register(*register: List[Union[OneDimReg, TwoDimReg]]) -> Animation:
+def decl_register(*register: List[Union[RegUnit]]) -> Animation:
     """
     Animation for declare register. Fadein object of register.
 
@@ -26,8 +25,8 @@ def decl_register(*register: List[Union[OneDimReg, TwoDimReg]]) -> Animation:
     """
     return FadeIn(*register)
 
-def replace_register(old_vector: OneDimReg,
-                     new_vector: OneDimReg,
+def replace_register(old_vector: RegUnit,
+                     new_vector: RegUnit,
                      align: str = "center") -> Animation:
     """
     Animation for replacing register with another register. The new vector can be left/right/center-
@@ -54,35 +53,11 @@ def replace_register(old_vector: OneDimReg,
     return Succession(Transform(old_vector, new_vector),
                       AnimationGroup(FadeIn(new_vector), FadeOut(old_vector)))
 
-def concat_vector(vector_list: List[OneDimReg],
-                  new_vector: OneDimReg) -> Animation:
-    """
-    Animation for concatenating vectors. Move vectors to the location of new vector and ordering.
-    Then, fadeout old vectors and fadein the new vector.
-
-    Args:
-        vector_list: List of old vectors.
-        new_vector: Object of new vector.
-    """
-    reg_width_list = [item.reg_rect.width for item in vector_list]
-
-    move_animate_list = []
-    for i in range(0, len(reg_width_list)):
-        offset = sum(reg_width_list[0:i])
-        new_pos = new_vector.reg_rect.get_right() + LEFT * (offset + reg_width_list[i] / 2)
-        move_animate_list.append(
-            vector_list[i].animate.shift(new_pos - vector_list[i].reg_rect.get_center()))
-    move_animate = \
-        AnimationGroup(*move_animate_list)
-
-    fade_animate = AnimationGroup(FadeIn(new_vector), *[FadeOut(arg) for arg in vector_list])
-    return Succession(move_animate, fade_animate)
-
 #
 # Animation with Elements.
 #
-def read_elem(vector: OneDimReg,
-              elem: OneDimRegElem,
+def read_elem(vector: RegUnit,
+              elem: RegElemUnit,
               reg_idx: int = 0,
               index: int = 0,
               offset: int = 0) -> Animation:
@@ -98,21 +73,18 @@ def read_elem(vector: OneDimReg,
         offset: Offset of lower bit.
     """
 
-    if isinstance(vector, OneDimReg):
+    if isinstance(vector, RegUnit):
         elem.move_to(vector.get_elem_center(
-            index=index, offset=offset, elem_width=elem.elem_width))
-    elif isinstance(vector, TwoDimReg):
-        elem.move_to(vector.get_elem_center(
-            reg_idx=reg_idx, index=index, offset=offset, elem_width=elem.elem_width))
+            index, reg_idx, offset=offset, elem_width=elem.elem_width))
     else:
         error_str = f"vector is not right type. {str(vector)}"
         raise ValueError(error_str)
 
     return FadeIn(elem)
 
-def assign_elem(old_elem: OneDimRegElem,
-                new_elem: OneDimRegElem,
-                vector: OneDimReg,
+def assign_elem(old_elem: RegElemUnit,
+                new_elem: RegElemUnit,
+                vector: RegUnit,
                 reg_idx: int = 0,
                 index: int = 0,
                 offset: int = 0) -> Animation:
@@ -131,12 +103,9 @@ def assign_elem(old_elem: OneDimRegElem,
         index: Index of element.
         offset: Offset of lower bit.
     """
-    if isinstance(vector, OneDimReg):
+    if isinstance(vector, RegUnit):
         dest_pos = vector.get_elem_center(
-            index=index, offset=offset, elem_width=new_elem.elem_width)
-    elif isinstance(vector, TwoDimReg):
-        dest_pos = vector.get_elem_center(
-            reg_idx=reg_idx, index=index, offset=offset, elem_width=new_elem.elem_width)
+            index, reg_idx, offset=offset, elem_width=new_elem.elem_width)
     else:
         error_str = f"vector is not right type. {str(vector)}"
         raise ValueError(error_str)
@@ -144,8 +113,8 @@ def assign_elem(old_elem: OneDimRegElem,
     new_elem.move_to(dest_pos)
     return Transform(old_elem, new_elem)
 
-def replace_elem(old_elem: OneDimRegElem,
-                 new_elem: OneDimRegElem,
+def replace_elem(old_elem: RegElemUnit,
+                 new_elem: RegElemUnit,
                  index: int = 0,
                  align: str = "right") -> Animation:
     """
@@ -183,7 +152,7 @@ def decl_func_call(*func_unit: List[FunctionUnit]) -> Animation:
     """
     return FadeIn(*func_unit)
 
-def read_func_imm(elem: OneDimRegElem) -> Tuple[Mobject, Animation]:
+def read_func_imm(elem: RegElemUnit) -> Tuple[Mobject, Animation]:
     """
     Animation for set one argument as immediate. Fade in element at the specified location related
     to the function unit..
@@ -194,10 +163,10 @@ def read_func_imm(elem: OneDimRegElem) -> Tuple[Mobject, Animation]:
     return (elem, FadeIn(elem))
 
 def function_call(func_unit: FunctionUnit,
-                  args_list: List[OneDimRegElem],
-                  res_item: OneDimRegElem,
+                  args_list: List[RegElemUnit],
+                  res_list: List[RegElemUnit],
                   func_args_index: List[int],
-                  res_index: int) -> Animation:
+                  res_index: List[int]) -> Animation:
     """
     Animation for calling one function.
 
@@ -206,10 +175,11 @@ def function_call(func_unit: FunctionUnit,
         args_list: List of object of arguments.
         res_item: List of result item.
     """
-    res_item.move_to(func_unit.get_dst_pos(res_item.elem_width, res_index))
+    for i, item in enumerate(res_list):
+        item.move_to(func_unit.get_dst_pos(i, item.elem_width, res_index[i]))
 
     move_animate_list = []
-    args_list_ = []
+    args_list_ : List[RegElemUnit] = []
     for i, arg in enumerate(args_list):
         if isinstance(arg, tuple):
             arg[0].move_to(func_unit.get_args_pos(i, arg[0].elem_width, func_args_index[i]))
@@ -224,9 +194,10 @@ def function_call(func_unit: FunctionUnit,
 
     fade_animate = \
         AnimationGroup(
-            FadeIn(res_item,
-                   shift=func_unit.get_dst_pos(res_item.elem_width, res_index) - \
-                       func_unit.func_ellipse.get_center()),
+            *[FadeIn(res,
+                     shift=func_unit.get_dst_pos(i, res.elem_width, res_index[i]) - \
+                          func_unit.func_ellipse.get_center())
+              for i, res in enumerate(res_list)],
             *[FadeOut(arg,
                       shift=func_unit.func_ellipse.get_center() - \
                           func_unit.get_args_pos(i, arg.elem_width, func_args_index[i]))
@@ -247,8 +218,8 @@ def decl_memory_unit(mem_unit: MemoryUnit) -> Animation:
     return FadeIn(mem_unit)
 
 def read_memory_without_addr(mem_unit: MemoryUnit,
-                             addr_item: OneDimRegElem,
-                             data_item: OneDimRegElem) -> Animation:
+                             addr_item: RegElemUnit,
+                             data_item: RegElemUnit) -> Animation:
     """
     Animation for calling one function.
 
@@ -269,8 +240,8 @@ def read_memory_without_addr(mem_unit: MemoryUnit,
     return Succession(move_animate, fade_animate)
 
 def write_memory_without_addr(mem_unit: MemoryUnit,
-                              addr_item: OneDimRegElem,
-                              data_item: OneDimRegElem) -> Animation:
+                              addr_item: RegElemUnit,
+                              data_item: RegElemUnit) -> Animation:
     """
     Animation for calling one function.
 
@@ -292,8 +263,8 @@ def write_memory_without_addr(mem_unit: MemoryUnit,
     return Succession(move_animate, fade_animate)
 
 def read_memory(mem_unit: MemoryUnit,
-                addr_item: OneDimRegElem,
-                data_item: OneDimRegElem,
+                addr_item: RegElemUnit,
+                data_item: RegElemUnit,
                 addr_mark: Triangle,
                 mem_mark: Rectangle,
                 addr_match: bool = True) -> Animation:
@@ -324,7 +295,8 @@ def read_memory(mem_unit: MemoryUnit,
         data_item.move_to(mem_unit.get_data_pos(data_item.elem_width))
         data_animate = AnimationGroup(
             Create(mem_mark),
-            FadeIn(data_item, shift=mem_unit.get_data_pos() - mem_mark.get_center()))
+            FadeIn(data_item,
+                   shift=mem_unit.get_data_pos(data_item.elem_width) - mem_mark.get_center()))
 
         return Succession(move_animate, addr_animate, data_animate)
     else:
@@ -346,8 +318,8 @@ def read_memory(mem_unit: MemoryUnit,
         return Succession(move_animate, addr_animate, data_animate)
 
 def write_memory(mem_unit: MemoryUnit,
-                 addr_item: OneDimRegElem,
-                 data_item: OneDimRegElem,
+                 addr_item: RegElemUnit,
+                 data_item: RegElemUnit,
                  addr_mark: Triangle,
                  mem_mark: Rectangle,
                  addr_match: bool = True) -> Animation:
@@ -379,7 +351,8 @@ def write_memory(mem_unit: MemoryUnit,
         # Data mark.
         data_animate = AnimationGroup(
             Create(mem_mark),
-            FadeOut(data_item, shift=mem_mark.get_center() - mem_unit.get_data_pos()))
+            FadeOut(data_item,
+                    shift=mem_mark.get_center() - mem_unit.get_data_pos(data_item.elem_width)))
 
         return Succession(move_animate, addr_animate, data_animate)
     else:

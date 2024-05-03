@@ -41,9 +41,10 @@ class MemoryUnit(VGroup):
                  data_width: int,
                  addr_align: int,
                  mem_range: List[Tuple[int]],
-                 font_size: int = DEFAULT_FONT_SIZE,
-                 para_enable: bool = False,
-                 mem_map_width: int = 0):
+                 font_size: int,
+                 value_format: str,
+                 para_enable: bool,
+                 mem_map_width: int):
         """
         Constructor an function call.
 
@@ -58,6 +59,7 @@ class MemoryUnit(VGroup):
         self.require_serialization = not para_enable
 
         self.mem_font_size = font_size
+        self.mem_value_format = value_format
 
         # memory rectangle
         self.mem_rect: RoundedRectangle = RoundedRectangle(color=color, height=3.0, width=4)
@@ -153,7 +155,7 @@ class MemoryUnit(VGroup):
         raise NotImplementedError("Please override in a child class.")
 
     # Get locations.
-    def get_addr_pos(self, width: int = None) -> np.ndarray:
+    def get_addr_pos(self, width: int) -> np.ndarray:
         """
         Return center position of access address.
 
@@ -165,7 +167,7 @@ class MemoryUnit(VGroup):
         else:
             return self.addr_rect.get_center()
 
-    def get_data_pos(self, width: int = None) -> np.ndarray:
+    def get_data_pos(self, width: int) -> np.ndarray:
         """
         Return center position of write data.
 
