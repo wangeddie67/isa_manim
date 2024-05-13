@@ -1,0 +1,2065 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../..">
+      
+      
+        <link rel="next" href="../02-animation-apis/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.21">
+    
+    
+      
+        <title>ISA Scenes - Manim for ISA</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.66ac8b77.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#isa-scenes" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Manim for ISA" class="md-header__button md-logo" aria-label="Manim for ISA" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Manim for ISA
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              ISA Scenes
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Manim for ISA" class="md-nav__button md-logo" aria-label="Manim for ISA" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Manim for ISA
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Welcome to Manim for ISA
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Introductions
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Introductions
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    ISA Scenes
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    ISA Scenes
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#isa-animation-flow-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      ISA Animation Flow Management
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ISA Animation Flow Management">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#manual-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      Manual Control
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Examples
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_scene" class="md-nav__link">
+    <span class="md-ellipsis">
+      isa_scene
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="isa_scene">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#isa-scene-for-single-instruction" class="md-nav__link">
+    <span class="md-ellipsis">
+      ISA Scene for Single Instruction
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.single_isa_scene.SingleIsaScene" class="md-nav__link">
+    <span class="md-ellipsis">
+      SingleIsaScene
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.single_isa_scene.SingleIsaScene.__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __init__
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.single_isa_scene.SingleIsaScene.construct" class="md-nav__link">
+    <span class="md-ellipsis">
+      construct
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.single_isa_scene.SingleIsaScene.construct_isa_flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      construct_isa_flow
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.single_isa_scene.SingleIsaScene.draw_title" class="md-nav__link">
+    <span class="md-ellipsis">
+      draw_title
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.single_isa_scene.SingleIsaScene.end_section" class="md-nav__link">
+    <span class="md-ellipsis">
+      end_section
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="end_section">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#isa-scene-for-multiple-instructions" class="md-nav__link">
+    <span class="md-ellipsis">
+      ISA Scene for Multiple Instructions
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.multi_isa_scene.MultiIsaScene" class="md-nav__link">
+    <span class="md-ellipsis">
+      MultiIsaScene
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.multi_isa_scene.MultiIsaScene.__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __init__
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.multi_isa_scene.MultiIsaScene.construct" class="md-nav__link">
+    <span class="md-ellipsis">
+      construct
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.multi_isa_scene.MultiIsaScene.construct_isa_flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      construct_isa_flow
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.multi_isa_scene.MultiIsaScene.draw_subtitle" class="md-nav__link">
+    <span class="md-ellipsis">
+      draw_subtitle
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.multi_isa_scene.MultiIsaScene.draw_title" class="md-nav__link">
+    <span class="md-ellipsis">
+      draw_title
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.multi_isa_scene.MultiIsaScene.end_section" class="md-nav__link">
+    <span class="md-ellipsis">
+      end_section
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.multi_isa_scene.MultiIsaScene.start_section" class="md-nav__link">
+    <span class="md-ellipsis">
+      start_section
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-animation-apis/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Animation APIs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-animation-flow/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Animation Flow
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-placement/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Object Placement
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../1-references/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    References
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            References
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../1-references/10-objects/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Objects
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            Objects
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1-references/10-objects/11-register-unit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Register Unit
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1-references/10-objects/12-function-unit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Function Unit
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1-references/10-objects/13-memory-unit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Memory Unit
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1-references/10-objects/14-element-unit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Element Unit
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../1-references/20-animation/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Animations
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            Animations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1-references/20-animation/21-register-animation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Animations for Registers and Elements
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1-references/20-animation/22-function-animation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Animations For Function Units
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1-references/20-animation/23-memory-animation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Animations for Memory Units
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../1-references/30-scene/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Scene
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            Scene
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1-references/30-scene/31-color-map/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Color map
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1-references/30-scene/32-placement/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Objects Placement
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1-references/30-scene/33-animation-flow/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Animation Flow
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1-references/30-scene/34-refer-count/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Element Reference Counter
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1-references/30-scene/35-data_flow/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Data flow
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#isa-animation-flow-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      ISA Animation Flow Management
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ISA Animation Flow Management">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#manual-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      Manual Control
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Examples
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_scene" class="md-nav__link">
+    <span class="md-ellipsis">
+      isa_scene
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="isa_scene">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#isa-scene-for-single-instruction" class="md-nav__link">
+    <span class="md-ellipsis">
+      ISA Scene for Single Instruction
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.single_isa_scene.SingleIsaScene" class="md-nav__link">
+    <span class="md-ellipsis">
+      SingleIsaScene
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.single_isa_scene.SingleIsaScene.__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __init__
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.single_isa_scene.SingleIsaScene.construct" class="md-nav__link">
+    <span class="md-ellipsis">
+      construct
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.single_isa_scene.SingleIsaScene.construct_isa_flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      construct_isa_flow
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.single_isa_scene.SingleIsaScene.draw_title" class="md-nav__link">
+    <span class="md-ellipsis">
+      draw_title
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.single_isa_scene.SingleIsaScene.end_section" class="md-nav__link">
+    <span class="md-ellipsis">
+      end_section
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="end_section">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#isa-scene-for-multiple-instructions" class="md-nav__link">
+    <span class="md-ellipsis">
+      ISA Scene for Multiple Instructions
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.multi_isa_scene.MultiIsaScene" class="md-nav__link">
+    <span class="md-ellipsis">
+      MultiIsaScene
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.multi_isa_scene.MultiIsaScene.__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __init__
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.multi_isa_scene.MultiIsaScene.construct" class="md-nav__link">
+    <span class="md-ellipsis">
+      construct
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.multi_isa_scene.MultiIsaScene.construct_isa_flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      construct_isa_flow
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.multi_isa_scene.MultiIsaScene.draw_subtitle" class="md-nav__link">
+    <span class="md-ellipsis">
+      draw_subtitle
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.multi_isa_scene.MultiIsaScene.draw_title" class="md-nav__link">
+    <span class="md-ellipsis">
+      draw_title
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.multi_isa_scene.MultiIsaScene.end_section" class="md-nav__link">
+    <span class="md-ellipsis">
+      end_section
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.multi_isa_scene.MultiIsaScene.start_section" class="md-nav__link">
+    <span class="md-ellipsis">
+      start_section
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="isa-scenes">ISA Scenes</h1>
+<p>When users want to create one animation for ISA, <code>isa_manim</code> should be imported at the start of the source file.</p>
+<p>Then, like Manim, one class should be created to describe the behavior within the animation. The class should choose one of <code>SingleIsaScene</code> and <code>MultiIsaScene</code> as the base class.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">isa_manim</span> <span class="kn">import</span> <span class="n">SingleIsaScene</span> 
+
+<span class="k">class</span> <span class="nc">TestSingleIsaScene</span><span class="p">(</span><span class="n">SingleIsaScene</span><span class="p">):</span>
+    <span class="o">...</span>
+</code></pre></div>
+<p>Or</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">isa_manim</span> <span class="kn">import</span> <span class="n">MultiIsaScene</span>
+
+<span class="k">class</span> <span class="nc">TestMultiIsaScene</span><span class="p">(</span><span class="n">MultiIsaScene</span><span class="p">):</span>
+    <span class="o">...</span>
+</code></pre></div>
+<p>The differences between <code>SingleIsaScene</code> and <code>MultiIsaScene</code> lie in the layout of scenes. </p>
+<p>Both <code>SingleIsaScene</code> and <code>MultiIsaScene</code> separate the scene into the title part and the zoom part. The zoom part contains objects (registers, functions and memory) and performs animations. When new objects are added to the scene or some objects are removed from the scene, the zoom part will be scaled or moved to fit all objects within the middle of the scene.</p>
+<p>The title part does not scale during animations. <code>SingleIsaScene</code> only provides one title in the title part. <code>MultiIsaScene</code> provides both the title and subtitle in the title part. The subtitle can be changed during animation.</p>
+<p><code>SingleIsaScene.draw_title</code> and <code>MultiIsaScene.draw_title</code> draw the title on the scene. <code>MultiIsaScene.draw_subtitle</code> fades in the subtitle.</p>
+<p>The animation class should overwrite the behavior of the function <code>construct_isa_flow</code>. In the <code>construct_isa_flow</code>, users do not need to pay much attention to the animation flow but focus on describing the behavior of instructions. Within <code>construct_isa_flow</code>, users can use the APIs provided in <a href="../02-animation-apis/">Animation APIs</a></p>
+<blockquote>
+<p>It is not recommand to apply objects and animations provided in <code>isa_manim.isa_object</code> and <code>isa_manim.isa_animate</code> directly.</p>
+</blockquote>
+<h2 id="isa-animation-flow-management">ISA Animation Flow Management</h2>
+<p>IsaManim makes a major effort to hide the effort of animation flow management behind the APIs describing the behavior of instruction.</p>
+<p>First, IsaManim places objects (register units, function units and memory units) on the scene automatically. See <a href="../../1-references/30-scene/32-placement/">Placement</a> for details.</p>
+<p>Then, IsaManim schedules animations according to the dependency between animations. <code>play</code> and <code>wait</code> are hidden behind APIs. See <a href="../../1-references/30-scene/33-animation-flow/">Animation Flow</a> for details.</p>
+<p>For example, for vector instructions, users have to expand the loop manually and play animations simultaneously.</p>
+<div class="highlight"><pre><span></span><code><span class="n">opa_list</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">read_elem</span><span class="p">(</span><span class="n">zn</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">elements</span><span class="p">)]</span>
+<span class="n">opb_list</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">read_elem</span><span class="p">(</span><span class="n">zm</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">elements</span><span class="p">)]</span>
+<span class="n">res_list</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">function_call</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;binop</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">opa_list</span><span class="p">[</span><span class="n">e</span><span class="p">],</span> <span class="n">opb_list</span><span class="p">[</span><span class="n">e</span><span class="p">]])</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">elements</span><span class="p">)]</span>
+<span class="n">res_list</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">move_elem</span><span class="p">(</span><span class="n">res_list</span><span class="p">[</span><span class="n">e</span><span class="p">],</span> <span class="n">zd</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">elements</span><span class="p">)]</span>
+</code></pre></div>
+<p>With animation APIs provided by IsaManim, IsaManim analyzes the dependency of animations and expands the loop automatically.</p>
+<div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">elements</span><span class="p">):</span>
+    <span class="n">op_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_elem</span><span class="p">(</span><span class="n">zn</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+    <span class="n">op_b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_elem</span><span class="p">(</span><span class="n">zm</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">function_call</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;binop</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">op_a</span><span class="p">,</span> <span class="n">op_b</span><span class="p">])</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">move_elem</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">zd</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+</code></pre></div>
+<p>Further, the color of each element unit is assigned from a color scheme. Element units generated at the same position in the source code share the same color. For example, <code>op_a</code>, <code>op_b</code> and <code>res</code> will be assigned different colors. But <code>op_a</code> for different <code>e</code> among the loop share the same color. Similarly, <code>op_b</code> and <code>res</code> for different <code>e</code> also share the same color. See <a href="../../1-references/30-scene/31-color-map/">Color Map</a> for details.</p>
+<h3 id="manual-control">Manual Control</h3>
+<p>Except for automatic placement and animation flow, IsaManim still provides several methods for users to control the generated animation.</p>
+<p>First, the option <code>align_width</code> controls to place the generated object in the same row as the specified object.</p>
+<p>Then, for groups of function units, <code>force_hw_ratio</code> controls the number of units within one row. Otherwise, the number of units is auto-adjusted to fit the scene.</p>
+<p>Further, <code>end_section()</code> is applied to control the animation flow. <code>end_section</code> performs like a barrier. Animations before the <code>end_section</code> in programming order must finished before the <code>end_section</code>. Meanwhile, Animations after the <code>end_section</code> in programming order must start after the <code>end_section</code>.</p>
+<p>Take the above vector instruction as an example again. The animation of the first element plays separately from animations of other elements because <code>end_section</code> is called when <code>e</code> is 0.</p>
+<div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">elements</span><span class="p">):</span>
+    <span class="n">op_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_elem</span><span class="p">(</span><span class="n">zn</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+    <span class="n">op_b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_elem</span><span class="p">(</span><span class="n">zm</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">function_call</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;binop</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">op_a</span><span class="p">,</span> <span class="n">op_b</span><span class="p">])</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">move_elem</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">zd</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">e</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">end_section</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">fade_out</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+<p><code>end_section</code> provides the following options:</p>
+<ul>
+<li><code>wait</code> specifies the duration between sections. A suitable pause can help a lot for audiences to understand the animation.</li>
+<li><code>fade_out</code> specifies whether all objects on the scene should be faded out. The default value is <code>True</code>.</li>
+</ul>
+<blockquote>
+<p><code>fade_out</code> does not control the title.</p>
+</blockquote>
+<p>the following options are only available in <code>MultiIsaScene</code>.</p>
+<ul>
+<li><code>keep_objects</code> specifies which objects and element units should be kept while other objects should be faded out. This option is very useful for one animation with several phases, like memory copy instruction.</li>
+<li><code>keep_pos</code> specifies whether the position of objects within <code>keep_objects</code> should be kept.</li>
+</ul>
+<h2 id="examples">Examples</h2>
+<p><img alt="" src="../../image/TestSingleIsaScene.gif" /></p>
+<p>Source code: <a href="https://github.com/wangeddie67/isa_manim/blob/main/tests/isa_scene/test_single_isa_scene_mem.py"><em>test_single_isa_scene_mem.py</em></a></p>
+<p><img alt="" src="../../image/TestSingleIsaSceneMem.gif" /></p>
+<p>Source code: <a href="https://github.com/wangeddie67/isa_manim/blob/main/tests/isa_scene/test_single_isa_scene_mem.py"><em>test_single_isa_scene_mem.py</em></a></p>
+<p><img alt="" src="../../image/TestMultiIsaScene.gif" /></p>
+<p>Source code: <a href="https://github.com/wangeddie67/isa_manim/blob/main/tests/isa_scene/test_multi_isa_scene.py"><em>test_multi_isa_scene.py</em></a></p>
+<h2 id="isa_scene">isa_scene</h2>
+<h3 id="isa-scene-for-single-instruction">ISA Scene for Single Instruction</h3>
+<p><code>isa_manim.isa_scene.single_isa_scene.SingleIsaScene</code> is used to describe one single instruction. Hence, it only provides one title, by function <code>draw_title</code>.</p>
+<p>The height of the frame is 9 while the width of the frame is 16.</p>
+<p><code>isa_manim.isa_scene.single_isa_scene.SingleIsaScene</code> applies <code>ZoomedScene</code>. The camera frame of the zoomed scene covers the area of the object placement while the display frame of the zoomed scene covers the area below the title (from 3.0 to the bottom, from the left to the right).</p>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<a id="isa_manim.isa_scene.single_isa_scene.SingleIsaScene"></a>
+  <div class="doc doc-contents first">
+          <p class="doc doc-class-bases">
+            Bases: <code><span title="manim.ZoomedScene">ZoomedScene</span></code>, <code><a class="autorefs autorefs-internal" title="isa_manim.isa_scene.isa_data_flow.IsaDataFlow" href="../../1-references/30-scene/35-data_flow/#isa_manim.isa_scene.isa_data_flow.IsaDataFlow">IsaDataFlow</a></code></p>
+
+  
+      <p>ISA scene with single instructions.</p>
+
+
+
+  <p><span class="doc-section-title">Attributes:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code><span title="isa_manim.isa_scene.single_isa_scene.SingleIsaScene.camera_scale_rate">camera_scale_rate</span></code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>scale factor of zoomed camera.</p>
+            </div>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code><span title="isa_manim.isa_scene.single_isa_scene.SingleIsaScene.camera_origin">camera_origin</span></code></td>
+          <td>
+                <code><span title="numpy.array">array</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>origin of zoomed camera.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.single_isa_scene.SingleIsaScene.__init__" class="doc doc-heading">
+          <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Construct scene.</p>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.single_isa_scene.SingleIsaScene.construct" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">construct</span><span class="p">()</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Construct animation.</p>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.single_isa_scene.SingleIsaScene.construct_isa_flow" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">construct_isa_flow</span><span class="p">()</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Construct ISA flow. Rewrite in inherited class.</p>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.single_isa_scene.SingleIsaScene.draw_title" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">draw_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Draw title.</p>
+
+
+
+  <p><span class="doc-section-title">Parameters:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code>title</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>String of title.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.single_isa_scene.SingleIsaScene.end_section" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">end_section</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">fade_out</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Terminate or temporary stop of section, and update camera.</p>
+
+
+
+  <p><span class="doc-section-title">Parameters:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code>wait</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Time of wait before end of section.</p>
+            </div>
+          </td>
+          <td>
+                <code>1</code>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>fade_out</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>True means fade_out all items on scene except always-on items.</p>
+            </div>
+          </td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+
+</div><h3 id="isa-scene-for-multiple-instructions">ISA Scene for Multiple Instructions</h3>
+<p><code>isa_manim.isa_scene.multi_isa_scene.MultiIsaScene</code> performs the same behavior as above, except it provides one subtitle below the title by function <code>draw_subtitle</code>. Hence, the display frame of the zoomed scene covers the area below the subtitle (from 2.0 to the bottom, from the left to the right).</p>
+<p>Moreover, the function <code>start_section</code> is provided to reset the object placement, which should be placed before each instruction. As below:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">construct_isa_flow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">start_section</span><span class="p">(</span><span class="s2">&quot;instruction 1&quot;</span><span class="p">)</span>
+    <span class="c1"># Instruction behaviors.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">end_section</span><span class="p">()</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">start_section</span><span class="p">(</span><span class="s2">&quot;instruction 2&quot;</span><span class="p">)</span>
+    <span class="c1"># Instruction behaviors.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">end_section</span><span class="p">()</span>
+</code></pre></div>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<a id="isa_manim.isa_scene.multi_isa_scene.MultiIsaScene"></a>
+  <div class="doc doc-contents first">
+          <p class="doc doc-class-bases">
+            Bases: <code><span title="manim.ZoomedScene">ZoomedScene</span></code>, <code><a class="autorefs autorefs-internal" title="isa_manim.isa_scene.isa_data_flow.IsaDataFlow" href="../../1-references/30-scene/35-data_flow/#isa_manim.isa_scene.isa_data_flow.IsaDataFlow">IsaDataFlow</a></code></p>
+
+  
+      <p>ISA scene with multiple instructions.</p>
+
+
+
+  <p><span class="doc-section-title">Attributes:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code><span title="isa_manim.isa_scene.multi_isa_scene.MultiIsaScene.camera_scale_rate">camera_scale_rate</span></code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>scale factor of zoomed camera.</p>
+            </div>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code><span title="isa_manim.isa_scene.multi_isa_scene.MultiIsaScene.camera_origin">camera_origin</span></code></td>
+          <td>
+                <code><span title="numpy.array">array</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>origin of zoomed camera.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.multi_isa_scene.MultiIsaScene.__init__" class="doc doc-heading">
+          <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Construct scene.</p>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.multi_isa_scene.MultiIsaScene.construct" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">construct</span><span class="p">()</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Construct animation.</p>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.multi_isa_scene.MultiIsaScene.construct_isa_flow" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">construct_isa_flow</span><span class="p">()</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Construct ISA flow. Rewrite in inherited class.</p>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.multi_isa_scene.MultiIsaScene.draw_subtitle" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">draw_subtitle</span><span class="p">(</span><span class="n">subtitle</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Draw subtitle.</p>
+
+
+
+  <p><span class="doc-section-title">Parameters:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code>subtitle</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>String of subtitle.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.multi_isa_scene.MultiIsaScene.draw_title" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">draw_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Draw title.</p>
+
+
+
+  <p><span class="doc-section-title">Parameters:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code>title</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>String of title.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.multi_isa_scene.MultiIsaScene.end_section" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">end_section</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">fade_out</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">keep_objects</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keep_pos</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Terminate or temporary stop of section, and update camera.</p>
+
+
+
+  <p><span class="doc-section-title">Parameters:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code>wait</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Time of wait before end of section.</p>
+            </div>
+          </td>
+          <td>
+                <code>1</code>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>fade_out</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>True means fade_out all items on scene except always-on items.</p>
+            </div>
+          </td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.multi_isa_scene.MultiIsaScene.start_section" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">start_section</span><span class="p">(</span><span class="n">subtitle</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Start of one section. Draw subtitle and reset object placement.</p>
+
+
+
+  <p><span class="doc-section-title">Parameters:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code>subtitle</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>String of subtitle.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.indexes"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.a7c05c9e.min.js"></script>
+      
+    
+  </body>
+</html>

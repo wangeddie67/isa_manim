@@ -1,0 +1,1874 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../22-function-animation/">
+      
+      
+        <link rel="next" href="../../30-scene/">
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.21">
+    
+    
+      
+        <title>Animations for Memory Units - Manim for ISA</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.66ac8b77.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#animations-for-memory-units" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Manim for ISA" class="md-header__button md-logo" aria-label="Manim for ISA" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Manim for ISA
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Animations for Memory Units
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Manim for ISA" class="md-nav__button md-logo" aria-label="Manim for ISA" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Manim for ISA
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Welcome to Manim for ISA
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Introductions
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Introductions
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../0-introductions/01-scenes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ISA Scenes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../0-introductions/02-animation-apis/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Animation APIs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../0-introductions/03-animation-flow/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Animation Flow
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../0-introductions/04-placement/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Object Placement
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    References
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            References
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../10-objects/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Objects
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            Objects
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-objects/11-register-unit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Register Unit
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-objects/12-function-unit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Function Unit
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-objects/13-memory-unit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Memory Unit
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-objects/14-element-unit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Element Unit
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" checked>
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Animations
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            Animations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../21-register-animation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Animations for Registers and Elements
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../22-function-animation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Animations For Function Units
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Animations for Memory Units
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Animations for Memory Units
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#memory_animate" class="md-nav__link">
+    <span class="md-ellipsis">
+      memory_animate
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_animate.memory_animate" class="md-nav__link">
+    <span class="md-ellipsis">
+      memory_animate
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_animate.memory_animate.decl_memory_unit" class="md-nav__link">
+    <span class="md-ellipsis">
+      decl_memory_unit
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_animate.memory_animate.read_memory" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_memory
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_animate.memory_animate.read_memory_without_addr" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_memory_without_addr
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_animate.memory_animate.write_memory" class="md-nav__link">
+    <span class="md-ellipsis">
+      write_memory
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_animate.memory_animate.write_memory_without_addr" class="md-nav__link">
+    <span class="md-ellipsis">
+      write_memory_without_addr
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../30-scene/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Scene
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            Scene
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../30-scene/31-color-map/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Color map
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../30-scene/32-placement/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Objects Placement
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../30-scene/33-animation-flow/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Animation Flow
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../30-scene/34-refer-count/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Element Reference Counter
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../30-scene/35-data_flow/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Data flow
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#memory_animate" class="md-nav__link">
+    <span class="md-ellipsis">
+      memory_animate
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_animate.memory_animate" class="md-nav__link">
+    <span class="md-ellipsis">
+      memory_animate
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_animate.memory_animate.decl_memory_unit" class="md-nav__link">
+    <span class="md-ellipsis">
+      decl_memory_unit
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_animate.memory_animate.read_memory" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_memory
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_animate.memory_animate.read_memory_without_addr" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_memory_without_addr
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_animate.memory_animate.write_memory" class="md-nav__link">
+    <span class="md-ellipsis">
+      write_memory
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_animate.memory_animate.write_memory_without_addr" class="md-nav__link">
+    <span class="md-ellipsis">
+      write_memory_without_addr
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="animations-for-memory-units">Animations for Memory Units</h1>
+<p><code>isa_manim.isa_animate.memory_animate.decl_memory_unit</code> declares one memory unit by fading in.</p>
+<p><code>isa_manim.isa_animate.memory_animate.read_memory</code> and <code>isa_manim.isa_animate.memory_animate.read_memory_without_addr</code> presents the animation to read data from memory. <code>isa_manim.isa_animate.memory_animate.write_memory</code> and <code>isa_manim.isa_animate.memory_animate.write_memory_without_addr</code> presents the animation to write data to memory. These four functions perform different animations according to some conditions of operations.</p>
+<p>If the address element does not provide a valid address or the provided address does not match any memory map, the accessed memory locations cannot be marked on memory maps of the memory unit. In this situation, <code>read_memory_without_addr</code> and <code>write_memory_without_addr</code> are applied.</p>
+<ul>
+<li>By the first step in <code>read_memory_without_addr</code>, the address element moves to the address port. Then the address element fades out while the data element fades in. At last, the data element can be observed at the data port.</li>
+<li>By the first step in <code>write_memory_without_addr</code>, the address element moves to the address port and the data element moves to the data port first. Then both the address element and the data element fade out.</li>
+</ul>
+<p>At last, a status element fades in if the memory unit has a status port and a status element is provided to function <code>read_memory_without_addr</code> and <code>write_memory_without_addr</code>.</p>
+<p>An example for <code>decl_memory_unit</code>, <code>read_memory_without_addr</code> and <code>write_memory_without_addr</code> is as below:</p>
+<p><img alt="" src="../../../image/TestMemUnitAnimationWithoutAddr.gif" /></p>
+<p>Source code: <a href="https://github.com/wangeddie67/isa_manim/blob/main/tests/isa_animate/test_memory_animation_without_addr.py"><em>test_memory_animation_without_addr.py</em></a></p>
+<blockquote>
+<p><code>read_memory_without_addr</code> and <code>write_memory_without_addr</code> do not work with vector load/store instructions. If the memory unit allows parallel animations, the address elements and data elements for different vector elements will overlap together at the address port and then data port. If the memory unit does not allow parallel animations, the animation for one instruction has to cost a much longer time since elements must be handled one by one.</p>
+<p>The distribution of accessed memory locations is very important to explain the instruction behaviors. It is not suggested to use <code>read_memory_without_addr</code> and <code>write_memory_without_addr</code> in new animations. It is expected that address elements always have valid address values to present in memory maps.</p>
+</blockquote>
+<p>It is suggested to use <code>read_memory</code> and <code>write_memory</code> to generate animations with memory units. The major difference between <code>read_memory</code>/<code>write_memory</code> and <code>read_memory_without_addr</code>/<code>write_memory_without_addr</code> lies in that <code>read_memory</code>/<code>write_memory</code> marks the accessed memory locations. The animation has three steps: moving address elements, marking address position, marking address range and fading in the status element.</p>
+<p>The behavior in the first step depends on whether the memory unit allows parallel animation and whether the actual address matches the value in <code>addr_item</code> (presented by the option <code>addr_match</code>).</p>
+<ul>
+<li>Move the address element to the address port when the memory unit does not allow parallel animations and the actual address matches the value in <code>addr_item</code>.</li>
+<li>Move the data element to the data port simultaneously when <code>write_memory</code> is called.</li>
+<li>Highlight the address element when the memory unit allows parallel animations and the actual address matches the value in <code>addr_item</code>.</li>
+<li>Otherwise, just wait one second to keep the synchronization of animations for vector elements.</li>
+</ul>
+<p>In the second step, the address element is transformed into the address mark on the matched memory map when the actual address matches the value in <code>addr_item</code>. The address mark is one triangle handed down. If the actual address to read is not the same as the value in <code>addr_item</code>, fade in the address mark.</p>
+<p>In the third step, the behavior depends on whether the memory unit allows parallel animation.</p>
+<ul>
+<li>If the memory unit allows parallel animation,</li>
+<li><code>read_memory</code> creates one memory mark on the matched memory map.</li>
+<li><code>write_memory</code> transforms the data element into a data mark on the memory map.</li>
+<li>If the memory unit does not allow parallel animation,</li>
+<li><code>read_memory</code> creates one memory mark on the matched memory map and then transforms the memory map to a data element at the data port.</li>
+<li><code>write_memory</code> transforms the data element into a data mark on the memory map.</li>
+</ul>
+<p>At last, a status element fades in if the memory unit has a status port and a status element is provided to function <code>read_memory_without_addr</code> and <code>write_memory_without_addr</code>.</p>
+<p>A serialization example for <code>decl_memory_unit</code>, <code>read_memory</code> and <code>write_memory</code> is as below.</p>
+<p><img alt="" src="../../../image/TestMemUnitAnimation.gif" /></p>
+<p>Source code: <a href="https://github.com/wangeddie67/isa_manim/blob/main/tests/isa_animate/test_memory_animation.py"><em>test_memory_animation.py</em></a></p>
+<p>A parallel example for <code>decl_memory_unit</code>, <code>read_memory</code> and <code>write_memory</code> is as below. The status port also has output in this example.</p>
+<p><img alt="" src="../../../image/TestMemUnitAnimationParallel.gif" /></p>
+<p>Source code: <a href="https://github.com/wangeddie67/isa_manim/blob/main/tests/isa_animate/test_memory_animation_parallel.py"><em>test_memory_animation_parallel.py</em></a></p>
+<blockquote>
+<p>The above functions generate a sequence of animations, but they do not register animation to Manim unless <code>play()</code> is applied on the result values</p>
+</blockquote>
+<h2 id="memory_animate">memory_animate</h2>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="isa_manim.isa_animate.memory_animate"></a>
+  <div class="doc doc-contents first">
+  
+      <p>Animation with Memory Unit.</p>
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_animate.memory_animate.decl_memory_unit" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">decl_memory_unit</span><span class="p">(</span><span class="n">mem_unit</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Declare one memory unit.</p>
+
+
+
+  <p><span class="doc-section-title">Parameters:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code>mem_unit</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="isa_manim.isa_objects.MemoryUnit" href="../../10-objects/13-memory-unit/#isa_manim.isa_objects.mem_unit.MemoryUnit">MemoryUnit</a></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Object of memory.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  <p><span class="doc-section-title">Returns:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td>
+                <code><span title="manim.Animation">Animation</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Animation to declare memory unit.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_animate.memory_animate.read_memory" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">read_memory</span><span class="p">(</span><span class="n">mem_unit</span><span class="p">,</span> <span class="n">addr_item</span><span class="p">,</span> <span class="n">data_item</span><span class="p">,</span> <span class="n">status_item</span><span class="p">,</span> <span class="n">addr_mark</span><span class="p">,</span> <span class="n">mem_mark</span><span class="p">,</span> <span class="n">addr_match</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Read data from one memory unit.</p>
+<p>Step of this animation is as below:</p>
+<ul>
+<li>Move the address element to the address port only when the memory unit does not allow parallel
+    animations and the actual address matches value in <code>addr_item</code>.<ul>
+<li>Highlight indicate the address element when the memory unit allows parallel animations
+    and the actual address matches value in <code>addr_item</code>.</li>
+<li>Otherwise, wait 1s.</li>
+</ul>
+</li>
+<li>Transform the address element to the address mark on the matched memory map.<ul>
+<li>If the actual address to read is not same as the value in <code>addr_item</code>, fadein the address
+    mark.</li>
+</ul>
+</li>
+<li>Create memory mark on the matched memory map.</li>
+<li>Move memory mark to the data port if the memory unit only allows serialized animations.</li>
+<li>Fadein the status element if <code>status_item</code> is provided and the <code>mem_unit</code> has <code>status_rect</code>.</li>
+</ul>
+
+
+
+  <p><span class="doc-section-title">Parameters:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code>mem_unit</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="isa_manim.isa_objects.MemoryUnit" href="../../10-objects/13-memory-unit/#isa_manim.isa_objects.mem_unit.MemoryUnit">MemoryUnit</a></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Object of memory unit.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>addr_item</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="isa_manim.isa_objects.ElemUnit" href="../../10-objects/14-element-unit/#isa_manim.isa_objects.elem_unit.ElemUnit">ElemUnit</a></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Address element.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>data_item</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="isa_manim.isa_objects.ElemUnit" href="../../10-objects/14-element-unit/#isa_manim.isa_objects.elem_unit.ElemUnit">ElemUnit</a></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Data element.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>status_item</code></td>
+          <td>
+                <code><span title="typing.Union">Union</span>[<a class="autorefs autorefs-internal" title="isa_manim.isa_objects.ElemUnit" href="../../10-objects/14-element-unit/#isa_manim.isa_objects.elem_unit.ElemUnit">ElemUnit</a>, None]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Status element.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>addr_mark</code></td>
+          <td>
+                <code><span title="manim.Triangle">Triangle</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Address mark.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>mem_mark</code></td>
+          <td>
+                <code><span title="manim.Rectangle">Rectangle</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Memory mark.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>addr_match</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>True means the actual address to read is same as the value of <code>addr_item</code>.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  <p><span class="doc-section-title">Returns:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td>
+                <code><span title="manim.Animation">Animation</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Animation to read data from memory unit.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_animate.memory_animate.read_memory_without_addr" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">read_memory_without_addr</span><span class="p">(</span><span class="n">mem_unit</span><span class="p">,</span> <span class="n">addr_item</span><span class="p">,</span> <span class="n">data_item</span><span class="p">,</span> <span class="n">status_item</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Read data from one memory unit.</p>
+<p>Because the address element does not provide an address, or the provided address does not match
+the range of memory maps, address marks and memory marks cannot be generated and displayed.</p>
+<p>Step of this animation is as below:</p>
+<ul>
+<li>Move the address element to the address port.</li>
+<li>Fadeout the address element and fadein the data element.</li>
+<li>Fadein the status element if <code>status_item</code> is provided and the <code>mem_unit</code> has <code>status_rect</code>.</li>
+</ul>
+
+
+
+  <p><span class="doc-section-title">Parameters:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code>mem_unit</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="isa_manim.isa_objects.MemoryUnit" href="../../10-objects/13-memory-unit/#isa_manim.isa_objects.mem_unit.MemoryUnit">MemoryUnit</a></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Object of memory unit.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>addr_item</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="isa_manim.isa_objects.ElemUnit" href="../../10-objects/14-element-unit/#isa_manim.isa_objects.elem_unit.ElemUnit">ElemUnit</a></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Address element.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>data_item</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="isa_manim.isa_objects.ElemUnit" href="../../10-objects/14-element-unit/#isa_manim.isa_objects.elem_unit.ElemUnit">ElemUnit</a></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Data element.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>status_item</code></td>
+          <td>
+                <code><span title="typing.Union">Union</span>[<a class="autorefs autorefs-internal" title="isa_manim.isa_objects.ElemUnit" href="../../10-objects/14-element-unit/#isa_manim.isa_objects.elem_unit.ElemUnit">ElemUnit</a>, None]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Status element.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  <p><span class="doc-section-title">Returns:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td>
+                <code><span title="manim.Animation">Animation</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Animation to read data from memory unit.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_animate.memory_animate.write_memory" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">write_memory</span><span class="p">(</span><span class="n">mem_unit</span><span class="p">,</span> <span class="n">addr_item</span><span class="p">,</span> <span class="n">data_item</span><span class="p">,</span> <span class="n">status_item</span><span class="p">,</span> <span class="n">addr_mark</span><span class="p">,</span> <span class="n">mem_mark</span><span class="p">,</span> <span class="n">addr_match</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Write data to one memory unit.</p>
+<p>Step of this animation is as below:</p>
+<ul>
+<li>Move the address element to the address port and move the data element to the data port only
+    when the memory unit does not allow parallel animations and the actual address matches value
+    in <code>addr_item</code>.<ul>
+<li>Highlight indicate the address element when the memory unit allows parallel animations
+    and the actual address matches value in <code>addr_item</code>.</li>
+<li>Otherwise, wait 1s.</li>
+</ul>
+</li>
+<li>Transform the address element to the address mark on the matched memory map.<ul>
+<li>If the actual address to read is not same as the value in <code>addr_item</code>, fadein the address
+    mark.</li>
+</ul>
+</li>
+<li>Move the data element to the data port to the memory mark if the memory unit only allows
+    serialized animations.<ul>
+<li>Otherwise, create memory mark on the matched memory map.</li>
+</ul>
+</li>
+<li>Fadein the status element if <code>status_item</code> is provided and the <code>mem_unit</code> has <code>status_rect</code>.</li>
+</ul>
+
+
+
+  <p><span class="doc-section-title">Parameters:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code>mem_unit</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="isa_manim.isa_objects.MemoryUnit" href="../../10-objects/13-memory-unit/#isa_manim.isa_objects.mem_unit.MemoryUnit">MemoryUnit</a></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Object of memory unit.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>addr_item</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="isa_manim.isa_objects.ElemUnit" href="../../10-objects/14-element-unit/#isa_manim.isa_objects.elem_unit.ElemUnit">ElemUnit</a></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Address element.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>data_item</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="isa_manim.isa_objects.ElemUnit" href="../../10-objects/14-element-unit/#isa_manim.isa_objects.elem_unit.ElemUnit">ElemUnit</a></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Data element.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>status_item</code></td>
+          <td>
+                <code><span title="typing.Union">Union</span>[<a class="autorefs autorefs-internal" title="isa_manim.isa_objects.ElemUnit" href="../../10-objects/14-element-unit/#isa_manim.isa_objects.elem_unit.ElemUnit">ElemUnit</a>, None]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Status element.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>addr_mark</code></td>
+          <td>
+                <code><span title="manim.Triangle">Triangle</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Address mark.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>mem_mark</code></td>
+          <td>
+                <code><span title="manim.Rectangle">Rectangle</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Memory mark.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>addr_match</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>True means the actual address to write is same as the value of <code>addr_item</code>.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  <p><span class="doc-section-title">Returns:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td>
+                <code><span title="manim.Animation">Animation</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Animation to write data to memory unit.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_animate.memory_animate.write_memory_without_addr" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">write_memory_without_addr</span><span class="p">(</span><span class="n">mem_unit</span><span class="p">,</span> <span class="n">addr_item</span><span class="p">,</span> <span class="n">data_item</span><span class="p">,</span> <span class="n">status_item</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Write data to one memory unit.</p>
+<p>Because the address element does not provide an address, or the provided address does not match
+the range of memory maps, address marks and memory marks cannot be generated and displayed.</p>
+<p>Step of this animation is as below:</p>
+<ul>
+<li>Move the address element to the address port, and move the data element to the data port.</li>
+<li>Fadeout the address element and data element.</li>
+<li>Fadein the status element if <code>status_item</code> is provided and the <code>mem_unit</code> has <code>status_rect</code>.</li>
+</ul>
+
+
+
+  <p><span class="doc-section-title">Parameters:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code>mem_unit</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="isa_manim.isa_objects.MemoryUnit" href="../../10-objects/13-memory-unit/#isa_manim.isa_objects.mem_unit.MemoryUnit">MemoryUnit</a></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Object of memory unit.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>addr_item</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="isa_manim.isa_objects.ElemUnit" href="../../10-objects/14-element-unit/#isa_manim.isa_objects.elem_unit.ElemUnit">ElemUnit</a></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Address element.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>data_item</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="isa_manim.isa_objects.ElemUnit" href="../../10-objects/14-element-unit/#isa_manim.isa_objects.elem_unit.ElemUnit">ElemUnit</a></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Data element.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>status_item</code></td>
+          <td>
+                <code><span title="typing.Union">Union</span>[<a class="autorefs autorefs-internal" title="isa_manim.isa_objects.ElemUnit" href="../../10-objects/14-element-unit/#isa_manim.isa_objects.elem_unit.ElemUnit">ElemUnit</a>, None]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Status element.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  <p><span class="doc-section-title">Returns:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td>
+                <code><span title="manim.Animation">Animation</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Animation to write data to memory unit.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.indexes"], "search": "../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.a7c05c9e.min.js"></script>
+      
+    
+  </body>
+</html>

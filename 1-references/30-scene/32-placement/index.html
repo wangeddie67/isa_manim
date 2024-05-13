@@ -1,0 +1,2773 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../31-color-map/">
+      
+      
+        <link rel="next" href="../33-animation-flow/">
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.21">
+    
+    
+      
+        <title>Objects Placement - Manim for ISA</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.66ac8b77.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#objects-placement" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Manim for ISA" class="md-header__button md-logo" aria-label="Manim for ISA" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Manim for ISA
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Objects Placement
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Manim for ISA" class="md-nav__button md-logo" aria-label="Manim for ISA" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Manim for ISA
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Welcome to Manim for ISA
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Introductions
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Introductions
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../0-introductions/01-scenes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ISA Scenes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../0-introductions/02-animation-apis/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Animation APIs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../0-introductions/03-animation-flow/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Animation Flow
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../0-introductions/04-placement/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Object Placement
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    References
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            References
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../10-objects/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Objects
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            Objects
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-objects/11-register-unit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Register Unit
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-objects/12-function-unit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Function Unit
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-objects/13-memory-unit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Memory Unit
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-objects/14-element-unit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Element Unit
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../20-animation/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Animations
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            Animations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../20-animation/21-register-animation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Animations for Registers and Elements
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../20-animation/22-function-animation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Animations For Function Units
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../20-animation/23-memory-animation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Animations for Memory Units
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" checked>
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Scene
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            Scene
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../31-color-map/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Color map
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Objects Placement
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Objects Placement
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#flow-charts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flow charts
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isaplacementitem" class="md-nav__link">
+    <span class="md-ellipsis">
+      IsaPlacementItem
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementItem" class="md-nav__link">
+    <span class="md-ellipsis">
+      IsaPlacementItem
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementItem.__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __init__
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementItem.get_height" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_height
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementItem.get_marker" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_marker
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementItem.get_width" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_width
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementItem.set_corner" class="md-nav__link">
+    <span class="md-ellipsis">
+      set_corner
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isaplacementmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      IsaPlacementMap
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap" class="md-nav__link">
+    <span class="md-ellipsis">
+      IsaPlacementMap
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __init__
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.dump_placement" class="md-nav__link">
+    <span class="md-ellipsis">
+      dump_placement
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.get_camera_scale" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_camera_scale
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.get_object" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_object
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.get_placement_height" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_placement_height
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.get_placement_origin" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_placement_origin
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.get_placement_width" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_placement_width
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.has_object" class="md-nav__link">
+    <span class="md-ellipsis">
+      has_object
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.place_object" class="md-nav__link">
+    <span class="md-ellipsis">
+      place_object
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.place_object_group" class="md-nav__link">
+    <span class="md-ellipsis">
+      place_object_group
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.place_placement_item" class="md-nav__link">
+    <span class="md-ellipsis">
+      place_placement_item
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.reset_placement" class="md-nav__link">
+    <span class="md-ellipsis">
+      reset_placement
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.resize_placement" class="md-nav__link">
+    <span class="md-ellipsis">
+      resize_placement
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../33-animation-flow/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Animation Flow
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../34-refer-count/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Element Reference Counter
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../35-data_flow/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Data flow
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#flow-charts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flow charts
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isaplacementitem" class="md-nav__link">
+    <span class="md-ellipsis">
+      IsaPlacementItem
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementItem" class="md-nav__link">
+    <span class="md-ellipsis">
+      IsaPlacementItem
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementItem.__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __init__
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementItem.get_height" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_height
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementItem.get_marker" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_marker
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementItem.get_width" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_width
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementItem.set_corner" class="md-nav__link">
+    <span class="md-ellipsis">
+      set_corner
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isaplacementmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      IsaPlacementMap
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap" class="md-nav__link">
+    <span class="md-ellipsis">
+      IsaPlacementMap
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __init__
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.dump_placement" class="md-nav__link">
+    <span class="md-ellipsis">
+      dump_placement
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.get_camera_scale" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_camera_scale
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.get_object" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_object
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.get_placement_height" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_placement_height
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.get_placement_origin" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_placement_origin
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.get_placement_width" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_placement_width
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.has_object" class="md-nav__link">
+    <span class="md-ellipsis">
+      has_object
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.place_object" class="md-nav__link">
+    <span class="md-ellipsis">
+      place_object
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.place_object_group" class="md-nav__link">
+    <span class="md-ellipsis">
+      place_object_group
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.place_placement_item" class="md-nav__link">
+    <span class="md-ellipsis">
+      place_placement_item
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.reset_placement" class="md-nav__link">
+    <span class="md-ellipsis">
+      reset_placement
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.resize_placement" class="md-nav__link">
+    <span class="md-ellipsis">
+      resize_placement
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="objects-placement">Objects Placement</h1>
+<p><code>isa_manim.isa_scene.isa_placement.IsaPlacementMap</code> provides the data structures and function interfaces for object placement. The major duty of <code>IsaPlacementMap</code> includes:</p>
+<ul>
+<li><code>_placement_object_dict</code> provides one dictionary of objects in the scene. The key of the dictionary can be an integer or string. The value of the dictionary is an entity of <code>isa_manim.isa_scene.isa_placement.IsaPlacementItem</code>. The data structure provides the position information of one object.</li>
+<li><code>_placement_map</code> presents the placement map as a 2-D array of an integer. Each element in the array presents the status of one single square of the grid.</li>
+</ul>
+<p><code>IsaPlacementMap</code> provides several groups of APIs to operate the dictionary and the map. At first, <code>has_object</code> and <code>get_object</code> are used to operate the placement dictionary. <code>has_object</code> checks whether one specified hash exists in the dictionary and <code>get_object</code> returns the object associated with the specified hash.</p>
+<p>Then, <code>place_object</code> adds one single object to the placement map and <code>place_object_group</code> adds a group of objects to the placement map. Both of these two functions call <code>place_placement_item</code> to find an appropriate space to place objects.</p>
+<p>The following functions return the status of the placement map:</p>
+<ul>
+<li><code>get_placement_width</code> and <code>get_placement_height</code> returns the width and height of the actual occupied map. Only occupied columns/rows or margins are counted.</li>
+<li><code>get_placement_origin</code> returns the central position of the placement map.</li>
+<li><code>get_camera_scale</code> returns the scale factor of the placement to fit into a specified camera. The value provided by this camera is used to show all objects in the scene by scaling the camera.</li>
+<li><code>dump_placement</code> returns a string to present the placement for debugging.</li>
+</ul>
+<p>The following functions operate on the placement map. <code>reset_placement</code> removes all placed objects and resizes the placement map to the initialization size. <code>resize_placement</code> resizes the placement map to a specified size while keeping all placed objects.</p>
+<h2 id="flow-charts">Flow charts</h2>
+<p>The flow charts to add one single object in the placement map:</p>
+<pre class="mermaid"><code>flowchart LR
+
+subgraph place_object
+A1[Get align row if necessary]
+A2[Create a placement item]
+A3[Add item to the placement dictionary]
+A4[End]
+
+A1--&gt;A2--&gt;A3==&gt;B1
+
+subgraph place_placement_item
+B1[Try to place item into the placement map]
+B2{Placement success}
+B3[Mark the item in the placement map]
+B4[Resize the placement with a fix h/w ratio]
+end
+
+B1--&gt;B2
+B2--"Yes"--&gt;B3==&gt;A4
+B2--"No"--&gt;B4--&gt;B1
+
+end</code></pre>
+<p>The flow graph to add one group of objects in the placement map:</p>
+<pre class="mermaid"><code>flowchart LR
+
+subgraph place_object_group
+A1[Create placement items]
+A2[Convert the object group to a object matrix]
+A3[Create place holder for the entire group]
+A4[Add each item in the group to the dictionary and map]
+A5[End]
+
+A1==&gt;C1
+A2--&gt;A3==&gt;B1
+A4--&gt;A5
+
+subgraph place_placement_item
+B1[Try to place item into the placement map]
+B2{Placement success}
+B3[Mark the item in the placement map]
+B4[Resize the placement with a fix h/w ratio]
+end
+
+B1--&gt;B2
+B2--"Yes"--&gt;B3==&gt;A4
+B2--"No"--&gt;B4--&gt;B1
+
+subgraph Get suitable shape of objects
+C1{h/w ratio is fix?}
+C2[Take fixed h/w ratio as the shape of the object group]
+C3[Count the width and the height of all objects in one row including marigins]
+C4{if the h/w ratio is larger than the ratio of scene}
+C5[Double the elements in the shape]
+C6[Take this h/w ratio as the shape of the object group]
+
+C1--"Yes"--&gt;C2==&gt;A2
+C1--"No"--&gt;C3--&gt;C4
+C4--"Yes"--&gt;C5--&gt;C3
+C4--"No"--&gt;C6==&gt;A2
+end
+
+end</code></pre>
+<h2 id="isaplacementitem">IsaPlacementItem</h2>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<a id="isa_manim.isa_scene.isa_placement.IsaPlacementItem"></a>
+  <div class="doc doc-contents first">
+
+  
+      <p>Data structure of one object for auto placement.</p>
+
+
+
+  <p><span class="doc-section-title">Attributes:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code><span title="isa_manim.isa_scene.isa_placement.IsaPlacementItem.isa_object">isa_object</span></code></td>
+          <td>
+                <code><span title="manim.Mobject">Mobject</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Isa object, RegUnit, ElemUnit, FunctionUnit and MemoryUnit.</p>
+            </div>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code><span title="isa_manim.isa_scene.isa_placement.IsaPlacementItem.isa_hash">isa_hash</span></code></td>
+          <td>
+                <code><span title="typing.Union">Union</span>[int, str]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Hash value of this object.</p>
+            </div>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code><span title="isa_manim.isa_scene.isa_placement.IsaPlacementItem.row">row</span></code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Vertical ordinate of left-up corner.</p>
+            </div>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code><span title="isa_manim.isa_scene.isa_placement.IsaPlacementItem.col">col</span></code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Horizontal ordinate of left-up corner.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.isa_placement.IsaPlacementItem.__init__" class="doc doc-heading">
+          <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">isa_object</span><span class="p">,</span> <span class="n">isa_hash</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Construct one data structure for animate.</p>
+
+
+
+  <p><span class="doc-section-title">Parameters:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code>isa_object</code></td>
+          <td>
+                <code><span title="manim.Mobject">Mobject</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Isa object.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>isa_hash</code></td>
+          <td>
+                <code><span title="typing.Union">Union</span>[int, str]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Hash value of this object.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.isa_placement.IsaPlacementItem.get_height" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">get_height</span><span class="p">()</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Return the height of this object for placement. The height is ceil to an integer.</p>
+
+
+
+  <p><span class="doc-section-title">Returns:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td>
+                <code>int</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The height of this object.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.isa_placement.IsaPlacementItem.get_marker" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">get_marker</span><span class="p">()</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Return the marker of this object for placement.</p>
+
+
+
+  <p><span class="doc-section-title">Returns:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td>
+                <code>int</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Marker of this object.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.isa_placement.IsaPlacementItem.get_width" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">get_width</span><span class="p">()</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Return the width of this object for placement. The width is ceil to an integer.</p>
+
+
+
+  <p><span class="doc-section-title">Returns:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td>
+                <code>int</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The width of this object.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.isa_placement.IsaPlacementItem.set_corner" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">set_corner</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Set the position of object by the left-up corner position. Move object to the specified
+position.</p>
+
+
+
+  <p><span class="doc-section-title">Parameters:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code>row</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Vertical ordinate of left-up corner.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>col</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Horizontal ordinate of left-up corner.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+
+</div><h2 id="isaplacementmap">IsaPlacementMap</h2>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<a id="isa_manim.isa_scene.isa_placement.IsaPlacementMap"></a>
+  <div class="doc doc-contents first">
+
+  
+      <p>This class manages the position of objects in scene.</p>
+
+
+
+  <p><span class="doc-section-title">Attributes:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code><span title="isa_manim.isa_scene.isa_placement.IsaPlacementMap._placement_object_dict">_placement_object_dict</span></code></td>
+          <td>
+                <code><span title="typing.Dict">Dict</span>[str, <a class="autorefs autorefs-internal" title="isa_manim.isa_scene.isa_placement.IsaPlacementItem" href="#isa_manim.isa_scene.isa_placement.IsaPlacementItem">IsaPlacementItem</a>]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Dictionary of objects, key is one hash value and the value is
+item of IsaPlacementItem.</p>
+            </div>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code><span title="isa_manim.isa_scene.isa_placement.IsaPlacementMap._placement_map">_placement_map</span></code></td>
+          <td>
+                <code><span title="typing.List">List</span>[<span title="typing.List">List</span>[int]]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Array of the placement.</p>
+            </div>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code><span title="isa_manim.isa_scene.isa_placement.IsaPlacementMap._placement_width">_placement_width</span></code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Width of the placement.</p>
+            </div>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code><span title="isa_manim.isa_scene.isa_placement.IsaPlacementMap._placement_height">_placement_height</span></code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Height of the placement.</p>
+            </div>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code><span title="isa_manim.isa_scene.isa_placement.IsaPlacementMap._placement_hv_ratio">_placement_hv_ratio</span></code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>height/width ratio of the placement.</p>
+            </div>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code><span title="isa_manim.isa_scene.isa_placement.IsaPlacementMap._placement_strategy">_placement_strategy</span></code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Strategy to find rectangle.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.isa_placement.IsaPlacementMap.__init__" class="doc doc-heading">
+          <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;RB&#39;</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Initialize placement map.</p>
+
+
+
+  <p><span class="doc-section-title">Parameters:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code>strategy</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Strategy to search rectangle, option: RB or BR.</p>
+            </div>
+          </td>
+          <td>
+                <code>&#39;RB&#39;</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.isa_placement.IsaPlacementMap.dump_placement" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">dump_placement</span><span class="p">()</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Return a string of placement map for debug.</p>
+
+
+
+  <p><span class="doc-section-title">Returns:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td>
+                <code>str</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A string of placement map.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.isa_placement.IsaPlacementMap.get_camera_scale" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">get_camera_scale</span><span class="p">(</span><span class="n">camera_width</span><span class="p">,</span> <span class="n">camera_height</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Return scale factor of the placement to fit into specified camera.</p>
+
+
+
+  <p><span class="doc-section-title">Parameters:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code>camera_width</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The width of camera.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>camera_height</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The height of camera.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  <p><span class="doc-section-title">Returns:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td>
+                <code>float</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Scale factor of the camera.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.isa_placement.IsaPlacementMap.get_object" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">get_object</span><span class="p">(</span><span class="n">place_hash</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Return ISA object of the specified hash.</p>
+
+
+
+  <p><span class="doc-section-title">Parameters:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code>place_hash</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Hash value of ISA object.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  <p><span class="doc-section-title">Returns:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td>
+                <code><span title="manim.Mobject">Mobject</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The object for the specified ISA.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.isa_placement.IsaPlacementMap.get_placement_height" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">get_placement_height</span><span class="p">()</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Return the height of the placement, only occupied rows or margins are count.</p>
+
+
+
+  <p><span class="doc-section-title">Returns:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td>
+                <code>int</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Return the width of the placement map.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.isa_placement.IsaPlacementMap.get_placement_origin" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">get_placement_origin</span><span class="p">()</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Return center position of the placement map related to the left-up corner.</p>
+
+
+
+  <p><span class="doc-section-title">Returns:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td>
+                <code><span title="numpy.array">array</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Return the center position of the placement map.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.isa_placement.IsaPlacementMap.get_placement_width" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">get_placement_width</span><span class="p">()</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Return the width of the placement, only occupied column or margins are count.</p>
+
+
+
+  <p><span class="doc-section-title">Returns:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td>
+                <code>int</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Return the width of the placement map.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.isa_placement.IsaPlacementMap.has_object" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">has_object</span><span class="p">(</span><span class="n">place_hash</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Check whether the object is existed.</p>
+
+
+
+  <p><span class="doc-section-title">Parameters:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code>place_hash</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Hash value of ISA object.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  <p><span class="doc-section-title">Returns:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td>
+                <code>bool</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>True means the hash exists in the placement dictionary.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.isa_placement.IsaPlacementMap.place_object" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">place_object</span><span class="p">(</span><span class="n">place_object</span><span class="p">,</span> <span class="n">place_hash</span><span class="p">,</span> <span class="n">align_with</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Add object into the dictionary and place it into the placement map.</p>
+
+
+
+  <p><span class="doc-section-title">Parameters:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code>place_object</code></td>
+          <td>
+                <code><span title="manim.Mobject">Mobject</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Object to place.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>place_hash</code></td>
+          <td>
+                <code><span title="typing.Union">Union</span>[int, str]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Hash value of ISA object.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>align_with</code></td>
+          <td>
+                <code><span title="manim.Mobject">Mobject</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The object will be placed at the same row with another object.</p>
+            </div>
+          </td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.isa_placement.IsaPlacementMap.place_object_group" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">place_object_group</span><span class="p">(</span><span class="n">place_object_list</span><span class="p">,</span> <span class="n">place_hash_list</span><span class="p">,</span> <span class="n">force_hw_ratio</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Add a group of object into the dictionary and place it into the placement map.</p>
+
+
+
+  <p><span class="doc-section-title">Parameters:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code>place_object_list</code></td>
+          <td>
+                <code><span title="typing.List">List</span>[<span title="manim.Mobject">Mobject</span>]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>List of object to place.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>place_hash_list</code></td>
+          <td>
+                <code><span title="typing.List">List</span>[<span title="typing.Union">Union</span>[int, str]]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Hash value of ISA object.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>force_hw_ratio</code></td>
+          <td>
+                <code><span title="typing.Union">Union</span>[int, None]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Force the horization/vertical ratio of the groups.</p>
+            </div>
+          </td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.isa_placement.IsaPlacementMap.place_placement_item" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">place_placement_item</span><span class="p">(</span><span class="n">placement_item</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">align_row</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Place one item into the placement map.</p>
+<p>This function tries to allocate the item into the placement map. If placement fails, this
+function will resize the placement map and try again. This function continues iteration
+until the object can be allocated into the placement map.</p>
+
+
+
+  <p><span class="doc-section-title">Parameters:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code>placement_item</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="isa_manim.isa_scene.isa_placement.IsaPlacementItem" href="#isa_manim.isa_scene.isa_placement.IsaPlacementItem">IsaPlacementItem</a></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Object item to place in the map.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>force</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>True means the object item must place at the position specified in
+<code>placement_item</code>.</p>
+            </div>
+          </td>
+          <td>
+                <code>False</code>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>align_row</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The object item must be specified at the specified row.</p>
+            </div>
+          </td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.isa_placement.IsaPlacementMap.reset_placement" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">reset_placement</span><span class="p">(</span><span class="n">keep_objects</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keep_pos</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Reset placement map.</p>
+
+
+
+  <p><span class="doc-section-title">Parameters:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code>keep_objects</code></td>
+          <td>
+                <code><span title="typing.List">List</span>[<span title="manim.Mobject">Mobject</span>]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Objects should keep in the scene.</p>
+            </div>
+          </td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>keep_pos</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>True means keep the position of keep objects in the new placement.</p>
+            </div>
+          </td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.isa_placement.IsaPlacementMap.resize_placement" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">resize_placement</span><span class="p">(</span><span class="n">new_width</span><span class="p">,</span> <span class="n">new_height</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Resize placement map while keeping items in the old placement map.</p>
+
+
+
+  <p><span class="doc-section-title">Parameters:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code>new_width</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>New width of the placement map.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>new_height</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>New height of the placement map.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.indexes"], "search": "../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.a7c05c9e.min.js"></script>
+      
+    
+  </body>
+</html>

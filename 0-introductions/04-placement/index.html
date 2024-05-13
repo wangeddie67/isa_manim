@@ -1,0 +1,1161 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../03-animation-flow/">
+      
+      
+        <link rel="next" href="../../1-references/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.21">
+    
+    
+      
+        <title>Object Placement - Manim for ISA</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.66ac8b77.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#object-placement" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Manim for ISA" class="md-header__button md-logo" aria-label="Manim for ISA" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Manim for ISA
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Object Placement
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Manim for ISA" class="md-nav__button md-logo" aria-label="Manim for ISA" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Manim for ISA
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Welcome to Manim for ISA
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Introductions
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Introductions
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-scenes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ISA Scenes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-animation-apis/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Animation APIs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-animation-flow/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Animation Flow
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Object Placement
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Object Placement
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#placement-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      Placement Map
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#place-one-single-object" class="md-nav__link">
+    <span class="md-ellipsis">
+      Place one Single Object
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#place-a-group-of-objects" class="md-nav__link">
+    <span class="md-ellipsis">
+      Place a Group of Objects
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#keep-objects-between-section" class="md-nav__link">
+    <span class="md-ellipsis">
+      Keep Objects between Section
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../1-references/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    References
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            References
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../1-references/10-objects/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Objects
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            Objects
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1-references/10-objects/11-register-unit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Register Unit
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1-references/10-objects/12-function-unit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Function Unit
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1-references/10-objects/13-memory-unit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Memory Unit
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1-references/10-objects/14-element-unit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Element Unit
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../1-references/20-animation/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Animations
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            Animations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1-references/20-animation/21-register-animation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Animations for Registers and Elements
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1-references/20-animation/22-function-animation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Animations For Function Units
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1-references/20-animation/23-memory-animation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Animations for Memory Units
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../1-references/30-scene/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Scene
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            Scene
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1-references/30-scene/31-color-map/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Color map
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1-references/30-scene/32-placement/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Objects Placement
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1-references/30-scene/33-animation-flow/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Animation Flow
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1-references/30-scene/34-refer-count/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Element Reference Counter
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1-references/30-scene/35-data_flow/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Data flow
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#placement-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      Placement Map
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#place-one-single-object" class="md-nav__link">
+    <span class="md-ellipsis">
+      Place one Single Object
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#place-a-group-of-objects" class="md-nav__link">
+    <span class="md-ellipsis">
+      Place a Group of Objects
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#keep-objects-between-section" class="md-nav__link">
+    <span class="md-ellipsis">
+      Keep Objects between Section
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="object-placement">Object Placement</h1>
+<p>As explained in previous pages, the object placement algorithm and function interfaces are hidden behind the APIs provided by scenes. However, it would be useful to understand the placement algorithm so that users can use options in API to guide the final placement.</p>
+<p>ISA objects are placed into the placement according to a specified algorithm. <code>isa_manim.isa_scene.isa_placement.IsaPlacementMap</code> provides the implementation and function interfaces. <code>IsaPlacementMap</code> provides two major functions:</p>
+<ul>
+<li>Object dictionary for all registers, function units and memory units within the animation.</li>
+<li>Placement objects into a scalable scene.</li>
+</ul>
+<p>By default, the area of the placement is defined by <code>config.frame_height</code> and <code>config.frame_width</code>. The upper-left corner of the placement is the origin point of the frame. As the increasing of objects, the range of placement is scaled, but the ratio of height and width is fixed.</p>
+<p>The placement algorithm must address the following limitations:</p>
+<ul>
+<li>There is a margin of 1.0 around each object in all directions.</li>
+<li>There is a margin of 1.0 between each object and the boundary of the placement.</li>
+<li>The ratio of height and width of the placement is kept as the h/v ratio of the frame.</li>
+<li>In one row, only the same kind of object can be allocated.</li>
+<li>For example, function units can be placed vertically aligned, but function units cannot be placed in the same row with registers.</li>
+</ul>
+<h2 id="placement-map">Placement Map</h2>
+<p>The area of the placement is abstracted as a grid, each metric in the grid presents 1.0 in the vertical or horizontal direction. Objects are abstracted as rectangles with integer width and height as well. For example, if the width of one object is 3.2 and the height of one object is 4.6, that object will occupy one rectangle of 4 in horizontal and 5 in vertical. </p>
+<p>The status of one 1.0x1.0 square in the grid is present by one integer:</p>
+<ul>
+<li>0 means the item is free to allocate;</li>
+<li>1 means the item is a margin between objects or a margin between objects and items.</li>
+<li>2 means the item is occupied by a register.</li>
+<li>3 means the item is occupied by a function unit.</li>
+<li>4 means the item is occupied by a memory unit.</li>
+</ul>
+<p>The status of all squares construct an array, referenced as a placement map:</p>
+<div class="highlight"><pre><span></span><code>1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0
+ ----------- ----------- ----------- ----------- ----------- ----------- ----------- -----------
+1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1 0 0
+1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1 0 0
+1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1 0 0
+1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1 0 0
+1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1|2 2 2 2 2|1 0 0
+ ----------- ----------- ----------- ----------- ----------- ----------- ----------- -----------
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0
+ ------------------- ------------------- ------------------- -------------------
+1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1 0 0 0 0 0 0 0 0 0 0
+1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1 0 0 0 0 0 0 0 0 0 0
+1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1 0 0 0 0 0 0 0 0 0 0
+1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1 0 0 0 0 0 0 0 0 0 0
+1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1 0 0 0 0 0 0 0 0 0 0
+ ------------------- ------------------- ------------------- -------------------
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0
+ ------------------- ------------------- ------------------- -------------------
+1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1 0 0 0 0 0 0 0 0 0 0
+1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1 0 0 0 0 0 0 0 0 0 0
+1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1 0 0 0 0 0 0 0 0 0 0
+1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1 0 0 0 0 0 0 0 0 0 0
+1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1|3 3 3 3 3 3 3 3 3|1 0 0 0 0 0 0 0 0 0 0
+ ------------------- ------------------- ------------------- -------------------
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+ ---------------------------------------------------------------------------------------------------
+1|4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4|1
+1|4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4|1
+1|4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4|1
+1|4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4|1
+1|4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4|1
+1|4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4|1
+ ---------------------------------------------------------------------------------------------------
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+</code></pre></div>
+<h2 id="place-one-single-object">Place one Single Object</h2>
+<p>The placement algorithm became one question to find one rectangle space in the placement 
+array, which addresses all the following conditions:</p>
+<ul>
+<li>The candidate rectangle space is free to allocate (all squares are 0) and it is large enough for the object to be placed.</li>
+<li>Squares around the candidate rectangle have not been allocated by another object (all squares are 0 or 1). So that there will be at least a margin of 1.0 between the new object and existing objects.</li>
+<li>All items on the same row with the candidate rectangle should be free (0), margin (1) or the same type of the new object to be placed.</li>
+</ul>
+<p>By default, the placement algorithm searches the candidate space among the placement map by "RB" or "BR" strategy. The "RB" strategy means attempting to place the new object <strong>beside</strong> existing items first. The "BR" strategy means attempting to place the new object <strong>below</strong> existing items first. The default strategy is "RB".</p>
+<p>The initialize size of the placement map is determined by <code>config.frame_width</code> and <code>config.frame_height</code>. As the increase of objects, the initialized size is not enough in most situations. When there is no space for one new object, the placement map is extended before another try. The extension does not change the ratio of horizontal and vertical. For example, if the initialized height is 9 and the initialized width is 16, the step to extend the placement map would be:</p>
+<p>(16,9) -&gt; (17,10) -&gt; (18,11) -&gt; (19,11) -&gt; (20,12) ...</p>
+<p>Besides the "RB" or "BR" strategies, <code>align_with</code> is another way to guide the placement algorithm. When <code>align_with</code> is specified, the new object is placed in the same row as the specified <code>align_with</code>. If there is not enough space for the new object, the placement map is extended.</p>
+<blockquote>
+<p>The specified object by <code>align_with</code> must be the same type as the new object. Otherwise, the program will fill in dead-loop.</p>
+</blockquote>
+<p><img alt="" src="../../image/TestIsaPlacementMap.png" /></p>
+<p>Source code: <a href="https://github.com/wangeddie67/isa_manim/blob/main/tests/isa_scene/test_isa_placement_map.py"><em>test_isa_placement_map.py</em></a></p>
+<p>As shown in the below figure, Zm is placed aligned with Zn.</p>
+<h2 id="place-a-group-of-objects">Place a Group of Objects</h2>
+<p>For vector instructions, the animation needs a group of function units so that vector elements can be handled parallelly. In consideration of good-looking, these function units are placed into the placement map as a group. Then, each function unit is placed into the placement map within the space of the group. A group of objects cannot be aligned with any other objects.</p>
+<p>The space occupied by a group of objects depends on the number of objects in one row. The number is auto-adjusted according to the ratio of horizontal and vertical of the placement map. The h/v ratio of the group of objects should not be smaller than the h/v ratio of the placement map.</p>
+<p>As shown in the below example. The h/v ratio of the group is 16/9=1.778. The h/v ratio of "+(a,b)" function units is 39/11=3.545, which is larger than 1.778. If there are only 2 function units in one row, the h/v ratio of "+(a,b)" function units is 19/23=0.826, which is smaller than 1.778.</p>
+<p><img alt="" src="../../image/TestIsaPlacementMap2.png" /></p>
+<p>Source code: <a href="https://github.com/wangeddie67/isa_manim/blob/main/tests/isa_scene/test_isa_placement_map_2.py"><em>test_isa_placement_map_2.py</em></a></p>
+<p>Instead of the auto-adjust shape, the option <code>force_hv_ratio</code> forces all function units in one single row. As the "*(a,b)" function units in the above figure.</p>
+<p>Please reference to <a href="../../1-references/30-scene/32-placement/">Reference/Scene/Object Placement</a> for implementation.</p>
+<h2 id="keep-objects-between-section">Keep Objects between Section</h2>
+<p>For animations with multiple sections, some objects should be kept in the scene between sections. The option <code>keep_objects</code> specifies a list of objects to be kept.</p>
+<p>During the process, all objects are removed and the placement map is reset to the initialized size. Then, the objects specified by <code>keep_objects</code> are added back with the same hash value. If option <code>keep_pos</code> is 1, these objects are added at the same position in the previous section. Otherwise, the positions of these objects are recalculated.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.indexes"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.a7c05c9e.min.js"></script>
+      
+    
+  </body>
+</html>
