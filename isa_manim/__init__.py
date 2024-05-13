@@ -6,7 +6,7 @@ from manim import *
 
 # Objects for ISA flow.
 from .isa_objects import (RegUnit,
-                          RegElemUnit,
+                          ElemUnit,
                           FunctionUnit,
                           MemoryUnit)
 
@@ -16,7 +16,8 @@ from .isa_animate import (decl_register,
                           read_elem,
                           assign_elem,
                           replace_elem,
-                          decl_func_call,
+                          decl_func_unit,
+                          read_func_imm,
                           function_call,
                           decl_memory_unit,
                           read_memory_without_addr,
@@ -26,7 +27,7 @@ from .isa_animate import (decl_register,
 
 # Scene for ISA flow
 from .isa_scene import (IsaAnimateItem,
-                        IsaAnimationMap,
+                        IsaAnimationFlow,
                         IsaPlacementItem,
                         IsaPlacementMap,
                         IsaColorMap)

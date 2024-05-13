@@ -14,65 +14,39 @@ class TestMultiIsaScene(MultiIsaScene):
     Test ISA scene with multiple instructions.
     """
     def construct_isa_flow(self):
+        # Parameters
+        vl = 256
+        esize = 32
+        elements = vl // esize
+        segments = vl // 128
+        elempersegment = 128 // esize
+        way = 2
+        pairpersegment = elempersegment // way
+
         # Title
-        self.draw_title("DOT Instruction")
+        self.draw_title("Shuffle instruction")
+        subtitle = ["Buttom", "Top"]
+        for part in range(0, way):
+            self.start_section(subtitle[part])
 
-        # DOT (2-way)
-        self.start_section("DOT (2-way)")
+            # Registers.
+            if part == 0:
+                zn_reg = self.decl_register("zn", vl, elements)
+                zm_reg = self.decl_register("zm", vl, elements)
+                src_reg = [zn_reg, zm_reg]
+            zd_reg = self.decl_register("zd", vl, elements)
 
-        vl = 128
-        esize = 32
+            # Behaviors
+            for s in range(0, segments):
+                for p in range(0, pairpersegment):
+                    for w in range(0, way):
+                        element = self.read_elem(
+                            src_reg[w], s * elempersegment + part * pairpersegment + p,
+                            color_hash=f"way{w}")
+                        self.move_elem(element, zd_reg, s * elempersegment + p * way + w)
 
-        zn = self.decl_vector(text="Zn", width=vl)
-        zm = self.decl_vector(text="Zm", width=vl)
-        zda = self.decl_vector(text="Zda", width=vl)
+            if part < way - 1:
+                self.end_section(wait=1, keep_objects=[zn_reg, zm_reg])
+            else:
+                self.end_section()
 
-        for i in range(0, 4):
-            sum_ = self.read_elem(vector=zda, size=esize, index=i, color_hash="sum_")
-
-            for j in range(0, 2):
-                opa = self.read_elem(
-                    vector=zn, size=esize // 2, index = 2 * i + j, color_hash="opa" + str(j))
-                opb = self.read_elem(
-                    vector=zm, size=esize // 2, index = 2 * i + j, color_hash="opb" + str(j))
-                prod = self.function_call(
-                    func="*(a, b)", args=[opa, opb], res_size=esize, res_color_hash="prod" + str(j),
-                    func_isa_hash="prod" + str(j), func_args_name=["a", "b"])
-                sum__ = self.function_call(
-                    func="+(a, b)", args=[prod, sum_], res_size=esize, res_color_hash="add" + str(j),
-                    func_isa_hash="add" + str(j), func_args_name=["a", "b"])
-                sum_ = sum__
-
-            self.move_elem(elem=sum_, vector=zda, index=i)
-
-        self.end_section(wait=2)
-
-        # DOT (4-way)
-        self.start_section("DOT (4-way)")
-
-        vl = 128
-        esize = 32
-
-        zn = self.decl_vector(text="Zn", width=vl)
-        zm = self.decl_vector(text="Zm", width=vl)
-        zda = self.decl_vector(text="Zda", width=vl)
-
-        for i in range(0, 4):
-            sum_ = self.read_elem(vector=zda, size=esize, index=i, color_hash="sum_")
-
-            for j in range(0, 4):
-                opa = self.read_elem(
-                    vector=zn, size=esize // 4, index = 4 * i + j, color_hash="opa")
-                opb = self.read_elem(
-                    vector=zm, size=esize // 4, index = 4 * i + j, color_hash="opb")
-                prod = self.function_call(
-                    func="*(a, b)", args=[opa, opb], res_size=esize, res_color_hash="prod",
-                    func_isa_hash="prod" + str(j), func_args_name=["a", "b"])
-                sum__ = self.function_call(
-                    func="+(a, b)", args=[prod, sum_], res_size=esize, res_color_hash="add",
-                    func_isa_hash="add" + str(j), func_args_name=["a", "b"])
-                sum_ = sum__
-
-            self.move_elem(elem=sum_, vector=zda, index=i)
-
-        self.end_section(wait=2)

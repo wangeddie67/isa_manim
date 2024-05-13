@@ -3,16 +3,16 @@ Define APIs for animation in ISA data flow, manage animation flow and object pla
 """
 
 import itertools
-from typing import Any, List, Tuple, Dict, Union
+from typing import Any, List, Tuple, Union, Callable
 from typing import overload
 from colour import Color
 import sys
-from manim import (WHITE, DEFAULT_FONT_SIZE)
+from manim import (WHITE, DEFAULT_FONT_SIZE, Animation)
 from ..isa_animate import (decl_register,
                            read_elem,
                            assign_elem,
                            replace_elem,
-                           decl_func_call,
+                           decl_func_unit,
                            read_func_imm,
                            function_call,
                            decl_memory_unit,
@@ -20,21 +20,21 @@ from ..isa_animate import (decl_register,
                            write_memory_without_addr,
                            read_memory,
                            write_memory)
-from ..isa_objects import RegElemUnit, RegUnit, FunctionUnit, MemoryUnit
-from .isa_animate import IsaAnimationMap, IsaAnimateItem
+from ..isa_objects import ElemUnit, RegUnit, FunctionUnit, MemoryUnit
+from .isa_animate import IsaAnimationFlow
+from .isa_elem_refcount import IsaElemRefCount
 from .isa_placement import IsaPlacementMap
 from .isa_color_map import IsaColorMap
 from ..isa_config import get_config
 
-class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
+class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMap):
     """
     Data flow of ISA, used to define API for ISA animation.
     """
     def __init__(self,
                  strategy: str ="RB",
                  default_color: Color = WHITE,
-                 color_scheme: List[Color] = None,
-                 default_font_size: int = 40):
+                 color_scheme: List[Color] = None):
         """
         Construct animation and placement manager.
 
@@ -42,18 +42,10 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
             strategy: Placement strategy, options: RB or BR.
             default_color: Default color of item, used for register and functions.
         """
-        IsaAnimationMap.__init__(self)
+        IsaAnimationFlow.__init__(self)
+        IsaElemRefCount.__init__(self)
         IsaPlacementMap.__init__(self, strategy=strategy)
         IsaColorMap.__init__(self, default_color=default_color, color_scheme=color_scheme)
-
-        self.default_font_size = default_font_size
-
-        self.last_dep_map = {}
-        self.elem_source_dict: Dict[RegElemUnit, List] = {}
-        self.elem_producer_copy: Dict[RegElemUnit, RegElemUnit] = {}
-        self.elem_producer_map: Dict[RegElemUnit, IsaAnimateItem] = {}
-        self.elem_refer_count: Dict[RegElemUnit, int] = {}
-        self.elem_last_consumer: Dict[RegElemUnit, IsaAnimateItem] = {}
 
     def _traceback_hash(self, depth: int = 2) -> int:
         """
@@ -64,68 +56,6 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         # frame 2 is the caller of animation API
         frame = sys._getframe(depth)    # pylint: disable=protected-access
         return hash(str(frame))
-
-    def _set_item_producer(self,
-                           item: RegElemUnit,
-                           producer: IsaAnimateItem,
-                           copy_item: RegElemUnit = None):
-        """
-        Set producer of element.
-        """
-        self.elem_producer_map[item] = producer
-        self.elem_producer_copy[item] = item.copy() if copy_item is None else copy_item.copy()
-        self.elem_refer_count[item] = 0
-        self.elem_last_consumer[item] = None
-
-    def _set_item_cusumer(self,
-                          item: RegElemUnit,
-                          consumer: IsaAnimateItem):
-        """
-        Set consumer of element.
-        """
-        self.elem_last_consumer[item] = consumer
-
-    def _get_duplicate_item(self,
-                            item: RegElemUnit) -> RegElemUnit:
-        """
-        Get a copy of element if the element has been referenced.
-        """
-        if self.elem_refer_count[item] == 0:
-            item_ = item
-        else:
-            item_ = self.elem_producer_copy[item]
-            self.elem_producer_copy[item] = self.elem_producer_copy[item].copy()
-        self.elem_refer_count[item] += 1
-        self.elem_producer_map[item].add_copy_item(item_)
-
-        if self.elem_last_consumer[item] is not None:
-            self.elem_last_consumer[item].add_before.append(item_)
-
-        return item_
-
-    def _set_elem_source_elem(self,
-                              elem: RegElemUnit,
-                              vector: RegUnit,
-                              size: float,
-                              reg_idx: int,
-                              index: int,
-                              offset: int):
-        self.elem_source_dict[elem] = [vector, size, reg_idx, index, offset]
-
-    def _get_elem_source_elem(self,
-                              vector: RegUnit,
-                              size: float = -1.0,
-                              reg_idx: int = 0,
-                              index: int = 0,
-                              offset: int = 0):
-        for elem, elem_src in self.elem_source_dict.items():
-            elem_src_vector, elem_src_size, elem_src_reg_idx, elem_src_index, elem_src_offset = \
-                elem_src
-            if elem_src_vector == vector and elem_src_size == size \
-                    and elem_src_reg_idx == reg_idx and elem_src_index == index \
-                    and elem_src_offset == offset:
-                return elem
-        return None
 
     #
     # Animations APIs
@@ -139,7 +69,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                       value: List[List[Any]] = None,
                       font_size: int = DEFAULT_FONT_SIZE,
                       value_format: str = None,
-                      align_with = None) -> RegUnit: ...
+                      align_with: Union[RegUnit, FunctionUnit, MemoryUnit] = None) -> RegUnit: ...
 
     @overload
     def decl_register(self,
@@ -149,7 +79,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                       value: List[Any] = None,
                       font_size: int = DEFAULT_FONT_SIZE,
                       value_format: str = None,
-                      align_with = None) -> RegUnit: ...
+                      align_with: Union[RegUnit, FunctionUnit, MemoryUnit] = None) -> RegUnit: ...
 
     @overload
     def decl_register(self,
@@ -158,7 +88,7 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                       value: Any = None,
                       font_size: int = DEFAULT_FONT_SIZE,
                       value_format: str = None,
-                      align_with = None) -> RegUnit: ...
+                      align_with: Union[RegUnit, FunctionUnit, MemoryUnit] = None) -> RegUnit: ...
 
     def decl_register(self,
                       text: str,
@@ -168,21 +98,31 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                       value: List[List[Any]] = None,
                       font_size: int = DEFAULT_FONT_SIZE,
                       value_format: str = None,
-                      align_with = None) -> RegUnit:
+                      align_with: Union[RegUnit, FunctionUnit, MemoryUnit] = None) -> RegUnit:
         """
-        Declare register unit.
+        Declare one register with a specified name (`text`) and bit width (`width`) and add it to
+        the scene.
         
-        Attributes:
+        Args:
             text: Name of this register.
             width: Width of this register width, in bit.
             elements: Elements count in this register, or horizontal size of this register.
-                Optional and positinal.
-            nreg: Number of registers, or vertical size of this register. Optional and positinal.
-            value: Value of this register, single element or 1-D/2-D array. Optional and keyword.
-            font_size: Font size of register name. Optional and keyword.
-            align_width: Align with specified element when placement.
+            nreg: Number of registers, or vertical size of this register.
+            value: Value of this register, single element or 1-D/2-D array.
+                If not specified, assign None.
+            font_size: Font size of register name.
+                If not specified, take the value of `DEFAULT_FONT_SIZE`.
+            value_format: Format to print data value.
+                If not specified, take the value from global configuration `elem_value_format`.
+            align_with: Align with specified element when placement.
+                If not specified, placement follows automatic strategy.
+
+        Returns:
+            Generated register unit.
         """
         # Handle default value of arguments.
+        if not isinstance(text, list):
+            text = [text]
         if value_format is None:
             value_format = get_config("elem_value_format")
 
@@ -190,10 +130,10 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
         color = self.colormap_default_color
         reg_unit = RegUnit(text, color, width, elements, nreg, value, font_size, value_format)
 
-        # Placement
-        self.placement_add_object(reg_unit, align_with=align_with)
-        # Animation
-        self.animation_add_animation(animate=decl_register(reg_unit), src=None, dst=reg_unit)
+        # Placement register unit.
+        self.place_object(reg_unit, hash(reg_unit), align_with=align_with)
+        # Create animation
+        self.add_animation(decl_register(reg_unit), None, reg_unit)
 
         # Return register unit.
         return reg_unit
@@ -204,179 +144,237 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                   index: int,
                   reg_idx: int,
                   offset: int = 0,
-                  size: float = -1.0,
+                  width: int = -1,
                   color_hash = None,
                   value = None,
-                  fill_opacity: float = 0.5,
+                  fill_opacity: float = None,
                   font_size: int = DEFAULT_FONT_SIZE,
-                  value_format: str = None) -> RegElemUnit: ...
+                  value_format: str = None) -> ElemUnit: ...
 
     @overload
     def read_elem(self,
                   vector: RegUnit,
                   index: int,
                   offset: int = 0,
-                  size: float = -1.0,
+                  width: int = -1,
                   value = None,
                   color_hash = None,
-                  fill_opacity: float = 0.5,
+                  fill_opacity: float = None,
                   font_size: int = DEFAULT_FONT_SIZE,
-                  value_format: str = None) -> RegElemUnit: ...
+                  value_format: str = None) -> ElemUnit: ...
 
     @overload
     def read_elem(self,
                   vector: RegUnit,
                   offset: int = 0,
-                  size: float = -1.0,
+                  width: int = -1,
                   value = None,
                   color_hash = None,
-                  fill_opacity: float = 0.5,
+                  fill_opacity: float = None,
                   font_size: int = DEFAULT_FONT_SIZE,
-                  value_format: str = None) -> RegElemUnit: ...
+                  value_format: str = None) -> ElemUnit: ...
 
     def read_elem(self,
                   vector: RegUnit,
                   index: int = 0,
                   reg_idx: int = 0,
                   offset: int = 0,
-                  size: float = -1.0,
-                  color_hash = None,
-                  value = None,
-                  fill_opacity: float = 0.5,
+                  width: int = 0,
+                  color_hash: Union[int, str] = None,
+                  value: Any = None,
+                  fill_opacity: float = None,
                   font_size: int = DEFAULT_FONT_SIZE,
-                  value_format: str = None) -> RegElemUnit:
+                  value_format: str = None) -> ElemUnit:
         """
-        Read element from register, return one Rectangle.
+        Read one element from the specified position (`reg_idx` and `index`) of the specified
+        register `vector` and return one element unit.
 
         Args:
             vector: Register.
-            color: Color of new element.
-            size: Width of element in byte.
-            e: Index of element.
-            kargs: Arguments to new element.
+            index: Element index.
+            reg_idx: Regsiter index.
+            offset: Offset of LSB.
+            width: Width of element in bit.
+            color_hash: Hash to get color from color scheme.
+            value: Value of this register, single element or 1-D/2-D array.
+                If not specified, assign None.
+            fill_opacity: Fill opacity.
+                If not specified, take the value from global configuration `elem_fill_opacity`.
+            font_size: Font size of element value.
+                If not specified, take the value of `DEFAULT_FONT_SIZE`.
+            value_format: Format to print data value.
+                If not specified, take the value from global configuration `elem_value_format`.
+
+        Returns:
+            Generated element unit.
         """
-        value_format = vector.reg_value_format if value_format is None else value_format
-        size = vector.elem_width if size < 0 else size
-        value = value if value is not None else vector.get_elem_value(index, reg_idx)
+        # If there is one element from the same position, return existing element.
+        if width == 0:
+            width = vector.elem_width
+        elem = self.get_elem_by_source(vector, width, reg_idx, index, offset)
+        if elem is not None:
+            return elem
 
-        color = self.colormap_get_color(
-            self._traceback_hash() if color_hash is None else color_hash)
+        # Handle default value of arguments.
+        if fill_opacity is None:
+            fill_opacity = get_config("elem_fill_opacity")
+        if value_format is None:
+            value_format = vector.reg_value_format
+        if width == 0:
+            width = vector.elem_width
+        if value is None:
+            value = vector.get_elem_value(index, reg_idx)
+        if color_hash is None:
+            color_hash = self._traceback_hash()
 
-        elem = self._get_elem_source_elem(
-            vector=vector, size=size, reg_idx=reg_idx, index=index, offset=offset)
-        if elem is None:
-            elem = RegElemUnit(color, size, value, fill_opacity, font_size, value_format, 0, False)
-            self._set_elem_source_elem(
-                elem=elem, vector=vector, size=size, reg_idx=reg_idx, index=index, offset=offset)
+        # Create new element.
+        color = self.colormap_get_color(color_hash)
+        elem = ElemUnit(color, width, value, fill_opacity, font_size, value_format, 0, False)
 
-            self.last_dep_map[elem] = vector
+        # Create animation.
+        self.add_animation(
+            read_elem(vector, elem, index, reg_idx, offset), vector, elem, dep=[vector])
 
-            animation_item = self.animation_add_animation(
-                animate=read_elem(vector, elem, reg_idx=reg_idx, index=index, offset=offset),
-                src=vector,
-                dst=elem,
-                dep=[vector])
-            self._set_item_producer(elem, animation_item)
+        # Update element reference counter.
+        self.set_elem_source(elem, vector, reg_idx, index, offset)
+        self.set_elem_producer(elem, vector)
+
+        # Return new element
         return elem
 
     @overload
     def move_elem(self,
-                  elem: RegElemUnit,
+                  elem: ElemUnit,
                   vector: RegUnit,
                   index: int,
                   reg_idx: int,
                   offset: int = 0,
-                  size: float = -1.0): ...
+                  width: int = 0) -> ElemUnit: ...
 
     @overload
     def move_elem(self,
-                  elem: RegElemUnit,
+                  elem: ElemUnit,
                   vector: RegUnit,
                   index: int,
                   offset: int = 0,
-                  size: float = -1.0): ...
+                  width: int = 0) -> ElemUnit: ...
+
+    @overload
+    def move_elem(self,
+                  elem: ElemUnit,
+                  vector: RegUnit,
+                  offset: int = 0,
+                  width: int = 0) -> ElemUnit: ...
 
     def move_elem(self,
-                  elem: RegElemUnit,
+                  elem: ElemUnit,
                   vector: RegUnit,
                   index: int = 0,
                   reg_idx: int = 0,
                   offset: int = 0,
-                  size: float = -1.0):
+                  width: int = 0) -> ElemUnit:
         """
-        Move element to register, add animate to list.
+        Aassign one element `elem` to the specified position (`reg_idx` and `index`) of the
+        specified register `vector`. 
 
         Args:
             elem: Element object.
-            vector: Register.
-            size: Width of element in byte.
-            e: Index of element.
+            vector: Register unit.
+            index: Element index.
+            reg_idx: Regsiter index.
+            offset: Offset of LSB.
+            width: Width of element in bit.
+
+        Returns:
+            Element unit after move.
         """
+        # Handle default value of arguments.
+        if width == 0:
+            width = elem.elem_width
+
+        # Create new element.
+        color = elem.elem_color
+        value = elem.elem_value
+        fill_opacity = elem.elem_fill_opacity
+        font_size = elem.elem_font_size
+        value_format = elem.elem_value_format
+        high_bits = elem.elem_high_bits
+        high_zero = elem.elem_high_zero
+        new_elem = ElemUnit(
+            color, width, value, fill_opacity, font_size, value_format, high_bits, high_zero)
+
+        # Create animation. Replace dup_elem with new_elem.
+        dup_elem = self.get_duplicate_item(elem)
+        old_dep = self.get_last_deps(elem)
+        animation_item = self.add_animation(
+            assign_elem(dup_elem, new_elem, vector, index, reg_idx, offset),
+            [elem, dup_elem], new_elem,
+            dep=[old_dep, vector] if old_dep else [vector],
+            remove_after=[dup_elem],
+            add_after=[new_elem])
+
+        # Update element reference counter.
+        self.set_elem_cusumer(elem, animation_item, vector)
+        self.set_elem_producer(new_elem, vector)
+
+        # Functionality of operation: move element to vector.
         if elem.elem_value is not None:
             vector.set_elem_value(elem.elem_value, index, reg_idx)
 
-        old_dep = None
-        if elem in self.last_dep_map:
-            old_dep = self.last_dep_map[elem]
-            del self.last_dep_map[elem]
-        self.last_dep_map[elem] = vector
-
-        elem_ = self._get_duplicate_item(elem)
-        elem_width = elem.elem_width if size <= 0 else size
-        new_elem = RegElemUnit(
-            elem.elem_color, elem_width, elem.elem_value,
-            elem.elem_fill_opacity, elem.elem_font_size, elem.elem_value_format, 0, False)
-
-        animation_item = self.animation_add_animation(
-            animate=assign_elem(elem_, new_elem, vector, reg_idx, index, offset),
-            src=[elem, elem_],
-            dst=new_elem,
-            dep=[old_dep, vector] if old_dep else [vector],
-            remove_after=[elem_],
-            add_after=[new_elem])
-        self._set_item_cusumer(elem, animation_item)
-        self._set_item_producer(new_elem, animation_item, copy_item=new_elem)
-
-        self.last_dep_map[new_elem] = vector
-
+        # Return new element.
         return new_elem
 
     def data_extend(self,
-                    elem: RegElemUnit,
-                    size: float,
+                    elem: ElemUnit,
+                    width: float,
                     zero_extend: bool = False,
-                    value = None) -> RegElemUnit:
+                    value: Any = None) -> ElemUnit:
         """
-        Animate of data convert.
+        Signaled extend or zero-extend element `elem` to bitwidth `width. Return the new element
+        after extension.
+
+        Args:
+            elem: Origin element unit.
+            width: Target width for extend.
+            zero_extend: True means zero extension. The extend part will be assign with zero.
+            value: New value of the element unit.
+                If not specified, inherent value from the origin element.
+
+        Returns:
+            Element unit after extension.
         """
-        new_value = value if value is not None else elem.elem_value
-        if size > elem.elem_width:
-            high_bits = size - elem.elem_width if zero_extend else size - elem.elem_width + 1
+        # Handle default value of arguments.
+        if value is not None:
+            value = elem.elem_value
+        if width > elem.elem_width:
+            if zero_extend:
+                high_bits = width - elem.elem_width
+            else:
+                high_bits = width - elem.elem_width + 1
         else:
             high_bits = 0
-        new_elem = RegElemUnit(elem.elem_color, size, new_value,
-                               elem.elem_fill_opacity, elem.elem_font_size, elem.elem_value_format,
-                               high_bits, zero_extend)
 
-        old_dep = None
-        if elem in self.last_dep_map:
-            old_dep = self.last_dep_map[elem]
+        # Create new element.
+        color = elem.elem_color
+        value = elem.elem_value
+        fill_opacity = elem.elem_fill_opacity
+        font_size = elem.elem_font_size
+        value_format = elem.elem_value_format
+        new_elem = ElemUnit(
+            color, width, value, fill_opacity, font_size, value_format, high_bits, zero_extend)
 
-        elem_ = self._get_duplicate_item(elem)
+        # Create animation. Replace dup_elem with new_elem.
+        dup_elem = self.get_duplicate_item(elem)
+        old_dep = self.get_last_deps(elem)
+        animation_item = self.add_animation(
+            replace_elem(dup_elem, new_elem, 0), [elem, dup_elem], new_elem,
+            dep=old_dep, remove_after=[dup_elem], add_after=[new_elem])
 
-        animation_item = self.animation_add_animation(
-            animate=replace_elem(old_elem=elem_, new_elem=new_elem, align="right"),
-            src=[elem, elem_],
-            dst=new_elem,
-            dep=old_dep,
-            remove_after=[elem_],
-            add_after=[new_elem])
-        self._set_item_cusumer(elem, animation_item)
-        self._set_item_producer(new_elem, animation_item, copy_item=new_elem)
+        # Update element reference counter.
+        self.set_elem_cusumer(elem, animation_item, old_dep)
+        self.set_elem_producer(new_elem, old_dep)
 
-        if old_dep:
-            self.last_dep_map[new_elem] = old_dep
-
+        # Return new element.
         return new_elem
 
     #
@@ -385,284 +383,456 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
     def decl_function(self,
                       isa_hash: str,
                       args_width: List[float],
-                      res_size: Union[int, List[int]],
-                      func_name: str = None,
+                      res_width: Union[int, List[int]],
+                      name: str = None,
                       args_name: List[str] = None,
+                      res_name: Union[str, List[str]] = None,
                       font_size: int = DEFAULT_FONT_SIZE,
                       value_format: str = None,
-                      align_with = None,
-                      func_callee = None) -> FunctionUnit:
+                      align_with: Union[RegUnit, FunctionUnit, MemoryUnit] = None,
+                      func_callee: Callable = None) -> FunctionUnit:
         """
-        Animation of declare function call.
-        
-        Used to control placement and animation.
+        Declare one function unit with a specified hash (`isa_hash`), arguments (`arg_width`), and
+        return values (`res_width`) and add it to the scene.
+
+        Args:
+            isa_hash: Hash value of this function unit, used by `function_call`.
+            args_width: A list of bit-width of arguments.
+            res_width: Bit-width of return values. If there is only one return value, one single
+                interger is required.
+            name: Function name. If not specified, take `isa_hash` as function name.
+            args_name: A list of name of arguments. The number of elements should be same as
+                `args_width`.
+            res_name: Name of return value. The number of elements should be same as `res_name`.
+            font_size: Font size of register name.
+                If not specified, take the value of `DEFAULT_FONT_SIZE`.
+            value_format: Format to print data value.
+                If not specified, take the value from global configuration `elem_value_format`.
+            align_with: Align with specified element when placement.
+                If not specified, placement follows automatic strategy.
+            func_callee: Pointer to a function to perform the functionality. 
+
+        Returns:
+            Generated function unit.
         """
+        # If there is existing function unit with the same hash, return existing unit.
+        if self.has_object(isa_hash):
+            func_unit = self.get_object(isa_hash)
+            return func_unit
+
         # Handle default value of arguments.
-        if not func_name:
-            func_name = isa_hash
+        if not name:
+            name = isa_hash
         if value_format is None:
             value_format = get_config("elem_value_format")
-        if not isinstance(res_size, list):
-            res_size = [res_size]
+        if not isinstance(res_width, list):
+            res_width = [res_width]
+        if args_name is None:
+            args_name = [""] * len(args_width)
+        elif not isinstance(args_name, list):
+            args_name = [args_name] * len(res_width)
+        if res_name is None:
+            res_name = [""] * len(res_width)
+        elif not isinstance(res_name, list):
+            res_name = [res_name] * len(res_width)
 
-        if self.placement_has_object(isa_hash):
-            func_unit = self.placement_get_object(isa_hash)
-        else:
-            func_color = self.colormap_default_color
-            func_unit = FunctionUnit(
-                func_name, func_color, args_width, res_size, args_name,
-                font_size, value_format, func_callee)
-            self.placement_add_object(func_unit, isa_hash, align_with=align_with)
+        # Create function unit.
+        color = self.colormap_default_color
+        func_unit = FunctionUnit(name, color, args_width, res_width, args_name, res_name,
+                                 font_size, value_format, func_callee)
 
-            self.animation_add_animation(
-                animate=decl_func_call(func_unit), src=None, dst=func_unit)
+        # Placement function unit.
+        self.place_object(func_unit, isa_hash, align_with=align_with)
+        # Create animation
+        self.add_animation(decl_func_unit(func_unit), None, func_unit)
 
+        # Return function unit.
         return func_unit
 
     def decl_func_group(self,
                         num_unit: Union[int, List[int]],
                         isa_hash: Union[str, List[str]],
                         args_width: List[float],
-                        res_size: Union[int, List[int]],
+                        res_width: Union[int, List[int]],
                         func_name: Union[str, List[str]] = None,
                         args_name: List[str] = None,
+                        res_name: Union[str, List[str]] = None,
                         font_size: int = DEFAULT_FONT_SIZE,
                         value_format: str = None,
                         force_hw_ratio: bool = False,
-                        func_callee = None) -> List[FunctionUnit]:
+                        func_callee: Callable = None) -> List[FunctionUnit]:
         """
-        Animation of declare a group of function call.
-        
-        Used to control placement and animation.
+        Declare a group of function units with a sequential of specified hash (`isa_hash`),
+        arguments (`arg_width`), and return values (`res_width`) and add them to the scene as a
+        group.
+
+        Args:
+            num_unit: The number of units. More than one hierachy level is accepted.
+            isa_hash: Hash value of this function unit, used by `function_call`.
+                Both a single hash and a sequence of hash are accepted.
+            args_width: A list of bit-width of arguments.
+            res_width: Bit-width of return values. If there is only one return value, one single
+                interger is required.
+            func_name: Function name. If not specified, take `isa_hash` as function name.
+            args_name: A list of name of arguments. The number of elements should be same as
+                `args_width`.
+            res_name: Name of return value. The number of elements should be same as `res_name`.
+            font_size: Font size of register name.
+                If not specified, take the value of `DEFAULT_FONT_SIZE`.
+            value_format: Format to print data value.
+                If not specified, take the value from global configuration `elem_value_format`.
+            force_hw_ratio: If `force_hw_ratio` is true, the number of units in one row is forced
+                by the last item in `num_unit`.
+                If `force_hw_ratio` is false, the shape of function groups is auto-adjusted
+                according to the scene h/w ratio.
+            func_callee: Pointer to a function to perform the functionality.
+
+        Returns:
+            A list of generated function unit.
         """
+        def _generate_name_with_index(name: Union[str, List[str]], num_id: List[int]):
+            if not isinstance(name, list):
+                return name + "_".join([str(sub_id) for sub_id in num_id])
+            else:
+                for sub_id in num_id:
+                    name = name[sub_id]
+                return name
+
         # Handle default value of arguments.
         if not func_name:
             func_name = isa_hash
-        if not isinstance(res_size, list):
-            res_size = [res_size]
+        if not isinstance(res_width, list):
+            res_width = [res_width]
         if value_format is None:
             value_format = get_config("elem_value_format")
         if isinstance(num_unit, int):
             num_unit = [num_unit]
+        if args_name is None:
+            args_name = [""] * len(args_width)
+        elif not isinstance(args_name, list):
+            args_name = [args_name] * len(res_width)
+        if res_name is None:
+            res_name = [""] * len(res_width)
+        elif not isinstance(res_name, list):
+            res_name = [res_name] * len(res_width)
 
+        # Loop across all function units.
         func_unit_list = []
         func_unit_hash = []
         num_id_list = itertools.product(*[list(range(0, numi)) for numi in num_unit])
         for num_id in num_id_list:
+            # Create function unit.
             if func_name:
-                func_ = func_name
-                if isinstance(func_name, list):
-                    for sub_id in num_id:
-                        func_ = func_[sub_id]
+                name = func_name
+                if isinstance(name, list):
+                    name = _generate_name_with_index(name, num_id)
             else:
-                if not isinstance(isa_hash, list):
-                    func_ = isa_hash + "_".join([str(sub_id) for sub_id in num_id])
-                else:
-                    func_ = isa_hash
-                    for sub_id in num_id:
-                        func_ = func_[sub_id]
-
-            func_color = self.colormap_default_color
-            func_unit = FunctionUnit(
-                func_, func_color, args_width, res_size, args_name,
-                font_size, value_format, func_callee)
-
-            if not isinstance(isa_hash, list):
-                func_hash = isa_hash + "_".join([str(sub_id) for sub_id in num_id])
-            else:
-                func_hash = isa_hash
-                for sub_id in num_id:
-                    func_hash = func_hash[sub_id]
-
+                name = _generate_name_with_index(isa_hash, num_id)
+            color = self.colormap_default_color
+            func_unit = FunctionUnit(name, color, args_width, res_width, args_name, res_name,
+                                     font_size, value_format, func_callee)
             func_unit_list.append(func_unit)
-            func_unit_hash.append(func_hash)
+            # Create hash value.
+            func_unit_hash.append(_generate_name_with_index(isa_hash, num_id))
 
-        self.placement_add_object_group(func_unit_list, func_unit_hash,
-                                        force_hw_ratio=num_unit if force_hw_ratio else None)
+        # Placement function units.
+        self.place_object_group(func_unit_list, func_unit_hash,
+                                force_hw_ratio=num_unit[-1] if force_hw_ratio else None)
+        # Create animation
+        self.add_animation(decl_func_unit(*func_unit_list), None, func_unit_list)
 
-        self.animation_add_animation(
-            animate=decl_func_call(*func_unit_list), src=None, dst=func_unit_list)
-
+        # Return a list of function units.
         return func_unit_list
 
     def function_call(self,
-                      func_isa_hash: str,
-                      args: List[RegElemUnit],
-                      func_args_index: List[int] = None,
+                      isa_hash: str,
+                      args: List[ElemUnit],
+                      args_offset: List[int] = None,
+                      color_hash: Union[int, str] = None,
                       res_width: Union[int, List[int]] = None,
-                      res_color_hash = None,
-                      res_index: Union[int, List[int]] = None,
+                      res_offset: Union[int, List[int]] = None,
                       res_value: Union[Any, List[Any]] = None,
-                      res_fill_opacity: float = 0.5,
+                      res_fill_opacity: float = None,
                       res_font_size: int = DEFAULT_FONT_SIZE,
-                      res_value_format: str = None) -> Union[RegElemUnit, List[RegElemUnit]]:
+                      res_value_format: str = None) -> Union[ElemUnit, List[ElemUnit]]:
         """
-        Animate of Function call.
+        Function call.
+
+        Args:
+            isa_hash: Hash value of the specified function unit.
+            args: Element units as arguments.
+            args_offset: LSB offset for the argument elements.
+                If not specified, 0 for each argument elements.
+            color_hash: Specified hash to get color from scheme.
+            res_width: Bit-width of return values. If there is only one return value, one single
+                interger is required.
+            res_offset: LSB offset for the result element units.
+                If not specified, 0 for each result element units.
+            res_value: Value of the result element units.
+                If not specified, assign None or calculate by inline function.
+            res_fill_opacity: Fill opacity.
+                If not specified, take the value from global configuration `elem_fill_opacity`.
+            res_font_size: Font size of result element unit.
+                If not specified, take the value of `DEFAULT_FONT_SIZE`.
+            res_value_format: Format to print result value.
+                If not specified, take the value from global configuration `elem_value_format`.
+
+        Returns:
+            Result element units. If only one result value, only one element unit returns.
         """
-        if res_width is not None and not isinstance(res_width, list):
+        func_unit: FunctionUnit = self.get_object(isa_hash)
+
+        # Handle default value of arguments.
+        if args_offset is None:
+            args_offset = [0 for _ in args]
+        if res_width is None:
+            res_width = func_unit.func_res_width_list
+        elif not isinstance(res_width, list):
             res_width = [res_width]
-        if res_index is not None and not isinstance(res_index, list):
-            res_index = [res_index]
-        if res_value is not None and not isinstance(res_value, list):
-            res_value = [res_value]
-
-        args_item: List[RegElemUnit] = []
-        args_item_exist: List[RegElemUnit] = []
-        for item in args:
-            if isinstance(item, tuple):
-                args_item.append(item[0])
-            else:
-                args_item.append(item)
-                args_item_exist.append(item)
-
-        if self.placement_has_object(func_isa_hash):
-            func_unit: FunctionUnit = self.placement_get_object(func_isa_hash)
+        if res_offset is None:
+            res_offset = [0 for _ in range(0, func_unit.func_res_count)]
+        elif not isinstance(res_offset, list):
+            res_offset = [res_offset]
+        if color_hash is None:
+            color_hash = self._traceback_hash()
+        if res_fill_opacity is None:
+            res_fill_opacity = get_config("elem_fill_opacity")
         if res_value_format is None:
             res_value_format = func_unit.func_value_format
-        if res_width is None:
-            res_width = func_unit.func_res_width
-        if res_index is None:
-            res_index = [0 for _ in range (0, func_unit.func_res_count)]
-        if func_args_index is None:
-            func_args_index = [0 for _ in args]
 
-        # Arguments
-        old_dep = []
-        args_ = []
-        args_exist_ = []
-        for arg in args:
-            if isinstance(arg, tuple):
-                args_.append(arg)
+        # Special handle for immediate operand.
+        args_elem: List[ElemUnit] = []
+        args_elem_exist: List[ElemUnit] = []
+        dup_args_elem: List[ElemUnit] = []
+        dup_args_elem_exist: List[ElemUnit] = []
+        for elem in args:
+            # Immediate operand:
+            if isinstance(elem, tuple):
+                args_elem.append(elem[0])
+                # Special case for immediate, read_func_imm is aligned with the animation to move
+                # animation.
+                dup_args_elem.append(elem)
             else:
-                if arg in self.last_dep_map:
-                    old_dep.append(self.last_dep_map[arg])
-                    del self.last_dep_map[arg]
+                args_elem.append(elem)
+                args_elem_exist.append(elem)
+                dup_elem = self.get_duplicate_item(elem)
+                dup_args_elem.append(dup_elem)
+                dup_args_elem_exist.append(dup_elem)
 
-                arg_ = self._get_duplicate_item(arg)
-                args_.append(arg_)
-                args_exist_.append(arg_)
-
-        # Function callee
-        args_item_value: List = [arg.elem_value for arg in args_item]
+        # Functionality of operation: function callee
+        args_elem_value: List = [arg.elem_value for arg in args_elem]
         if (res_value is None) and (func_unit.func_callee is not None) \
-                and (None not in args_item_value):
-            res_value = func_unit.func_callee(*args_item_value)
-        if not isinstance(res_value, list):
+                and (None not in args_elem_value):
+            res_value = func_unit.func_callee(*args_elem_value)
+        if res_value is None:
+            res_value = [None] * func_unit.func_res_count
+        elif not isinstance(res_value, list):
             res_value = [res_value] * len(res_width)
 
-        # Result elements
-        res_color_list = self.colormap_get_multi_color(
-            len(res_width), self._traceback_hash() if res_color_hash is None else res_color_hash)
-        res_elem_list = []
+        # Create result elements
+        res_color_list = self.colormap_get_color(color_hash, len(res_width))
+        if not isinstance(res_color_list, list):
+            res_color_list = [res_color_list]
+        res_elem_list = [
+            ElemUnit(
+                color, width, value, res_fill_opacity, res_font_size, res_value_format, 0, False)
+            for width, value, color in zip(res_width, res_value, res_color_list)]
 
-        for res_width_, res_value_, res_color in zip(res_width, res_value, res_color_list):
-            res_elem = RegElemUnit(
-                res_color, res_width_, res_value_,
-                res_fill_opacity, res_font_size, res_value_format, 0, False)
-            self.last_dep_map[res_elem] = func_unit
-            res_elem_list.append(res_elem)
-
-        animation_item = self.animation_add_animation(
-            animate=function_call(func_unit=func_unit,
-                                  args_list=args_,
-                                  res_list=res_elem_list,
-                                  func_args_index=func_args_index,
-                                  res_index=res_index),
-            src=args_item_exist + args_exist_,
-            dst=res_elem,
+        # Create animation.
+        old_dep = self.get_last_deps(*args_elem_exist)
+        if not isinstance(old_dep, list):
+            old_dep = [old_dep]
+        animation_item = self.add_animation(
+            function_call(func_unit, dup_args_elem, res_elem_list, args_offset, res_offset),
+            args_elem_exist + dup_args_elem_exist, res_elem_list,
             dep=(old_dep + [func_unit]) if old_dep else [func_unit])
-        for arg in args_item_exist:
-            self._set_item_cusumer(arg, animation_item)
-        for res in res_elem_list:
-            self._set_item_producer(res, animation_item)
 
-        return res_elem_list[0] if len(res_elem_list) == 1 else res_elem_list
+        # Update elements reference counter.
+        for arg in args_elem_exist:
+            self.set_elem_cusumer(arg, animation_item, None)
+        for res in res_elem_list:
+            self.set_elem_producer(res, func_unit)
+
+        # Return single result element or a list of result elements
+        if len(res_elem_list) == 1:
+            return res_elem_list[0]
+        else:
+            return res_elem_list
 
     def read_func_imm(self,
-                      size: float,
-                      color_hash = None,
-                      value = None,
-                      fill_opacity: float = 0.5,
+                      width: float,
+                      color_hash: Union[int, str] = None,
+                      value: Any = None,
+                      fill_opacity: float = None,
                       font_size: int = DEFAULT_FONT_SIZE,
-                      value_format: str = None) -> RegElemUnit:
+                      value_format: str = None) -> Tuple[ElemUnit, Animation]:
         """
-        Animate of Function call.
+        Generate immediate operand for function calling.
+        
+        Args:
+            width: Bit width.
+            color_hash: Specified hash to get color from scheme.
+            value: Value of the immediate element units.
+                If not specified, assign None or calculate by inline function.
+            fill_opacity: Fill opacity.
+                If not specified, take the value from global configuration `elem_fill_opacity`.
+            font_size: Font size of result element unit.
+                If not specified, take the value of `DEFAULT_FONT_SIZE`.
+            value_format: Format to print result value.
+                If not specified, take the value from global configuration `elem_value_format`. 
+           
+        Returns:
+            A tuple of element unit and fade-in animation.
         """
         # Handle default value of arguments.
+        if fill_opacity is None:
+            fill_opacity = get_config("elem_fill_opacity")
         if value_format is None:
             value_format = get_config("elem_value_format")
+        if color_hash is None:
+            color_hash = self._traceback_hash()
 
-        res_color = self.colormap_get_color(
-            self._traceback_hash() if color_hash is None else color_hash)
-        res_elem = RegElemUnit(
-            res_color, size, value, fill_opacity, font_size, value_format, 0, False)
+        # Create element unit.
+        color = self.colormap_get_color(color_hash)
+        res_elem = ElemUnit(color, width, value, fill_opacity, font_size, value_format, 0, False)
 
-        return read_func_imm(elem=res_elem)
+        # Retuen a tuple of element unit and animation.
+        return (res_elem, read_func_imm(res_elem))
 
     #
     # Memory
     #
-    def decl_memory(self,   # pylint: disable=dangerous-default-value
+    def decl_memory(self,
                     addr_width: int,
                     data_width: int,
-                    mem_range: List[Tuple[int]],
+                    mem_range: List[Tuple[int,int]],
                     isa_hash: str = None,
                     addr_align: int = None,
-                    font_size = DEFAULT_FONT_SIZE,
+                    status_width: int = 0,
+                    font_size: int = DEFAULT_FONT_SIZE,
                     value_format: str = None,
-                    para_enable = False) -> MemoryUnit:
+                    para_enable: bool = False) -> MemoryUnit:
         """
-        Animation of declare memory.
+        Declare one memory unit with a specified address width (`addr_width`), data width
+        (`data_width`), and memory range (`mem_range`) and add it to the scene.
 
-        Used to control placement and animation.
+        Args:
+            addr_width: Bit-width of the address port.
+            data_width: Bit-width of the data port.
+            mem_range: Range of memory map. Each tuple in `mem_range` presents the range of one
+                memory map. The first element in tuple is the lowest address and the second element
+                is the highest address.
+            isa_hash: Hash value of this memory unit. Used to declare more than one memory unit.
+            addr_align: Align requirement of memory range.
+                If not specified, take the value from global configuration `mem_align`.
+            status_width: Bit width of the status port.
+                If not specified, the memory unit does not have status port.
+            font_size: Font size of register name.
+                If not specified, take the value of `DEFAULT_FONT_SIZE`.
+            value_format: Format to print data value.
+                If not specified, take the value from global configuration `elem_value_format`.
+            para_enable: True means memory unit allow parallel animations. False means animations
+                with this memory unit must be serialized.
+
+        Returns:
+            Generated memory unit.
         """
+        # If there is existing memory unit with the same hash, return existing unit.
+        if not isa_hash:
+            isa_hash = "Memory"
+        if self.has_object(isa_hash):
+            mem_unit = self.get_object(isa_hash)
+            return mem_unit
+
         # Handle default value of arguments.
+        if isa_hash is None:
+            isa_hash = "Memory"
         if addr_align is None:
             addr_align = get_config("mem_align")
         if value_format is None:
             value_format = get_config("elem_value_format")
 
-        if not isa_hash:
-            isa_hash = "Memory"
+        # Create memory unit.
+        mem_color = self.colormap_default_color
+        mem_unit = MemoryUnit(mem_color, addr_width, data_width, addr_align, mem_range,
+                              font_size, value_format, para_enable, status_width,
+                              self.get_placement_width() - 2)
 
-        if self.placement_has_object(isa_hash):
-            mem_unit = self.placement_get_object(isa_hash)
-        else:
-            mem_unit = MemoryUnit(color=WHITE,
-                                  addr_width=addr_width,
-                                  data_width=data_width,
-                                  addr_align=addr_align,
-                                  mem_range=mem_range,
-                                  font_size=font_size,
-                                  value_format=value_format,
-                                  para_enable=para_enable,
-                                  mem_map_width=self.placement_width() - 2)
-            self.placement_add_object(mem_unit, "Memory")
+        # Placement memory unit.
+        self.place_object(mem_unit, isa_hash)
+        # Create animation
+        self.add_animation(decl_memory_unit(mem_unit), None, mem_unit)
 
-            self.animation_add_animation(
-                animate=decl_memory_unit(mem_unit), src=None, dst=mem_unit)
-
+        # Return memory unit.
         return mem_unit
 
-    def read_memory(self,   # pylint: disable=dangerous-default-value
-                    addr: RegElemUnit,
-                    size: int,
+    def read_memory(self,
+                    addr: ElemUnit,
+                    width: int,
                     offset: int = 0,
-                    addr_match: bool = False,
-                    res_color_hash = None,
-                    res_value = None,
-                    res_fill_opacity: float = 0.5,
+                    color_hash: Union[int, str] = None,
+                    res_value: Any = None,
+                    res_fill_opacity: float = None,
                     res_font_size: int = DEFAULT_FONT_SIZE,
                     res_value_format: str = None,
-                    mem_isa_hash: str = None) -> RegElemUnit:
+                    has_status_output: bool = True,
+                    status_width: int = None,
+                    status_value: Any = None,
+                    status_fill_opacity: float = None,
+                    status_font_size: int = DEFAULT_FONT_SIZE,
+                    status_value_format: str = None,
+                    mem_isa_hash: str = None) -> Union[Tuple[ElemUnit, ElemUnit], ElemUnit]:
         """
-        Animate of read memory.
+        Read data from the specified address.
+
+        Args:
+            addr: Address element unit.
+            width: Bit width of read data.
+            offset: LSB offset of read data.
+            color_hash: Hash value to get color from color scheme.
+            res_value: Value of data element.
+            res_fill_opacity: Fill opacity.
+                If not specified, take the value from global configuration `elem_fill_opacity`.
+            res_font_size: Font size of result element unit.
+                If not specified, take the value of `DEFAULT_FONT_SIZE`.
+            res_value_format: Format to print result value.
+                If not specified, take the value from global configuration `elem_value_format`. 
+            has_status_output: True means output of the status port is required.
+                If the memory unit does not have a status port, `has_status_output` is ignored.
+            status_width: Bit width of output status.
+                If not specified, the width of the generated status element unit is as same as the
+                status port.
+            status_value: Value of status element.
+            status_fill_opacity: Fill opacity.
+                If not specified, take the value from global configuration `elem_fill_opacity`.
+            status_font_size: Font size of result element unit.
+                If not specified, take the value of `DEFAULT_FONT_SIZE`.
+            status_value_format: Format to print result value.
+                If not specified, take the value from global configuration `elem_value_format`. 
+            mem_isa_hash: Hash to idenify memory unit.
+                If not specified, operate on the memory unit with the hash of "Memory".
+
+        Returns:
+            If having status output, return a tuple of the data and status element units.
+                Otherwise, return the data element unit.
         """
-        if not mem_isa_hash:
+        if mem_isa_hash is None:
             mem_isa_hash = "Memory"
-        mem_unit: MemoryUnit = self.placement_get_object(mem_isa_hash)
-        res_value_format = mem_unit.mem_value_format if res_value_format is None else \
-                           res_value_format
+        mem_unit: MemoryUnit = self.get_object(mem_isa_hash)
+
+        # Handle default value of arguments.
+        if res_fill_opacity is None:
+            res_fill_opacity = get_config("elem_fill_opacity")
+        if res_value_format is None:
+            res_value_format = mem_unit.mem_value_format
+        if color_hash is None:
+            color_hash = self._traceback_hash()
+        if status_width is None:
+            status_width = mem_unit.mem_status_width
+        if status_fill_opacity is None:
+            status_fill_opacity = get_config("elem_fill_opacity")
+        if status_value_format is None:
+            status_value_format = get_config("elem_value_format")
 
         addr_value = None
         if addr.elem_value is not None:
@@ -671,74 +841,115 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                 addr_value = None
         addr_match = addr_value is not None and offset == 0
 
-        data_color = self.colormap_get_color(
-            self._traceback_hash() if res_color_hash is None else res_color_hash)
-        data = RegElemUnit(
-            data_color, size, res_value, res_fill_opacity, res_font_size, res_value_format,
-            0, False)
+        has_status_output = mem_unit.has_status_port() and has_status_output
 
-        old_dep = []
-        if addr in self.last_dep_map:
-            old_dep.append(self.last_dep_map[addr])
-            del self.last_dep_map[addr]
-
-        if addr_match:
-            addr_ = self._get_duplicate_item(addr)
+        if has_status_output:
+            color, status_color = self.colormap_get_color(color_hash, 2)
         else:
-            addr_ = addr
+            color = self.colormap_get_color(color_hash)
 
-        self.last_dep_map[data] = mem_unit
+        # Create data element
+        data = ElemUnit(
+            color, width, res_value, res_fill_opacity, res_font_size, res_value_format, 0, False)
 
+        # Create address mark and memory mark
         if addr_value is not None:
-            addr_mark = mem_unit.get_addr_mark(addr=addr_value,
-                                               color=addr_.elem_color)
-            mem_mark = mem_unit.get_rd_mem_mark(laddr=addr_value,
-                                                raddr=addr_value + size // 8,
-                                                color=data_color)
+            addr_mark = mem_unit.get_addr_mark(addr_value, addr.elem_color)
+            mem_mark = mem_unit.get_rd_mem_mark(addr_value, addr_value + width // 8, color)
             mem_unit.append_mem_mark_list(mem_mark)
-            if not mem_unit.require_serialization:
-                data = data.stretch_to_fit_width(mem_mark.width) \
-                    .stretch_to_fit_height(mem_mark.height) \
-                    .move_to(mem_mark.get_center())
 
-            animation_item = self.animation_add_animation(
-                animate=read_memory(mem_unit=mem_unit,
-                                    addr_item=addr_,
-                                    data_item=data,
-                                    addr_mark=addr_mark,
-                                    mem_mark=mem_mark,
-                                    addr_match=addr_match),
-                src=[addr, addr_],
-                dst=[data, mem_mark],
-                dep=old_dep + [mem_unit],
-                remove_after=[addr_] if addr_match else [addr_mark])
-            self._set_item_cusumer(addr, animation_item)
-            self._set_item_producer(data, animation_item)
+        # Create status element
+        if has_status_output:
+            status = ElemUnit(status_color, status_width, status_value, status_fill_opacity,
+                              status_font_size, status_value_format, 0, False)
         else:
-            animation_item = self.animation_add_animation(
-                animate=read_memory_without_addr(
-                    mem_unit=mem_unit, addr_item=addr_, data_item=data),
-                src=[addr, addr_],
-                dst=[data],
-                dep=old_dep + [mem_unit],
-                remove_after=[addr_])
-            self._set_item_cusumer(addr, animation_item)
-            self._set_item_producer(data, animation_item)
+            status = None
 
-        return data
+        # Create animation.
+        if addr_match:
+            dup_addr = self.get_duplicate_item(addr)
+        else:
+            dup_addr = addr
+        old_dep = self.get_last_deps(addr)
+        if addr_value is not None:
+            animation_item = self.add_animation(
+                read_memory(mem_unit, dup_addr, data, status, addr_mark, mem_mark, addr_match),
+                [addr, dup_addr],
+                [data, mem_mark, status] if has_status_output else [data, mem_mark],
+                dep=[old_dep, mem_unit] if old_dep else [mem_unit],
+                remove_after=[dup_addr] if addr_match else [addr_mark])
 
-    def write_memory(self,  # pylint: disable=dangerous-default-value
-                     addr: RegElemUnit,
-                     data: RegElemUnit,
+        else:
+            animation_item = self.add_animation(
+                read_memory_without_addr(mem_unit, dup_addr, data, status),
+                [addr, dup_addr],
+                [data, status] if has_status_output else [data],
+                dep=[old_dep, mem_unit] if old_dep else [mem_unit],
+                remove_after=[dup_addr])
+
+        # Update element reference counter.
+        self.set_elem_cusumer(addr, animation_item, None)
+        self.set_elem_producer(data, mem_unit)
+        if has_status_output:
+            self.set_elem_producer(status, mem_unit)
+
+        # Return data element and status element.
+        if has_status_output:
+            return data, status
+        else:
+            return data
+
+    def write_memory(self,
+                     addr: ElemUnit,
+                     data: ElemUnit,
                      offset: int = 0,
-                     addr_match: bool = False,
-                     mem_isa_hash: str = None) -> None:
+                     color_hash: Union[int, str] = None,
+                     has_status_output: bool = True,
+                     status_width: int = None,
+                     status_value: Any = None,
+                     status_fill_opacity: float = None,
+                     status_font_size: int = DEFAULT_FONT_SIZE,
+                     status_value_format: str = None,
+                     mem_isa_hash: str = None) -> Union[ElemUnit, None]:
         """
-        Animate of write memory.
+        Write data to the specified address.
+
+        Args:
+            addr: Address element unit.
+            data: Data element unit.
+            offset: LSB offset of read data.
+            color_hash: Hash value to get color from color scheme.
+            has_status_output: True means output of the status port is required.
+                If the memory unit does not have a status port, `has_status_output` is ignored.
+            status_width: Bit width of output status.
+                If not specified, the width of the generated status element unit is as same as the
+                status port.
+            status_value: Value of status element.
+            status_fill_opacity: Fill opacity.
+                If not specified, take the value from global configuration `elem_fill_opacity`.
+            status_font_size: Font size of result element unit.
+                If not specified, take the value of `DEFAULT_FONT_SIZE`.
+            status_value_format: Format to print result value.
+                If not specified, take the value from global configuration `elem_value_format`. 
+            mem_isa_hash: Hash to idenify memory unit.
+                If not specified, operate on the memory unit with the hash of "Memory".
+
+        Returns:
+            If having status output, return status element unit. Otherwise, return None.
         """
         if not mem_isa_hash:
             mem_isa_hash = "Memory"
-        mem_unit: MemoryUnit = self.placement_get_object(mem_isa_hash)
+        mem_unit: MemoryUnit = self.get_object(mem_isa_hash)
+
+        # Handle default value of arguments.
+        if color_hash is None:
+            color_hash = self._traceback_hash()
+        if status_width is None:
+            status_width = mem_unit.mem_status_width
+        if status_fill_opacity is None:
+            status_fill_opacity = get_config("elem_fill_opacity")
+        if status_value_format is None:
+            status_value_format = get_config("elem_value_format")
 
         addr_value = None
         if addr.elem_value is not None:
@@ -747,51 +958,53 @@ class IsaDataFlow(IsaAnimationMap, IsaPlacementMap, IsaColorMap):
                 addr_value = None
         addr_match = addr_value is not None and offset == 0
 
-        old_dep = []
-        if addr in self.last_dep_map:
-            old_dep.append(self.last_dep_map[addr])
-            del self.last_dep_map[addr]
+        has_status_output = mem_unit.has_status_port() and has_status_output
 
-        if addr_match:
-            addr_ = self._get_duplicate_item(addr)
-        else:
-            addr_ = addr
-
-        if data in self.last_dep_map:
-            old_dep.append(self.last_dep_map[data])
-            del self.last_dep_map[data]
-
-        data_ = self._get_duplicate_item(data)
-
+        # Create address mark and memory mark
         if addr_value is not None:
-            addr_mark = mem_unit.get_addr_mark(addr=addr_value,
-                                               color=addr_.elem_color)
-            mem_mark = mem_unit.get_wt_mem_mark(laddr=addr_value,
-                                                raddr=addr_value + data.elem_width // 8,
-                                                color=data_.elem_rect.color)
+            addr_mark = mem_unit.get_addr_mark(addr_value, addr.elem_color)
+            mem_mark = mem_unit.get_wt_mem_mark(
+                addr_value, addr_value + data.elem_width // 8, data.elem_color)
             mem_unit.append_mem_mark_list(mem_mark)
 
-            animation_item = self.animation_add_animation(
-                animate=write_memory(mem_unit=mem_unit,
-                                     addr_item=addr_,
-                                     data_item=data_,
-                                     addr_mark=addr_mark,
-                                     mem_mark=mem_mark,
-                                     addr_match=addr_match),
-                src=[addr, data, addr_, data_],
-                dst=[mem_mark],
-                dep=old_dep + [mem_unit],
-                remove_after=[addr_, data_] if addr_match else [addr_mark, data_],
-                add_after=[mem_mark])
-            self._set_item_cusumer(addr, animation_item)
-            self._set_item_cusumer(data, animation_item)
+        # Create status element
+        status_color = self.colormap_get_color(color_hash)
+        if has_status_output:
+            status = ElemUnit(status_color, status_width, status_value, status_fill_opacity,
+                              status_font_size, status_value_format, 0, False)
         else:
-            animation_item = self.animation_add_animation(
-                animate=write_memory_without_addr(
-                    mem_unit=mem_unit, addr_item=addr_, data_item=data_),
-                src=[addr, data, addr_, data_],
-                dst=[],
-                dep=old_dep + [mem_unit],
-                remove_after=[addr_])
-            self._set_item_cusumer(addr, animation_item)
-            self._set_item_cusumer(data, animation_item)
+            status = None
+
+        # Create animation.
+        if addr_match:
+            dup_addr = self.get_duplicate_item(addr)
+        else:
+            dup_addr = addr
+        dup_data = self.get_duplicate_item(data)
+        old_dep = self.get_last_deps(addr, data)
+        if addr_value is not None:
+            animation_item = self.add_animation(
+                write_memory(mem_unit, dup_addr, dup_data, status, addr_mark, mem_mark, addr_match),
+                [addr, data, dup_addr, dup_data],
+                [mem_mark, status] if has_status_output else [mem_mark],
+                dep=old_dep + [mem_unit] if old_dep else [mem_unit],
+                remove_after=[dup_addr, dup_data] if addr_match else [addr_mark, dup_data],
+                add_after=[mem_mark])
+        else:
+            animation_item = self.add_animation(
+                write_memory_without_addr(mem_unit, dup_addr, status, dup_data),
+                [addr, data, dup_addr, dup_data],
+                [status] if has_status_output else [],
+                dep=old_dep + [mem_unit] if old_dep else [mem_unit],
+                remove_after=[dup_addr])
+
+        # Update element reference counter.
+        self.set_elem_cusumer(addr, animation_item, None)
+        self.set_elem_cusumer(data, animation_item, None)
+        if has_status_output:
+            self.set_elem_producer(status, mem_unit)
+
+        if has_status_output:
+            return status
+        else:
+            return None

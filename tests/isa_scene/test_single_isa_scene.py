@@ -19,28 +19,25 @@ class TestSingleIsaScene(SingleIsaScene):
 
         vl = 128
         esize = 32
+        elements = vl // esize
+        way = 2
 
-        zn = self.decl_vector(text="Zn", width=vl)
-        zm = self.decl_vector(text="Zm", width=vl)
-        zda = self.decl_vector(text="Zda", width=vl)
+        zn = self.decl_register("Zn", vl, elements * way)
+        zm = self.decl_register("Zm", vl, elements * way)
+        zd = self.decl_register("Zda", vl, elements)
 
-        for i in range(0, 4):
-            sum_ = self.read_elem(vector=zda, size=esize, index=i, color_hash="sum_")
+        self.decl_func_group(elements, "dot", [esize // way, esize // way, esize], esize,
+                             func_name="a*b+sum", args_name=["a", "b", "sum"], force_hw_ratio=True)
+
+        for i in range(0, elements):
+            dot_sum = self.read_elem(zd, i)
 
             for j in range(0, 2):
-                opa = self.read_elem(
-                    vector=zn, size=esize // 2, index = 2 * i + j, color_hash="opa" + str(j))
-                opb = self.read_elem(
-                    vector=zm, size=esize // 2, index = 2 * i + j, color_hash="opb" + str(j))
-                prod = self.function_call(
-                    func="*(a, b)", args=[opa, opb], res_size=esize, res_color_hash="prod" + str(j),
-                    func_isa_hash="prod" + str(j), func_args_name=["a", "b"])
-                sum__ = self.function_call(
-                    func="+(a, b)", args=[prod, sum_], res_size=esize, res_color_hash="add" + str(j),
-                    func_isa_hash="add" + str(j), func_args_name=["a", "b"])
-                sum_ = sum__
+                opa = self.read_elem(zn, way * i + j)
+                opb = self.read_elem(zm, way * 2 + j)
+                dot_sum = self.function_call(f"dot{i}", [opa, opb, dot_sum])
 
-            self.move_elem(elem=sum_, vector=zda, index=i)
+            self.move_elem(dot_sum, zd, i)
 
             if i == 0:
                 self.end_section(wait=1, fade_out=False)

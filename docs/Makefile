@@ -8,9 +8,9 @@ SOURCEDIR     = source
 BUILDDIR      = build
 
 doc:
-	@sphinx-build -b html $(SOURCEDIR) $(BUILDDIR)
+	@mkdocs build
 
 .PHONY: html Makefile clean
 
 clean:
-	@rm -rf $(BUILDDIR) $(SOURCEDIR)/_autosummary
+	@rm -rf site

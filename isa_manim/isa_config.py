@@ -71,6 +71,7 @@ isa_config = {
     "mem_data_width": 128,
     "mem_range": [[0, 0x1000]], # 1KB page
     "mem_align": 64,    # Memory address aligment 64B
+    "elem_fill_opacity": 0.5,
     "elem_value_format": "{:d}"
 }
 """

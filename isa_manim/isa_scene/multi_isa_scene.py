@@ -58,17 +58,17 @@ class MultiIsaScene(ZoomedScene, IsaDataFlow):
 
         self.activate_zooming()
 
-        msg = f"Register {len(self.isa_animation_section_list)} sections."
+        msg = f"Register {len(self.animation_section_list)} sections."
         logger.info(msg)
 
         # Analysis flow
         self.analysis_animation_flow()
-        msg = f"Register {len(self.isa_animation_step_list)} steps."
+        msg = f"Register {len(self.animation_step_list)} steps."
         logger.info(msg)
 
         # Play flow
         # Play each section
-        for animation_step in self.isa_animation_step_list:
+        for animation_step in self.animation_step_list:
             # Update camera to hold section.
             if animation_step.camera_animate:
                 camera_ratio = animation_step.camera_animate[0]
@@ -78,10 +78,10 @@ class MultiIsaScene(ZoomedScene, IsaDataFlow):
 
             # Play each step in section.
             self.add(*animation_step.add_before)
-            self.remove(*animation_step.remove_before)
+            self.remove(*animation_step.rm_before)
             self.play(*animation_step.animate_list)
             self.add(*animation_step.add_after)
-            self.remove(*animation_step.remove_after)
+            self.remove(*animation_step.rm_after)
 
             # Wait after animation.
             if animation_step.wait > 0:
@@ -111,7 +111,7 @@ class MultiIsaScene(ZoomedScene, IsaDataFlow):
             subtitle: String of subtitle.
         """
         subtitle_obj = Text(subtitle, font_size=25).move_to(UP * 3)
-        self.animation_add_animation(
+        self.add_animation(
             animate=FadeIn(subtitle_obj), src=[], dst=[subtitle_obj], dep=[])
 
     def start_section(self, subtitle: str):
@@ -138,8 +138,8 @@ class MultiIsaScene(ZoomedScene, IsaDataFlow):
         """
         if keep_objects is not None:
             for i in range(0, len(keep_objects)):
-                if self.placement_has_object(keep_objects[i]):
-                    keep_objects[i] = self.placement_get_object(keep_objects[i])
+                if self.has_object(keep_objects[i]):
+                    keep_objects[i] = self.get_object(keep_objects[i])
 
         camera_animate = self._update_camera()
         self.switch_section(wait=wait,
@@ -148,9 +148,7 @@ class MultiIsaScene(ZoomedScene, IsaDataFlow):
                             keep_objects=keep_objects)
 
         if fade_out:
-            always_on_item = self.always_on_item_list + keep_objects \
-                if keep_objects else self.always_on_item_list
-            self.placement_reset(keep_objects=always_on_item, keep_pos=keep_pos)
+            self.reset_placement(keep_objects=keep_objects, keep_pos=keep_pos)
 
         self.elem_source_dict.clear()
 
@@ -161,9 +159,9 @@ class MultiIsaScene(ZoomedScene, IsaDataFlow):
         If no update, return None. Otherwise, return a tuple of scaling factor and new location.
         The returned scaling factor the ratio of new scaling factor and old scaling factor.
         """
-        zoomed_frame_width = self.placement_width()
+        zoomed_frame_width = self.get_placement_width()
         zoomed_frame_scale = \
-            self.placement_scale(self.zoomed_display_width, self.zoomed_display_height)
+            self.get_camera_scale(self.zoomed_display_width, self.zoomed_display_height)
 
         zoomed_frame_origin_x = zoomed_frame_width / 2
         zoomed_frame_origin_y = (self.zoomed_display_height * zoomed_frame_scale) / 2

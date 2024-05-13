@@ -57,17 +57,17 @@ class SingleIsaScene(ZoomedScene, IsaDataFlow):
 
         self.activate_zooming()
 
-        msg = f"Register {len(self.isa_animation_section_list)} sections."
+        msg = f"Register {len(self.animation_section_list)} sections."
         logger.info(msg)
 
         # Analysis flow
         self.analysis_animation_flow()
-        msg = f"Register {len(self.isa_animation_step_list)} steps."
+        msg = f"Register {len(self.animation_step_list)} steps."
         logger.info(msg)
 
         # Play flow
         # Play each section
-        for animation_step in self.isa_animation_step_list:
+        for animation_step in self.animation_step_list:
             # Update camera to hold section.
             if animation_step.camera_animate:
                 camera_ratio = animation_step.camera_animate[0]
@@ -76,10 +76,10 @@ class SingleIsaScene(ZoomedScene, IsaDataFlow):
                           .move_to(camera_target))
 
             # Play each step in section.
-            self.remove(*animation_step.remove_before)
+            self.remove(*animation_step.rm_before)
             self.add(*animation_step.add_before)
             self.play(*animation_step.animate_list)
-            self.remove(*animation_step.remove_after)
+            self.remove(*animation_step.rm_after)
             self.add(*animation_step.add_after)
 
             # Wait after animation.
@@ -126,9 +126,9 @@ class SingleIsaScene(ZoomedScene, IsaDataFlow):
         If no update, return None. Otherwise, return a tuple of scaling factor and new location.
         The returned scaling factor the ratio of new scaling factor and old scaling factor.
         """
-        zoomed_frame_width = self.placement_width()
+        zoomed_frame_width = self.get_placement_width()
         zoomed_frame_scale = \
-            self.placement_scale(self.zoomed_display_width, self.zoomed_display_height)
+            self.get_camera_scale(self.zoomed_display_width, self.zoomed_display_height)
 
         zoomed_frame_origin_x = zoomed_frame_width / 2
         zoomed_frame_origin_y = (self.zoomed_display_height * zoomed_frame_scale) / 2

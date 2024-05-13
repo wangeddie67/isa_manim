@@ -8,10 +8,10 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
 from isa_manim import (Scene, # pylint: disable=wrong-import-position
                        Dot, BraceBetweenPoints, Text, Arrow,
-                       config,
+                       config, get_config, DEFAULT_FONT_SIZE,
                        WHITE, GREEN, BLUE, YELLOW,
                        RIGHT, UP, DOWN,
-                       OneDimReg)
+                       RegUnit)
 
 config.frame_height = 6
 config.frame_width = 24
@@ -21,7 +21,8 @@ class TestOneDimReg(Scene):
     Test object for register with one dimension.
     """
     def construct(self):
-        vector = OneDimReg(text="Register", color=WHITE, width=128, elements=8)
+        vector = RegUnit(["Register"], WHITE, 128, 8, 1, None,
+                         DEFAULT_FONT_SIZE, get_config("elem_value_format"))
         dots = [Dot(color=GREEN)]
         self.add(vector, *dots)
 
@@ -51,8 +52,8 @@ class TestOneDimReg(Scene):
             reg_rect_label.get_bottom(), vector.reg_rect.get_top() + RIGHT * 2, color=YELLOW)
         self.add(reg_rect_label, reg_rect_arrow)
 
-        label_text_label = Text("label_text", color=YELLOW).move_to(
-            vector.label_text.get_center() + UP * 2.5)
+        label_text_label = Text("label_text_list", color=YELLOW).move_to(
+            vector.name_text_list[0].get_center() + UP * 2.5)
         label_text_arrow = Arrow(
-            label_text_label.get_bottom(), vector.label_text.get_top(), color=YELLOW)
+            label_text_label.get_bottom(), vector.name_text_list[0].get_top(), color=YELLOW)
         self.add(label_text_label, label_text_arrow)
