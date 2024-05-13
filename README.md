@@ -1,11 +1,10 @@
 # Welcome to Manim for ISA
 
-This project aims to create a well-using framework to generate animations presenting the function 
-of one instruction or an instruction sequence.
+This project aims to create a well-using framework to generate animations presenting the function of one instruction or an instruction sequence.
 
-The whole project is based on `Manim <https://docs.manim.community/en/stable/index.html>`_, which is 
-a very powerful Python-based animation framework for mathematics and algorithms. Meanwhile, it is 
-very simple to use. Manim has been widely used in education and research. 
+The whole project is based on [Manim](https://docs.manim.community/en/stable/index.html), which is a very powerful Python-based animation framework for mathematics and algorithms. Meanwhile, it is very simple to use. Manim has been widely used in education and research. 
+
+Full document of IsaManim can be accessed by https://wangeddie67.github.io/isa_manim/.
 
 # Installation
 
