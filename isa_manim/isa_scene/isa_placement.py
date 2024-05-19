@@ -428,6 +428,8 @@ class IsaPlacementMap:
             if self._placement_check_rect(row, col, rect_width, rect_height, marker):
                 self._placement_mark_rect(marker, row, col, rect_width, rect_height)
                 return (row, col)
+            else:
+                return None
 
         # Align strategy, only check the specified row.
         if align_row is not None:
@@ -519,12 +521,11 @@ class IsaPlacementMap:
             raise ValueError("Argument must be Mobject.")
 
         #  Get align row.
+        align_row = None
         if align_with:
-            for _, place_item in self._placement_object_dict.items():
-                if place_item.isa_object is align_with:
+            for place_key, place_item in self._placement_object_dict.items():
+                if place_item.isa_object is align_with or place_key == align_with:
                     align_row = place_item.row
-        else:
-            align_row = None
 
         # Create placement item.
         placement_item = IsaPlacementItem(place_object, place_hash)

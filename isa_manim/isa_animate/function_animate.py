@@ -60,10 +60,11 @@ def function_call(func_unit: FunctionUnit,
     args_list_ : List[ElemUnit] = []
     for i, (arg, offset) in enumerate(zip(args_list, args_offset)):
         if isinstance(arg, tuple):  # immediate operand
+            arg_animate: FadeIn = arg[1]
             arg: ElemUnit = arg[0]
             arg.move_to(func_unit.get_arg_pos(i, offset, arg.elem_width))
             args_list_.append(arg)
-            move_animate_list.append(arg[1])
+            move_animate_list.append(arg_animate)
         else:
             args_list_.append(arg)
             move_animate_list.append(

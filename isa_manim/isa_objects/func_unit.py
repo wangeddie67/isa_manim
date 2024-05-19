@@ -92,7 +92,7 @@ class FunctionUnit(VGroup):
                         for i in range(0, len(res_scene_width))]
 
         # function rectangle
-        ellipse_width = max(all_args_width, all_func_width)
+        ellipse_width = ceil(max(all_args_width, all_func_width))
         self.func_rect: RoundedRectangle = RoundedRectangle(corner_radius=0.25,
                                                             color=color,
                                                             height=1.0,

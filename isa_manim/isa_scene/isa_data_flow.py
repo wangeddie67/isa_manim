@@ -640,7 +640,7 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
 
         # Create animation.
         old_dep = self.get_last_deps(*args_elem_exist)
-        if not isinstance(old_dep, list):
+        if old_dep is not None and not isinstance(old_dep, list):
             old_dep = [old_dep]
         animation_item = self.add_animation(
             function_call(func_unit, dup_args_elem, res_elem_list, args_offset, res_offset),
@@ -775,7 +775,7 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
                     res_fill_opacity: float = None,
                     res_font_size: int = DEFAULT_FONT_SIZE,
                     res_value_format: str = None,
-                    has_status_output: bool = True,
+                    has_status_output: bool = False,
                     status_width: int = None,
                     status_value: Any = None,
                     status_fill_opacity: float = None,
@@ -904,7 +904,7 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
                      data: ElemUnit,
                      offset: int = 0,
                      color_hash: Union[int, str] = None,
-                     has_status_output: bool = True,
+                     has_status_output: bool = False,
                      status_width: int = None,
                      status_value: Any = None,
                      status_fill_opacity: float = None,
