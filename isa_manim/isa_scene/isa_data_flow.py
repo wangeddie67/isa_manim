@@ -992,7 +992,7 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
                 add_after=[mem_mark])
         else:
             animation_item = self.add_animation(
-                write_memory_without_addr(mem_unit, dup_addr, status, dup_data),
+                write_memory_without_addr(mem_unit, dup_addr, dup_data, status),
                 [addr, data, dup_addr, dup_data],
                 [status] if has_status_output else [],
                 dep=old_dep + [mem_unit] if old_dep else [mem_unit],
