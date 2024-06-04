@@ -221,6 +221,8 @@
       
         
       
+        
+      
     
     
     
@@ -324,6 +326,27 @@
   
   <span class="md-ellipsis">
     Object Placement
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../0-introductions/05-configuration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configuration
   </span>
   
 
@@ -2907,7 +2930,7 @@ If not specified, take the value from global configuration <code>elem_value_form
 
 
 <h2 id="isa_manim.isa_scene.isa_data_flow.IsaDataFlow.read_memory" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">read_memory</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">color_hash</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">res_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">res_fill_opacity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">res_font_size</span><span class="o">=</span><span class="n">DEFAULT_FONT_SIZE</span><span class="p">,</span> <span class="n">res_value_format</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">has_status_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">status_width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_fill_opacity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_font_size</span><span class="o">=</span><span class="n">DEFAULT_FONT_SIZE</span><span class="p">,</span> <span class="n">status_value_format</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mem_isa_hash</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+          <code class="highlight language-python"><span class="n">read_memory</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">color_hash</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">res_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">res_fill_opacity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">res_font_size</span><span class="o">=</span><span class="n">DEFAULT_FONT_SIZE</span><span class="p">,</span> <span class="n">res_value_format</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">has_status_output</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">status_width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_fill_opacity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_font_size</span><span class="o">=</span><span class="n">DEFAULT_FONT_SIZE</span><span class="p">,</span> <span class="n">status_value_format</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mem_isa_hash</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h2>
 
@@ -3056,7 +3079,7 @@ If the memory unit does not have a status port, <code>has_status_output</code> i
             </div>
           </td>
           <td>
-                <code>True</code>
+                <code>False</code>
           </td>
         </tr>
         <tr class="doc-section-item">
@@ -3187,7 +3210,7 @@ Otherwise, return the data element unit.</p>
 
 
 <h2 id="isa_manim.isa_scene.isa_data_flow.IsaDataFlow.write_memory" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">write_memory</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">color_hash</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">has_status_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">status_width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_fill_opacity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_font_size</span><span class="o">=</span><span class="n">DEFAULT_FONT_SIZE</span><span class="p">,</span> <span class="n">status_value_format</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mem_isa_hash</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+          <code class="highlight language-python"><span class="n">write_memory</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">color_hash</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">has_status_output</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">status_width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_fill_opacity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_font_size</span><span class="o">=</span><span class="n">DEFAULT_FONT_SIZE</span><span class="p">,</span> <span class="n">status_value_format</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mem_isa_hash</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h2>
 
@@ -3277,7 +3300,7 @@ If the memory unit does not have a status port, <code>has_status_output</code> i
             </div>
           </td>
           <td>
-                <code>True</code>
+                <code>False</code>
           </td>
         </tr>
         <tr class="doc-section-item">
