@@ -5,10 +5,9 @@ ISA configuration structure.
 import os
 import re
 import shlex
-from typing import Union, List, Any
+from typing import Any
 
-def _convert_value(value_str: str) -> Union[str, int, float, bool,
-                                            List[str], List[int], List[float], List[bool]]:
+def _convert_value(value_str: str) -> Any:
     """
     Convert string to a value.
     """
@@ -104,6 +103,10 @@ def get_scene_ratio() -> float:
 def set_config(key: str, value: Any):
     """
     Set configuration.
+    
+    Args:
+        key: Name of the option.
+        value: Value of the option.
     """
     global isa_config   # pylint: disable=global-variable-not-assigned,invalid-name
     isa_config[key] = value
@@ -111,6 +114,13 @@ def set_config(key: str, value: Any):
 def get_config(key: str, default: Any = None) -> Any:
     """
     Get configuration.
+
+    Args:
+        key: Name of the option.
+        default: Default value of the option.
+
+    Returns:
+        Value of the option. If the option is not defined, return default value.
     """
     global isa_config   # pylint: disable=global-variable-not-assigned,invalid-name
     if key in isa_config:

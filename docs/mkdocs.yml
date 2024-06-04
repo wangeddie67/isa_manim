@@ -7,6 +7,7 @@ nav:
     - 0-introductions/02-animation-apis.md
     - 0-introductions/03-animation-flow.md
     - 0-introductions/04-placement.md
+    - 0-introductions/05-configuration.md
   - References:
     - 1-references/index.md
     - Objects:
