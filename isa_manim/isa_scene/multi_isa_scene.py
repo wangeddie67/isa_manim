@@ -2,7 +2,7 @@
 ISA scene with multiple instructions.
 """
 
-from typing import Union, Tuple
+from typing import Union, Tuple, List
 import numpy as np
 from manim import logger
 from manim import (Text,
@@ -12,7 +12,7 @@ from manim import (Text,
                    BLACK,
                    config)
 from .isa_data_flow import IsaDataFlow
-from ..isa_config import get_cfgs
+from ..isa_config import OptionDef, get_cfgs, inherit_cfgs
 
 config.frame_height = 9
 config.frame_width = 16
@@ -25,6 +25,8 @@ class MultiIsaScene(ZoomedScene, IsaDataFlow):
         camera_scale_rate: scale factor of zoomed camera.
         camera_origin: origin of zoomed camera.
     """
+
+    cfgs_list: List[OptionDef] = []
 
     def __init__(self, **kwargs):
         """
@@ -182,3 +184,13 @@ class MultiIsaScene(ZoomedScene, IsaDataFlow):
             return [temp_frame_scale, zoomed_frame_origin]
         else:
             return None
+
+    @classmethod
+    def inherit_cfgs(cls, *cfg_items: List, **fix_cfg_items) -> List:
+        """
+        Inherit configuration structure.
+
+        Returns:
+            List of configuration structure.
+        """
+        return inherit_cfgs(cls.cfgs_list, *cfg_items, **fix_cfg_items)

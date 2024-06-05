@@ -3,12 +3,11 @@ ISA configuration structure.
 """
 
 
-from math import ceil
 from random import randint, choice, uniform
 import os
 import re
 import shlex
-from typing import List, Dict, Tuple, Any
+from typing import List, Dict, Tuple, Callable, Any
 from typing import overload
 
 def _convert_value(value_str: str) -> Any:
@@ -139,400 +138,174 @@ def get_config(key: str, default: Any = None) -> Any:
 # Option Configurations.
 #
 
-def def_cfg(name: str,
-            cfg_type,
-            default: Any,
-            options: List[Any] = None,
-            condition = None,
-            cfg_range: Tuple[Any, Any] = None) -> Dict:
+class OptionDef:
     """
-    Define configuration structure.
-
-    Args:
-        name (str): Name of config option.
-        cfg_type (type): Type of config option.
-        default (Any): Default value of config option. Options: int, str, float, "fix_cfg",
-                        "reg_index".
-        options (List[Any], optional): Option values of config option. Defaults to None.
-        condition (optional): Condition of config option. Defaults to None.
-        cfg_range ([Any, Any], optional): Value range of config option. Defaults to None.
-
-    Returns:
-        Dict: Configuration structure.
+    Structure to define configuration options.
     """
-    cfg_dict = {"name": name, "type": cfg_type, "default": default}
 
-    if cfg_type == "fix_type":
-        return cfg_dict
+    FIX_CFG = 0
+    CONFIG_CFG = 1
+    RANDOM_CFG = 2
 
-    if options:
-        cfg_dict["options"] = options
-    if condition:
-        cfg_dict["condition"] = condition
-    if cfg_range:
-        cfg_dict["range"] = cfg_range
-    return cfg_dict
+    def __init__(self, name: str, opt_type: int, default: Any, **kwargs):
+        """
+        Create structure for configuration options.
 
-def def_fix_cfg(name: str, default: Any) -> Dict:
-    """
-    Define configuration structure with fixed value. This option cannot be changed by commandline.
+        Args:
+            name: Name of config option.
+            opt_type: Option type. Options: FIX_CFG, CONFIG_CFG, RANDOM_CFG.
+            default: Default value of config option.
+            options: Option values of config option. Defaults to None.
+            condition: Condition of config option. Defaults to None.
+            range: Value range of config option. Defaults to None.
+        """
+        self.name = name
+        self.opt_type = opt_type
+        self.default = default
+        self.options = None
+        self.condition = None
+        self.opt_range = None
 
-    Args:
-        name (str): Name of config option.
-        default (Any): Value of config option.
-
-    Returns:
-        Dict: Configuration structure.
-    """
-    return {"name": name, "type": "fix_cfg", "default": default}
+        if "options" in kwargs:
+            self.options = kwargs["options"]
+        if "condition" in kwargs:
+            self.condition = kwargs["condition"]
+        if "opt_range" in kwargs:
+            self.opt_range = kwargs["opt_range"]
 
 @overload
-def def_esize_cfg() -> Dict: ...
+def def_cfg(name: str, default: Any): ...
 
 @overload
-def def_esize_cfg(options: List[int]) -> Dict: ...
+def def_cfg(name: str, default: Any, options: List[Any]): ...
 
 @overload
-def def_esize_cfg(name: str) -> Dict: ...
+def def_cfg(name: str, default: Any, condition: Callable): ...
 
 @overload
-def def_esize_cfg(name: str, options: List[int]) -> Dict: ...
+def def_cfg(name: str, default: Any, opt_range: Tuple[Any, Any]): ...
 
-def def_esize_cfg(*args, **kwargs) -> Dict:
+def def_cfg(name: str, default: Any, **kwargs) -> OptionDef:
     """
-    Pre-defined configuration structure for "esize", default is 32.
-    Used by Fpsimd/SME/SVE instructions.
+    Define one option with default value. Option can be configurable by command line.
 
     Args:
-        options (List[int], optional): Option values of config option. Defaults to [32].
-        name (str, optional): Name of config option.. Defaults to "esize".
+        name: Name of config option.
+        default: Default value of config option.
+        options: Option values of config option. Defaults to None.
+        condition: Condition of config option. Defaults to None.
+        opt_range: Value range of config option. Defaults to None.
 
     Returns:
-        Dict: Configuration structure of "esize".
+        Structure for configuration option.
     """
-    # Handle args and kwargs.
-    options = [32]
-    name = "esize"
-    for arg in args:
-        if isinstance(arg, str):
-            name = arg
-        if isinstance(arg, list) and len(arg) >= 1:
-            options = arg
-    for key, arg in kwargs.items():
-        if key == "name":
-            name = arg
-        if key == "options":
-            options = arg
-
-    if len(options) == 1:
-        return {"name": name, "type": "fix_cfg", "default": options[0]}
-    else:
-        default = 32 if 32 in options else options[-1]
-        return {"name": name, "type": int, "options": options, "default": default}
+    return OptionDef(name, OptionDef.CONFIG_CFG, default, **kwargs)
 
 @overload
-def def_esize64_cfg() -> Dict: ...
+def def_random_cfg(name: str, options: List[Any]): ...
 
 @overload
-def def_esize64_cfg(options: List[int]) -> Dict: ...
+def def_random_cfg(name: str, opt_range: Tuple[Any, Any]): ...
 
-@overload
-def def_esize64_cfg(name: str) -> Dict: ...
-
-@overload
-def def_esize64_cfg(name: str, options: List[int]) -> Dict: ...
-
-def def_esize64_cfg(*args, **kwargs) -> Dict:
+def def_random_cfg(name: str, **kwargs) -> OptionDef:
     """
-    Pre-defined configuration structure for "esize", default is 64.
-    Used by aarch64 instructions.
+    Define one option with random value. Default value is choosen from a list or a range.
 
     Args:
-        options (List[int], optional): Option values of config option. Defaults to [64].
-        name (str, optional): Name of config option.. Defaults to "esize".
+        name: Name of config option.
+        options: Option values of config option. Defaults to None.
+        opt_range: Value range of config option. Defaults to None.
 
     Returns:
-        Dict: Configuration structure of "esize".
+        Structure for configuration option.
     """
-    # Handle args and kwargs.
-    options = [64]
-    name = "esize"
-    for arg in args:
-        if isinstance(arg, str):
-            name = arg
-        if isinstance(arg, list) and len(arg) >= 1:
-            options = arg
-    for key, arg in kwargs.items():
-        if key == "name":
-            name = arg
-        if key == "options":
-            options = arg
+    return OptionDef(name, OptionDef.RANDOM_CFG, None, **kwargs)
 
-    if len(options) == 1:
-        return {"name": name, "type": "fix_cfg", "default": options[0]}
-    else:
-        default = 64 if 64 in options else options[-1]
-        return {"name": name, "type": int, "options": options, "default": default}
-
-def def_vl_cfg(name: str = "vl") -> Dict:
+def def_fix_cfg(name: str, default: Any) -> OptionDef:
     """
-    Pre-defined configuration structure for "vl" (vector length of SVE/SME), default is 256.
-    Used by SME/SVE instructions.
+    Define one option with fixed value. This option cannot be changed by commandline.
 
     Args:
-        name (str, optional): Name of config option.. Defaults to "vl".
+        name: Name of config option.
+        default: Value of config option.
 
     Returns:
-        Dict: Configuration structure of "vl".
+        Structure for configuration option.
     """
-    return {"name": name, "type": "vl_cfg", "condition": "vl >= 128", "default": 256}
+    return OptionDef(name, OptionDef.FIX_CFG, default)
 
-def def_datasize_cfg(name: str = "datasize") -> Dict:
+def get_cfgs(cfgs_list: List[OptionDef]) -> Dict:
     """
-    Pre-defined configuration structure for "datasize" (vector length of fpsimd), default is 128.
-    Used by Fpsimd instructions.
+    Get value of options and return in a dictionary.
 
     Args:
-        name (str, optional): Name of config option.. Defaults to "datasize".
+        cfgs_list: List of option structures.
 
     Returns:
-        Dict: Configuration structure of "datasize".
+        A dictionary providing the value of options.
     """
-    return {"name": name, "type": int, "options": [64, 128], "default": 128}
-
-def def_nreg_cfg(name="nreg",   # pylint: disable=dangerous-default-value
-                 options=[2, 4],
-                 default=2) -> Dict:
-    """
-    Pre-defined configuration structure for "nreg" (Register number), default is 2.
-    Used by SME/SVE instructions.
-
-    Args:
-        name (str, optional): Name of config option.. Defaults to "datasize".
-
-    Returns:
-        Dict: Configuration structure of "datasize".
-    """
-    if len(options) == 1:
-        return {"name": name, "type": "fix_cfg", "default": options[0]}
-    else:
-        return {"name": name, "type": int, "options": options, "default": default}
-
-def def_reg_cfg(name: str) -> Dict:
-    """
-    Define configuration structure of register name.
-
-    Args:
-        name (str): Register name.
-
-    Returns:
-        Dict: Configuration structure of register name.
-    """
-    cfg_dict = {"name": name, "type": "reg_index", "default": name[1:]}
-
-    if name[0] in ["p", "P"]:               # Predicate registers.
-        cfg_dict["options"] = list(range(0, 8)) + [name[1:]]
-    elif name[0] in ["z", "Z", "v", "V"]:   # Fpsimd/SVE/SME registers.
-        cfg_dict["options"] = list(range(0, 16)) + [name[1:]]
-    elif name[0] in ["r", "R"]:             # General-purpose registers.
-        cfg_dict["options"] = list(range(0, 32)) + [name[1:]]
-    elif name[0] in ["w", "W"]:             # ZA registers.
-        cfg_dict["default"] = name
-
-    return cfg_dict
-
-def def_reg_cfgs(*name_list: List[str]) -> List[Dict]:
-    """
-    Define configuration structures of register names.
-
-    Args:
-        name_list (str): Register names.
-
-    Returns:
-        List[Dict]: List of configuration structure.
-    """
-    return [def_reg_cfg(name) for name in name_list]
-
-def get_cfgs(cfgs_list: List[Dict]):
     namespace = {}
 
     for cfg_item in cfgs_list:
+        # Option name
+        key = cfg_item.name
 
-        key = cfg_item["name"]
-        default = cfg_item["default"] if "default" in cfg_item else None
-
-        if default is "random_choice":
-            if "options" in cfg_item:
-                default = choice(cfg_item["options"])
-            elif "range" in cfg_item:
-                min_val, max_val = cfg_item["range"]
+        # Default value of option
+        if cfg_item.opt_type == OptionDef.RANDOM_CFG:
+            if cfg_item.options is not None:
+                value = choice(cfg_item.options)
+            elif cfg_item.opt_range is not None:
+                min_val, max_val = cfg_item.opt_range
                 if isinstance(min_val, int) and isinstance(max_val, int):
-                    default = randint(min_val, max_val)
+                    value = randint(min_val, max_val)
                 else:
-                    default = uniform(min_val, max_val)
+                    value = uniform(min_val, max_val)
             else:
                 raise ValueError(
                     f"Do not know how to find default value for configuration {key}.")
+        else:
+            value = cfg_item.default
 
-        if cfg_item["type"] == "fix_cfg":
-            namespace[key] = default
-            continue
+        # Get value from command line.
+        if cfg_item.opt_type != OptionDef.FIX_CFG:
+            value = get_config(key=key, default=value)
 
-        val = get_config(key=key, default=default)
-        namespace[key] = val
-
-        if "options" in cfg_item:
-            option_list = cfg_item["options"]
-            if namespace[key] not in option_list:
+        # Check whether value is correct
+        if cfg_item.options is not None:
+            if value not in cfg_item.options:
                 raise ValueError(
-                    f"Wrong value for configuration {key}, expect options {option_list}.")
+                    f"Wrong value for configuration {key}, expect options {cfg_item.options}.")
 
-        if "checker" in cfg_item:
-            checker_expr = cfg_item["checker"]
-            if not eval(checker_expr, namespace[key]):
-                raise ValueError(
-                    f"Wrong value for configuration {key}, expect condition \"{checker_expr}\".")
+        if cfg_item.condition is not None:
+            if not cfg_item.condition(value):
+                raise ValueError(f"Wrong value for configuration {key}, "
+                                 f"expect condition \"{cfg_item.condition}\".")
+
+        namespace[key] = value
 
     return namespace
 
-def get_predmask_cfg(key: str, elements: int, default: Any = [1]) -> Any:
-    """
-    Get value of predict.
-    """
-    if default is None:
-        default = []
-    pred_val = get_config(key, default)
-
-    if pred_val is None or len(pred_val) == 0:
-        pred_val = [randint(0, 1) for _ in range(0, elements)]
-    elif len(pred_val) < elements:
-        pred_val = pred_val * ceil(elements / len(pred_val))
-
-    return pred_val
-
-def get_predcnt_cfg(key: str, elements: int, default: Any = None) -> Any:
-    """
-    Get value of predict.
-    """
-    if default is None:
-        default = elements
-    cnt_val = get_config(key, default)
-    cnt_val = max(-elements, min(cnt_val, elements))
-
-    if cnt_val >= 0:
-        pred_val = [True] * cnt_val + [False] * (elements - cnt_val)
-    else:
-        pred_val = [False] * (-cnt_val) + [True] * (elements - (-cnt_val))
-
-    return pred_val
-
-@overload
-def get_addr_cfg(key: str,
-                 width: int,
-                 align: int,
-                 elements: int,
-                 val_range: Tuple[int, int] = None) -> Any: ...
-
-@overload
-def get_addr_cfg(key: str,
-                 width: int,
-                 align: int,
-                 val_range: Tuple[int, int] = None) -> Any: ...
-
-def get_addr_cfg(key: str,
-                 width: int,
-                 align: int,
-                 repeat: int = 1,
-                 val_range: Tuple[int, int] = None) -> Any:
-    """
-    Get value of address.
-    """
-    if val_range is None:
-        default_list = [randint(0, 1 << width) // align * align for _ in range(0, repeat)]
-    else:
-        min_val, max_val = val_range
-        if isinstance(min_val, int) and isinstance(max_val, int):
-            default_list = [randint(min_val, max_val) // align * align for _ in range(0, repeat)]
-        else:
-            default_list = [uniform(min_val, max_val) for _ in range(0, repeat)]
-
-    default = default_list if repeat > 1 else default_list[0]
-    addr_val = get_config(key, default)
-    return addr_val
-
-@overload
-def get_value_cfg(key: str, default: Any): ...
-
-@overload
-def get_value_cfg(key: str, range: Tuple[Any, Any], align: int = 1): ...
-
-@overload
-def get_value_cfg(key: str, elements: int, reps: int, range: Tuple[Any, Any], align: int = 1): ...
-
-@overload
-def get_value_cfg(key: str, elements: int, reps: int, width: int, align: int = 1): ...
-
-@overload
-def get_value_cfg(key: str, options: List[Any]): ...
-
-@overload
-def get_value_cfg(key: str, elements: int, reps: int, options: List[Any]): ...
-
-def get_value_cfg(*args, **kwargs) -> Any:
-    """
-    Get random value of item.
-    """
-    key = args[0]
-    elements = kwargs["elements"] if "elements" in kwargs else args[1] if len(args) > 1 else 1
-    repeat = kwargs["reps"] if "reps" in kwargs else args[2] if len(args) > 2 else elements
-    align = kwargs["align"] if "align" in kwargs else 1
-
-    # Get default value.
-    default = 0 if elements == 1 else []
-    if "default" in kwargs:
-        default = [kwargs["default"]]
-    elif "range" in kwargs:
-        min_val, max_val = kwargs["range"]
-        if isinstance(min_val, int) and isinstance(max_val, int):
-            default = [randint(min_val, max_val) // align * align for _ in range(0, repeat)]
-        else:
-            default = [uniform(min_val, max_val) for _ in range(0, repeat)]
-    elif "options" in kwargs:
-        default = [choice(kwargs["options"]) for _ in range(0, repeat)]
-
-    if elements == 1:
-        if isinstance(default, list):
-            default = default[0]
-        var_val = get_config(key, default)
-        return var_val
-    else:
-        var_val = get_config(key, default)
-        if len(var_val) == 0:
-            var_val = [default] * elements
-        elif len(var_val) < elements:
-            var_val = var_val * ceil(elements / len(var_val))
-
-        return var_val
-
-def append_cfg(parent, *cfg_items: List[Dict], **fix_cfg_items) -> List[Dict]:
+def inherit_cfgs(old_list: List[OptionDef],
+                 *cfg_items: List[OptionDef],
+                 **fix_cfg_items) -> List[OptionDef]:
     """
     Append configuration item.
 
     Args:
-        parent: Parent scene.
+        old_list: Old list of configuration options.
         cfg_item: List of configurable options.
         fix_cfg_item: List of fixed options.
 
     Returns:
-        List of options.
+        New list of options.
     """
-    cfgs_list: List[Dict] = parent.cfgs_list.copy()
+    cfgs_list: List[OptionDef] = old_list.copy()
 
     # Configurable options.
     for item in cfg_items:
         # Remove old item.
         for old_item in cfgs_list:
-            if old_item["name"] == item["name"]:
+            if old_item.name == item.name:
                 cfgs_list.remove(old_item)
                 break
         # Add new item
@@ -542,7 +315,7 @@ def append_cfg(parent, *cfg_items: List[Dict], **fix_cfg_items) -> List[Dict]:
     for key, value in fix_cfg_items.items():
         # Remove old item.
         for old_item in cfgs_list:
-            if old_item["name"] == key:
+            if old_item.name == key:
                 cfgs_list.remove(old_item)
                 break
         # Add new item
