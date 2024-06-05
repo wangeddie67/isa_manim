@@ -11,6 +11,7 @@ from manim import (Text,
                    BLACK,
                    config)
 from .isa_data_flow import IsaDataFlow
+from ..isa_config import get_cfgs
 
 config.frame_height = 9
 config.frame_width = 16
@@ -50,7 +51,11 @@ class SingleIsaScene(ZoomedScene, IsaDataFlow):
         """
         Construct animation.
         """
-        self.construct_isa_flow()
+        # Configuration list.
+        if hasattr(self, "cfgs_list"):
+            self.construct_isa_flow(**get_cfgs(self.cfgs_list))
+        else:
+            self.construct_isa_flow()
 
         self.zoomed_display.display_frame.set_color(BLACK)
         self.zoomed_camera.frame.move_to(DOWN * ((config.frame_height / 2 - 2) / 2))
