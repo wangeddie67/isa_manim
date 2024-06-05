@@ -35,3 +35,5 @@ from .isa_scene import (IsaAnimateItem,
 from .isa_scene import SingleIsaScene, MultiIsaScene
 
 from .isa_config import get_config, set_config
+
+from .isa_utils import calculate_mem_range
