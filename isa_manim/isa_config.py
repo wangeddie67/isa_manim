@@ -7,8 +7,7 @@ from random import randint, choice, uniform
 import os
 import re
 import shlex
-from typing import List, Dict, Tuple, Callable, Any
-from typing import overload
+from typing import List, Dict, Any
 
 def _convert_value(value_str: str) -> Any:
     """
@@ -146,6 +145,7 @@ class OptionDef:
     FIX_CFG = 0
     CONFIG_CFG = 1
     RANDOM_CFG = 2
+    VALUE_CFG = 3
 
     def __init__(self, name: str, opt_type: int, default: Any, **kwargs):
         """
@@ -157,7 +157,8 @@ class OptionDef:
             default: Default value of config option.
             options: Option values of config option. Defaults to None.
             condition: Condition of config option. Defaults to None.
-            range: Value range of config option. Defaults to None.
+            opt_range: Value range of config option. Defaults to None.
+            transform: Function to transfer configured value. Defaults to None.
         """
         self.name = name
         self.opt_type = opt_type
@@ -165,6 +166,7 @@ class OptionDef:
         self.options = None
         self.condition = None
         self.opt_range = None
+        self.transform = None
 
         if "options" in kwargs:
             self.options = kwargs["options"]
@@ -172,18 +174,8 @@ class OptionDef:
             self.condition = kwargs["condition"]
         if "opt_range" in kwargs:
             self.opt_range = kwargs["opt_range"]
-
-@overload
-def def_cfg(name: str, default: Any): ...
-
-@overload
-def def_cfg(name: str, default: Any, options: List[Any]): ...
-
-@overload
-def def_cfg(name: str, default: Any, condition: Callable): ...
-
-@overload
-def def_cfg(name: str, default: Any, opt_range: Tuple[Any, Any]): ...
+        if "transform" in kwargs:
+            self.transform = kwargs["transform"]
 
 def def_cfg(name: str, default: Any, **kwargs) -> OptionDef:
     """
@@ -195,17 +187,12 @@ def def_cfg(name: str, default: Any, **kwargs) -> OptionDef:
         options: Option values of config option. Defaults to None.
         condition: Condition of config option. Defaults to None.
         opt_range: Value range of config option. Defaults to None.
+        transform: Function to transfer configured value. Defaults to None.
 
     Returns:
         Structure for configuration option.
     """
     return OptionDef(name, OptionDef.CONFIG_CFG, default, **kwargs)
-
-@overload
-def def_random_cfg(name: str, options: List[Any]): ...
-
-@overload
-def def_random_cfg(name: str, opt_range: Tuple[Any, Any]): ...
 
 def def_random_cfg(name: str, **kwargs) -> OptionDef:
     """
@@ -234,6 +221,18 @@ def def_fix_cfg(name: str, default: Any) -> OptionDef:
     """
     return OptionDef(name, OptionDef.FIX_CFG, default)
 
+def def_value_cfg(name: str) -> OptionDef:
+    """
+    Define one value option. This option does not parse by `get_cfgs`.
+
+    Args:
+        name: Name of config option.
+
+    Returns:
+        Structure for configuration option.
+    """
+    return OptionDef(name, OptionDef.VALUE_CFG, None)
+
 def get_cfgs(cfgs_list: List[OptionDef]) -> Dict:
     """
     Get value of options and return in a dictionary.
@@ -247,6 +246,10 @@ def get_cfgs(cfgs_list: List[OptionDef]) -> Dict:
     namespace = {}
 
     for cfg_item in cfgs_list:
+        # Skip value configuration
+        if cfg_item.opt_type == OptionDef.VALUE_CFG:
+            continue
+
         # Option name
         key = cfg_item.name
 
@@ -286,7 +289,7 @@ def get_cfgs(cfgs_list: List[OptionDef]) -> Dict:
     return namespace
 
 def inherit_cfgs(old_list: List[OptionDef],
-                 *cfg_items: List[OptionDef],
+                 *cfg_items: OptionDef,
                  **fix_cfg_items) -> List[OptionDef]:
     """
     Append configuration item.
