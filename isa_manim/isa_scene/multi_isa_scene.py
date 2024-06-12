@@ -144,9 +144,15 @@ class MultiIsaScene(ZoomedScene, IsaDataFlow):
             fade_out: True means fade_out all items on scene except always-on items.
         """
         if keep_objects is not None:
-            for i in range(0, len(keep_objects)):
-                if self.has_object(keep_objects[i]):
-                    keep_objects[i] = self.get_object(keep_objects[i])
+            new_keep_objects = []
+            for isa_object in keep_objects:
+                if self.has_object(isa_object):
+                    new_keep_objects.append(self.get_object(isa_object))
+                elif self.has_object_group(isa_object):
+                    new_keep_objects.extend(self.get_object_group(isa_object))
+                else:
+                    new_keep_objects.append(isa_object)
+            keep_objects = new_keep_objects
 
         camera_animate = self._update_camera()
         self.switch_section(wait=wait,

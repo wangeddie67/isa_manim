@@ -182,6 +182,27 @@ class IsaPlacementMap:
         """
         return place_hash in self._placement_object_dict
 
+    def has_object_group(self, place_hash: str) -> bool:
+        """
+        Check whether there is object with prefix.
+
+        Args:
+            place_hash: Hash value of ISA object.
+
+        Returns:
+            True means the hash as prefix exists in the placement dictionary.
+        """
+        if not isinstance(place_hash, str):
+            return False
+
+        for key in self._placement_object_dict:
+            if not isinstance(key, str):
+                continue
+
+            if key.startswith(place_hash):
+                return True
+        return False
+
     def get_object(self, place_hash: str) -> Mobject:
         """
         Return ISA object of the specified hash.
@@ -193,6 +214,28 @@ class IsaPlacementMap:
             The object for the specified ISA.
         """
         return self._placement_object_dict[place_hash].isa_object
+
+    def get_object_group(self, place_hash: str) -> List[Mobject]:
+        """
+        Return a list of object with prefix hash.
+
+        Args:
+            place_hash: Hash value of ISA object.
+
+        Returns:
+            A list of objects for the specified ISA.
+        """
+        if not isinstance(place_hash, str):
+            return []
+
+        object_list = []
+        for key, place_item in self._placement_object_dict.items():
+            if not isinstance(key, str):
+                continue
+
+            if key.startswith(place_hash):
+                object_list.append(place_item.isa_object)
+        return object_list
 
     # Placement map
     def get_placement_width(self) -> int:

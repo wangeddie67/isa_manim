@@ -221,7 +221,7 @@ def def_fix_cfg(name: str, default: Any) -> OptionDef:
     """
     return OptionDef(name, OptionDef.FIX_CFG, default)
 
-def def_value_cfg(name: str) -> OptionDef:
+def def_value_cfg(name: str, **kwargs) -> OptionDef:
     """
     Define one value option. This option does not parse by `get_cfgs`.
 
@@ -231,7 +231,7 @@ def def_value_cfg(name: str) -> OptionDef:
     Returns:
         Structure for configuration option.
     """
-    return OptionDef(name, OptionDef.VALUE_CFG, None)
+    return OptionDef(name, OptionDef.VALUE_CFG, None, **kwargs)
 
 def get_cfgs(cfgs_list: List[OptionDef]) -> Dict:
     """
