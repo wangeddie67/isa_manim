@@ -130,13 +130,6 @@ class ElemUnit(VGroup):
     def align_points_with_larger(self, larger_mobject):
         raise NotImplementedError("Please override in a child class.")
 
-    # Override operator
-    def __bool__(self):
-        """
-        Return whether the value of element is True of False. Used by predicate mask.
-        """
-        return bool(self.elem_value)
-
     # Get locations.
     def get_elem_pos(self,
                      offset: int,

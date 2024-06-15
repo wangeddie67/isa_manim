@@ -145,8 +145,8 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
                   reg_idx: int,
                   offset: int = 0,
                   width: int = -1,
-                  color_hash = None,
-                  value = None,
+                  color_hash: Union[int, str] = None,
+                  value: Any = None,
                   fill_opacity: float = None,
                   font_size: int = DEFAULT_FONT_SIZE,
                   value_format: str = None) -> ElemUnit: ...
@@ -157,8 +157,8 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
                   index: int,
                   offset: int = 0,
                   width: int = -1,
-                  value = None,
-                  color_hash = None,
+                  value: Any = None,
+                  color_hash: Union[int, str] = None,
                   fill_opacity: float = None,
                   font_size: int = DEFAULT_FONT_SIZE,
                   value_format: str = None) -> ElemUnit: ...
@@ -168,8 +168,8 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
                   vector: RegUnit,
                   offset: int = 0,
                   width: int = -1,
-                  value = None,
-                  color_hash = None,
+                  value: Any = None,
+                  color_hash: Union[int, str] = None,
                   fill_opacity: float = None,
                   font_size: int = DEFAULT_FONT_SIZE,
                   value_format: str = None) -> ElemUnit: ...
@@ -181,6 +181,7 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
                   offset: int = 0,
                   width: int = 0,
                   color_hash: Union[int, str] = None,
+                  value_color: bool = False,
                   value: Any = None,
                   fill_opacity: float = None,
                   font_size: int = DEFAULT_FONT_SIZE,
@@ -196,6 +197,7 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
             offset: Offset of LSB.
             width: Width of element in bit.
             color_hash: Hash to get color from color scheme.
+            value_color: Assign different colors for different values.
             value: Value of this register, single element or 1-D/2-D array.
                 If not specified, assign None.
             fill_opacity: Fill opacity.
@@ -227,6 +229,10 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
         if color_hash is None:
             color_hash = self._traceback_hash()
 
+        # Predict color
+        if value_color is True:
+            color_hash = f"value{value}"
+
         # Create new element.
         color = self.colormap_get_color(color_hash)
         elem = ElemUnit(color, width, value, fill_opacity, font_size, value_format, 0, False)
@@ -241,6 +247,82 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
 
         # Return new element
         return elem
+
+    @overload
+    def read_elem_value(self,
+                        vector: RegUnit,
+                        index: int,
+                        reg_idx: int,
+                        offset: int = 0,
+                        width: int = -1,
+                        color_hash: Union[int, str] = None,
+                        value: Any = None,
+                        fill_opacity: float = None,
+                        font_size: int = DEFAULT_FONT_SIZE,
+                        value_format: str = None) -> Any: ...
+
+    @overload
+    def read_elem_value(self,
+                        vector: RegUnit,
+                        index: int,
+                        offset: int = 0,
+                        width: int = -1,
+                        value: Any = None,
+                        color_hash: Union[int, str] = None,
+                        fill_opacity: float = None,
+                        font_size: int = DEFAULT_FONT_SIZE,
+                        value_format: str = None) -> Any: ...
+
+    @overload
+    def read_elem_value(self,
+                        vector: RegUnit,
+                        offset: int = 0,
+                        width: int = -1,
+                        value: Any = None,
+                        color_hash: Union[int, str] = None,
+                        fill_opacity: float = None,
+                        font_size: int = DEFAULT_FONT_SIZE,
+                        value_format: str = None) -> Any: ...
+
+    def read_elem_value(self,
+                        vector: RegUnit,
+                        index: int = 0,
+                        reg_idx: int = 0,
+                        offset: int = 0,
+                        width: int = 0,
+                        color_hash: Union[int, str] = None,
+                        value: Any = None,
+                        fill_opacity: float = None,
+                        font_size: int = DEFAULT_FONT_SIZE,
+                        value_format: str = None) -> Any:
+        """
+        Read one element from the specified position (`reg_idx` and `index`) of the specified
+        register `vector` and return one element unit.
+
+        Args:
+            vector: Register.
+            index: Element index.
+            reg_idx: Regsiter index.
+            offset: Offset of LSB.
+            width: Width of element in bit.
+            color_hash: Hash to get color from color scheme.
+            value: Value of this register, single element or 1-D/2-D array.
+                If not specified, assign None.
+            fill_opacity: Fill opacity.
+                If not specified, take the value from global configuration `elem_fill_opacity`.
+            font_size: Font size of element value.
+                If not specified, take the value of `DEFAULT_FONT_SIZE`.
+            value_format: Format to print data value.
+                If not specified, take the value from global configuration `elem_value_format`.
+
+        Returns:
+            Generated element unit.
+        """
+        # Return new element
+        elem: ElemUnit = self.read_elem(vector, index, reg_idx, offset, width, color_hash, True,
+                                        value, fill_opacity, font_size, value_format)
+        # Return value of new element
+        return elem.elem_value
 
     @overload
     def move_elem(self,
@@ -658,6 +740,55 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
             return res_elem_list[0]
         else:
             return res_elem_list
+
+    def func_group_call(self,
+                        grp_isa_hash: str,
+                        para_index: Union[int, List[int]],
+                        args: List[ElemUnit],
+                        args_offset: List[int] = None,
+                        color_hash: Union[int, str] = None,
+                        res_width: Union[int, List[int]] = None,
+                        res_offset: Union[int, List[int]] = None,
+                        res_value: Union[Any, List[Any]] = None,
+                        res_fill_opacity: float = None,
+                        res_font_size: int = DEFAULT_FONT_SIZE,
+                        res_value_format: str = None) -> Union[ElemUnit, List[ElemUnit]]:
+        """
+        Function call among a parallel function group.
+
+        Args:
+            grp_isa_hash: Hash value of the specified function unit.
+            para_index: Index of unit in parallel function group.
+            args: Element units as arguments.
+            args_offset: LSB offset for the argument elements.
+                If not specified, 0 for each argument elements.
+            color_hash: Specified hash to get color from scheme.
+            res_width: Bit-width of return values. If there is only one return value, one single
+                interger is required.
+            res_offset: LSB offset for the result element units.
+                If not specified, 0 for each result element units.
+            res_value: Value of the result element units.
+                If not specified, assign None or calculate by inline function.
+            res_fill_opacity: Fill opacity.
+                If not specified, take the value from global configuration `elem_fill_opacity`.
+            res_font_size: Font size of result element unit.
+                If not specified, take the value of `DEFAULT_FONT_SIZE`.
+            res_value_format: Format to print result value.
+                If not specified, take the value from global configuration `elem_value_format`.
+
+        Returns:
+            Result element units. If only one result value, only one element unit returns.
+        """
+        if isinstance(para_index, int):
+            isa_hash = f"{grp_isa_hash}{para_index}"
+        else:
+            isa_hash = grp_isa_hash + "_".join([str(sub_id) for sub_id in para_index])
+
+        if color_hash is None:
+            color_hash = self._traceback_hash()
+        
+        return self.function_call(isa_hash, args, args_offset, color_hash, res_width, res_offset,
+                                  res_value, res_fill_opacity, res_font_size, res_value_format)
 
     def read_func_imm(self,
                       width: float,
