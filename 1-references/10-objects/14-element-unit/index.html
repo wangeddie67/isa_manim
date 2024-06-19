@@ -306,7 +306,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -496,7 +496,7 @@
         
   
   <span class="md-ellipsis">
-    Register Unit
+    Register Units
   </span>
   
 
@@ -517,7 +517,7 @@
         
   
   <span class="md-ellipsis">
-    Function Unit
+    Function Units
   </span>
   
 
@@ -622,15 +622,6 @@
   <a href="#isa_manim.isa_objects.elem_unit.ElemUnit.require_serialization" class="md-nav__link">
     <span class="md-ellipsis">
       require_serialization
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#isa_manim.isa_objects.elem_unit.ElemUnit.__bool__" class="md-nav__link">
-    <span class="md-ellipsis">
-      __bool__
     </span>
   </a>
   
@@ -856,8 +847,6 @@
       
         
       
-        
-      
     
     
     
@@ -949,7 +938,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -971,27 +960,6 @@
   
   <span class="md-ellipsis">
     Element Reference Counter
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../30-scene/35-data_flow/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Data flow
   </span>
   
 
@@ -1070,15 +1038,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#isa_manim.isa_objects.elem_unit.ElemUnit.__bool__" class="md-nav__link">
-    <span class="md-ellipsis">
-      __bool__
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#isa_manim.isa_objects.elem_unit.ElemUnit.__init__" class="md-nav__link">
     <span class="md-ellipsis">
       __init__
@@ -1148,28 +1107,28 @@
 
 
 <h1 id="element-unit">Element Unit</h1>
-<p><code>isa_manim.isa_objects.one_dim_reg_elem</code> presents one element in registers, function units and memory units. This object can be used to present data reading from/writing to one register, moving between registers, function units and memory units.</p>
+<p><code>isa_manim.isa_objects.one_dim_reg_elem</code> presents one element in registers, function units, and memory units. This object can be used to present data reading from/writing to one register, moving between registers, function units, and memory units.</p>
 <p><img alt="" src="../../../image/TestElemUnit.png" /></p>
 <p>Source code: <a href="https://github.com/wangeddie67/isa_manim/blob/main/tests/isa_objects/test_elem_unit.py"><em>test_elem_unit.py</em></a></p>
 <p>As shown in the above figures, one element unit contains the following Manim objects:
 - <code>elem_rect</code> presents the element.
   - The width of <code>elem_rect</code> presents the bit width of the register.
   - The height of <code>elem_rect</code> is 1.0.
-  - In a normal situation, <code>elem_rect</code> is filled with the same color as the boundary and opacity is set to 0.5.
-- <code>value_text</code> presents the value of the element, which is centrally aligned with <code>elem_rect</code>.</p>
+  - In a normal situation, <code>elem_rect</code> is filled with the same color as the boundary. The opacity is set to 0.5.
+- <code>value_text</code> presents the element's value, which is centrally aligned with <code>elem_rect</code>.</p>
 <p>In the case of zero-extend, some MSBs are forced to zero. In this case, the element unit contains four Manim objects:
-- <code>elem_rect</code> still presents the element as above. But the <code>elem_rect</code> is transparent.
-- Another Rectangle object <code>fill_elem_rect</code> is used to cover the non-zero bits. 
-- <code>value_text</code> presents the value of the element, which is centrally aligned with <code>fill_elem_rect</code>.
-- Another Text object <code>fill_value_text</code> with a string of "0" is used to cover the zero bits.</p>
+- <code>elem_rect</code> still presents the element as above. However, the <code>elem_rect</code> is transparent.
+- <code>fill_elem_rect</code> covers the non-zero bits. 
+- <code>value_text</code> presents the element's value, which is centrally aligned with <code>fill_elem_rect</code>.
+- <code>fill_value_text</code> with a string of "0" covers the zero bits.</p>
 <p><img alt="" src="../../../image/TestElemUnitZero.png" /></p>
 <p>Source code: <a href="https://github.com/wangeddie67/isa_manim/blob/main/tests/isa_objects/test_elem_unit_zero.py"><em>test_elem_unit_zero.py</em></a></p>
 <blockquote>
 <p><code>fill_elem_rect</code> and <code>fill_value_text</code> are not public members.</p>
 <p>The origin point is located in the center position of <code>elem_rect</code>  as same as the center position of this object.</p>
 </blockquote>
-<p>Element units can maintain a value as a normal variable. The value is specified by the option <code>value</code> in the constructor function. The value can be read out by public member <code>elem_value</code>. To simplify predicate cases, <code>__bool_</code> is overridden so that element units can be directly used after <code>if</code>.</p>
-<p>If one element has been assigned a valid value, the value will be displayed. The format to print the value is defined by a format string as Python. For example, <code>":d"</code> means decimal format and <code>"0x:x"</code> means hexadecimal format. The value format is specified by the option <code>value_format</code> in the constructor function.</p>
+<p>Element units can maintain a value as a normal variable. The option <code>value</code> in the constructor function specifies the element's value. Public member <code>elem_value</code> reads out the value.</p>
+<p>If one element has been assigned a valid value, the value will be displayed. The format to print the value is defined by a format string as Python. For example, <code>":d"</code> means decimal format, and <code>"0x:x"</code> means hexadecimal format. The option <code>value_format</code> in the constructor function specifies the value format.</p>
 <h2 id="elemunit">ElemUnit</h2>
 
 
@@ -1344,25 +1303,6 @@
 </div>
 
 
-
-
-<div class="doc doc-object doc-function">
-
-
-
-<h2 id="isa_manim.isa_objects.elem_unit.ElemUnit.__bool__" class="doc doc-heading">
-          <code class="highlight language-python"><span class="fm">__bool__</span><span class="p">()</span></code>
-
-</h2>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Return whether the value of element is True of False. Used by predicate mask.</p>
-
-  </div>
-
-</div>
 
 
 <div class="doc doc-object doc-function">

@@ -306,7 +306,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -494,7 +494,7 @@
         
   
   <span class="md-ellipsis">
-    Register Unit
+    Register Units
   </span>
   
 
@@ -515,7 +515,7 @@
         
   
   <span class="md-ellipsis">
-    Function Unit
+    Function Units
   </span>
   
 
@@ -829,8 +829,6 @@
       
         
       
-        
-      
     
     
     
@@ -922,7 +920,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -944,27 +942,6 @@
   
   <span class="md-ellipsis">
     Element Reference Counter
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../30-scene/35-data_flow/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Data flow
   </span>
   
 
@@ -1098,10 +1075,10 @@
 <p><code>isa_manim.isa_animate.memory_animate.read_memory</code> and <code>isa_manim.isa_animate.memory_animate.read_memory_without_addr</code> presents the animation to read data from memory. <code>isa_manim.isa_animate.memory_animate.write_memory</code> and <code>isa_manim.isa_animate.memory_animate.write_memory_without_addr</code> presents the animation to write data to memory. These four functions perform different animations according to some conditions of operations.</p>
 <p>If the address element does not provide a valid address or the provided address does not match any memory map, the accessed memory locations cannot be marked on memory maps of the memory unit. In this situation, <code>read_memory_without_addr</code> and <code>write_memory_without_addr</code> are applied.</p>
 <ul>
-<li>By the first step in <code>read_memory_without_addr</code>, the address element moves to the address port. Then the address element fades out while the data element fades in. At last, the data element can be observed at the data port.</li>
-<li>By the first step in <code>write_memory_without_addr</code>, the address element moves to the address port and the data element moves to the data port first. Then both the address element and the data element fade out.</li>
+<li>By the first step in <code>read_memory_without_addr</code>, the address element moves to the address port. Then, the address element fades out while the data element fades in. At last, the data element can be observed at the data port.</li>
+<li>By the first step in <code>write_memory_without_addr</code>, the address element moves to the address port, and the data element moves to the data port first. Then, both the address element and the data element fade out.</li>
 </ul>
-<p>At last, a status element fades in if the memory unit has a status port and a status element is provided to function <code>read_memory_without_addr</code> and <code>write_memory_without_addr</code>.</p>
+<p>Finally, a status element fades if the memory unit has a status port, and a status element is provided to function <code>read_memory_without_addr</code> and <code>write_memory_without_addr</code>.</p>
 <p>An example for <code>decl_memory_unit</code>, <code>read_memory_without_addr</code> and <code>write_memory_without_addr</code> is as below:</p>
 <p><img alt="" src="../../../image/TestMemUnitAnimationWithoutAddr.gif" /></p>
 <p>Source code: <a href="https://github.com/wangeddie67/isa_manim/blob/main/tests/isa_animate/test_memory_animation_without_addr.py"><em>test_memory_animation_without_addr.py</em></a></p>
@@ -1109,13 +1086,13 @@
 <p><code>read_memory_without_addr</code> and <code>write_memory_without_addr</code> do not work with vector load/store instructions. If the memory unit allows parallel animations, the address elements and data elements for different vector elements will overlap together at the address port and then data port. If the memory unit does not allow parallel animations, the animation for one instruction has to cost a much longer time since elements must be handled one by one.</p>
 <p>The distribution of accessed memory locations is very important to explain the instruction behaviors. It is not suggested to use <code>read_memory_without_addr</code> and <code>write_memory_without_addr</code> in new animations. It is expected that address elements always have valid address values to present in memory maps.</p>
 </blockquote>
-<p>It is suggested to use <code>read_memory</code> and <code>write_memory</code> to generate animations with memory units. The major difference between <code>read_memory</code>/<code>write_memory</code> and <code>read_memory_without_addr</code>/<code>write_memory_without_addr</code> lies in that <code>read_memory</code>/<code>write_memory</code> marks the accessed memory locations. The animation has three steps: moving address elements, marking address position, marking address range and fading in the status element.</p>
+<p>Users are suggested to use <code>read_memory</code> and <code>write_memory</code> to generate animations with memory units. The major difference between <code>read_memory</code>/<code>write_memory</code> and <code>read_memory_without_addr</code>/<code>write_memory_without_addr</code> lies in that <code>read_memory</code>/<code>write_memory</code> marks the accessed memory locations. The animation has four steps: moving address elements, marking address position, marking address range, and fading in the status element.</p>
 <p>The behavior in the first step depends on whether the memory unit allows parallel animation and whether the actual address matches the value in <code>addr_item</code> (presented by the option <code>addr_match</code>).</p>
 <ul>
 <li>Move the address element to the address port when the memory unit does not allow parallel animations and the actual address matches the value in <code>addr_item</code>.</li>
 <li>Move the data element to the data port simultaneously when <code>write_memory</code> is called.</li>
 <li>Highlight the address element when the memory unit allows parallel animations and the actual address matches the value in <code>addr_item</code>.</li>
-<li>Otherwise, just wait one second to keep the synchronization of animations for vector elements.</li>
+<li>Otherwise, wait one second to keep animations synchronized for vector elements.</li>
 </ul>
 <p>In the second step, the address element is transformed into the address mark on the matched memory map when the actual address matches the value in <code>addr_item</code>. The address mark is one triangle handed down. If the actual address to read is not the same as the value in <code>addr_item</code>, fade in the address mark.</p>
 <p>In the third step, the behavior depends on whether the memory unit allows parallel animation.</p>
@@ -1127,11 +1104,11 @@
 <li><code>read_memory</code> creates one memory mark on the matched memory map and then transforms the memory map to a data element at the data port.</li>
 <li><code>write_memory</code> transforms the data element into a data mark on the memory map.</li>
 </ul>
-<p>At last, a status element fades in if the memory unit has a status port and a status element is provided to function <code>read_memory_without_addr</code> and <code>write_memory_without_addr</code>.</p>
-<p>A serialization example for <code>decl_memory_unit</code>, <code>read_memory</code> and <code>write_memory</code> is as below.</p>
+<p>At last, a status element fades if the memory unit has a status port. Hence, if the status port applies, a status element is provided to function <code>read_memory_without_addr</code> and <code>write_memory_without_addr</code>.</p>
+<p>Below is an example of <code>decl_memory_unit</code>, <code>read_memory</code>, and <code>write_memory</code> for serialization animations.</p>
 <p><img alt="" src="../../../image/TestMemUnitAnimation.gif" /></p>
 <p>Source code: <a href="https://github.com/wangeddie67/isa_manim/blob/main/tests/isa_animate/test_memory_animation.py"><em>test_memory_animation.py</em></a></p>
-<p>A parallel example for <code>decl_memory_unit</code>, <code>read_memory</code> and <code>write_memory</code> is as below. The status port also has output in this example.</p>
+<p>Below is an example for <code>decl_memory_unit</code>, <code>read_memory</code>, and <code>write_memory</code> for parallel animations. The status port also has output in this example.</p>
 <p><img alt="" src="../../../image/TestMemUnitAnimationParallel.gif" /></p>
 <p>Source code: <a href="https://github.com/wangeddie67/isa_manim/blob/main/tests/isa_animate/test_memory_animation_parallel.py"><em>test_memory_animation_parallel.py</em></a></p>
 <blockquote>

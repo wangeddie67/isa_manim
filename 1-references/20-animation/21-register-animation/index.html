@@ -306,7 +306,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -494,7 +494,7 @@
         
   
   <span class="md-ellipsis">
-    Register Unit
+    Register Units
   </span>
   
 
@@ -515,7 +515,7 @@
         
   
   <span class="md-ellipsis">
-    Function Unit
+    Function Units
   </span>
   
 
@@ -829,8 +829,6 @@
       
         
       
-        
-      
     
     
     
@@ -922,7 +920,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -944,27 +942,6 @@
   
   <span class="md-ellipsis">
     Element Reference Counter
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../30-scene/35-data_flow/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Data flow
   </span>
   
 
@@ -1095,11 +1072,11 @@
 
 <h1 id="animations-for-registers-and-elements">Animations for Registers and Elements</h1>
 <p><code>isa_manim.isa_animate.register_animate.decl_register</code> declares registers by fading in all provided register objects.</p>
-<p><code>isa_manim.isa_animate.register_animate.replace_register</code> replaces one existing register object with a new register object by transform. </p>
+<p><code>isa_manim.isa_animate.register_animate.replace_register</code> replaces one existing register with a new register by transform. </p>
 <p>An example for <code>decl_register</code> and <code>replace_register</code> is as below:</p>
 <p><img alt="" src="../../../image/TestRegAnimation.gif" /></p>
 <p>Source code: <a href="https://github.com/wangeddie67/isa_manim/blob/main/tests/isa_animate/test_reg_animation.py"><em>test_reg_animation.py</em></a></p>
-<p><code>isa_manim.isa_animate.register_animate.read_elem</code> reads one data element from one register by fading in the provided element at the specified position.</p>
+<p><code>isa_manim.isa_animate.register_animate.read_elem</code> reads one data element from one register by fading the provided element in the specified position.</p>
 <p><code>isa_manim.isa_animate.register_animate.assign_elem</code> assigns one data element to one register by moving the data element to the specified location related to the provided register.</p>
 <blockquote>
 <p>It is not required that the target element must share the same shape and color as the origin element.</p>
@@ -1110,7 +1087,7 @@
 <blockquote>
 <p>See <code>isa_manim.isa_objects.reg_unit.RegUnit.get_elem_pos</code> and <code>isa_manim.isa_objects.elem_unit.ElemUnit.get_elem_pos</code> for detail about how to index one element within one register unit or one element unit.</p>
 </blockquote>
-<p><code>isa_manim.isa_animate.register_animate.replace_elem</code> replaces the existing data element object with a new data element object by transform.</p>
+<p><code>isa_manim.isa_animate.register_animate.replace_elem</code> replaces the existing data element with a new data element by transform.</p>
 <blockquote>
 <p>The above functions generate a sequence of animations, but they do not register animation to Manim unless <code>play()</code> is applied on the result values</p>
 </blockquote>

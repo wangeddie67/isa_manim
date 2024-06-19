@@ -416,7 +416,16 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="end_section">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.single_isa_scene.SingleIsaScene.inherit_cfgs" class="md-nav__link">
+    <span class="md-ellipsis">
+      inherit_cfgs
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="inherit_cfgs">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -497,6 +506,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.multi_isa_scene.MultiIsaScene.inherit_cfgs" class="md-nav__link">
+    <span class="md-ellipsis">
+      inherit_cfgs
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#isa_manim.isa_scene.multi_isa_scene.MultiIsaScene.start_section" class="md-nav__link">
     <span class="md-ellipsis">
       start_section
@@ -546,7 +564,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -732,7 +750,7 @@
         
   
   <span class="md-ellipsis">
-    Register Unit
+    Register Units
   </span>
   
 
@@ -753,7 +771,7 @@
         
   
   <span class="md-ellipsis">
-    Function Unit
+    Function Units
   </span>
   
 
@@ -962,8 +980,6 @@
       
         
       
-        
-      
     
     
     
@@ -1055,7 +1071,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -1077,27 +1093,6 @@
   
   <span class="md-ellipsis">
     Element Reference Counter
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../1-references/30-scene/35-data_flow/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Data flow
   </span>
   
 
@@ -1257,7 +1252,16 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="end_section">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.single_isa_scene.SingleIsaScene.inherit_cfgs" class="md-nav__link">
+    <span class="md-ellipsis">
+      inherit_cfgs
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="inherit_cfgs">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1338,6 +1342,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.multi_isa_scene.MultiIsaScene.inherit_cfgs" class="md-nav__link">
+    <span class="md-ellipsis">
+      inherit_cfgs
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#isa_manim.isa_scene.multi_isa_scene.MultiIsaScene.start_section" class="md-nav__link">
     <span class="md-ellipsis">
       start_section
@@ -1362,7 +1375,7 @@
 
 
 <h1 id="isa-scenes">ISA Scenes</h1>
-<p>When users want to create one animation for ISA, <code>isa_manim</code> should be imported at the start of the source file.</p>
+<p>When users want to create one animation for ISA, import <code>isa_manim</code> at the start of the source file.</p>
 <p>Then, like Manim, one class should be created to describe the behavior within the animation. The class should choose one of <code>SingleIsaScene</code> and <code>MultiIsaScene</code> as the base class.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">isa_manim</span> <span class="kn">import</span> <span class="n">SingleIsaScene</span> 
 
@@ -1375,37 +1388,41 @@
 <span class="k">class</span> <span class="nc">TestMultiIsaScene</span><span class="p">(</span><span class="n">MultiIsaScene</span><span class="p">):</span>
     <span class="o">...</span>
 </code></pre></div>
-<p>The differences between <code>SingleIsaScene</code> and <code>MultiIsaScene</code> lie in the layout of scenes. </p>
-<p>Both <code>SingleIsaScene</code> and <code>MultiIsaScene</code> separate the scene into the title part and the zoom part. The zoom part contains objects (registers, functions and memory) and performs animations. When new objects are added to the scene or some objects are removed from the scene, the zoom part will be scaled or moved to fit all objects within the middle of the scene.</p>
-<p>The title part does not scale during animations. <code>SingleIsaScene</code> only provides one title in the title part. <code>MultiIsaScene</code> provides both the title and subtitle in the title part. The subtitle can be changed during animation.</p>
+<p>The differences between <code>SingleIsaScene</code> and <code>MultiIsaScene</code> lie in the layout of scenes.</p>
+<p>Both <code>SingleIsaScene</code> and <code>MultiIsaScene</code> separate the scene into the title and zoom parts. The zoom part contains objects (registers, functions, and memory units) and performs animations. When adding new objects or removing some objects from the scene, the zoom part will be scaled or moved to fit all objects within the middle of the scene.</p>
+<p>The title part does not scale during animations. <code>SingleIsaScene</code> only provides one title in the title part. <code>MultiIsaScene</code> provides both the title and subtitle in the title part. The title remains the same, but the subtitle can change during animation.</p>
 <p><code>SingleIsaScene.draw_title</code> and <code>MultiIsaScene.draw_title</code> draw the title on the scene. <code>MultiIsaScene.draw_subtitle</code> fades in the subtitle.</p>
 <p>The animation class should overwrite the behavior of the function <code>construct_isa_flow</code>. In the <code>construct_isa_flow</code>, users do not need to pay much attention to the animation flow but focus on describing the behavior of instructions. Within <code>construct_isa_flow</code>, users can use the APIs provided in <a href="../02-animation-apis/">Animation APIs</a></p>
 <blockquote>
-<p>It is not recommand to apply objects and animations provided in <code>isa_manim.isa_object</code> and <code>isa_manim.isa_animate</code> directly.</p>
+<p>It is not recommand to apply objects and animations provided in <code>isa_manim.isa_object</code> and <code>isa_manim.isa_animate</code> directly. It is a little complex to create a new object and a kine of animation in the animation classes.</p>
 </blockquote>
 <h2 id="isa-animation-flow-management">ISA Animation Flow Management</h2>
-<p>IsaManim makes a major effort to hide the effort of animation flow management behind the APIs describing the behavior of instruction.</p>
-<p>First, IsaManim places objects (register units, function units and memory units) on the scene automatically. See <a href="../../1-references/30-scene/32-placement/">Placement</a> for details.</p>
-<p>Then, IsaManim schedules animations according to the dependency between animations. <code>play</code> and <code>wait</code> are hidden behind APIs. See <a href="../../1-references/30-scene/33-animation-flow/">Animation Flow</a> for details.</p>
-<p>For example, for vector instructions, users have to expand the loop manually and play animations simultaneously.</p>
+<p>ISAManim made a significant effort to hide the animation flow management behind the APIs that describe the instruction behavior.</p>
+<p>First, ISAManim automatically places objects (register, function, and memory units) on the scene. See <a href="../../1-references/30-scene/32-placement/">Placement</a> for details.</p>
+<p>Then, ISAManim schedules animations according to the dependency between animations. Manim APIs are hidden behind ISAManim APIs. See <a href="../../1-references/30-scene/33-animation-flow/">Animation Flow</a> for details.</p>
+<p>For example, users can expand the loop manually and play animations simultaneously for vector instructions.</p>
 <div class="highlight"><pre><span></span><code><span class="n">opa_list</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">read_elem</span><span class="p">(</span><span class="n">zn</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">elements</span><span class="p">)]</span>
 <span class="n">opb_list</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">read_elem</span><span class="p">(</span><span class="n">zm</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">elements</span><span class="p">)]</span>
 <span class="n">res_list</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">function_call</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;binop</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">opa_list</span><span class="p">[</span><span class="n">e</span><span class="p">],</span> <span class="n">opb_list</span><span class="p">[</span><span class="n">e</span><span class="p">]])</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">elements</span><span class="p">)]</span>
 <span class="n">res_list</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">move_elem</span><span class="p">(</span><span class="n">res_list</span><span class="p">[</span><span class="n">e</span><span class="p">],</span> <span class="n">zd</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">elements</span><span class="p">)]</span>
 </code></pre></div>
-<p>With animation APIs provided by IsaManim, IsaManim analyzes the dependency of animations and expands the loop automatically.</p>
+<p>Otherwise, users can write the operation of vector instructions in one loop, as shown below. ISAManim analyzes the dependency of animations and expands the loop automatically.</p>
 <div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">elements</span><span class="p">):</span>
     <span class="n">op_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_elem</span><span class="p">(</span><span class="n">zn</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
     <span class="n">op_b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_elem</span><span class="p">(</span><span class="n">zm</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
     <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">function_call</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;binop</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">op_a</span><span class="p">,</span> <span class="n">op_b</span><span class="p">])</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">move_elem</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">zd</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
 </code></pre></div>
-<p>Further, the color of each element unit is assigned from a color scheme. Element units generated at the same position in the source code share the same color. For example, <code>op_a</code>, <code>op_b</code> and <code>res</code> will be assigned different colors. But <code>op_a</code> for different <code>e</code> among the loop share the same color. Similarly, <code>op_b</code> and <code>res</code> for different <code>e</code> also share the same color. See <a href="../../1-references/30-scene/31-color-map/">Color Map</a> for details.</p>
+<p>The above two code pieces result in the same animation.</p>
+<p>Further, the color of each element unit is assigned from a specified color scheme. Element units generated at the same position in the source code share the same color. For example, <code>op_a</code>, <code>op_b</code>, and <code>res</code> will be assigned different colors. However, <code>op_a</code> for different <code>e</code> among the loop share the same color. Similarly, <code>op_b</code> and <code>res</code> for different <code>e</code> also share the same color. See <a href="../../1-references/30-scene/31-color-map/">Color Map</a> for details.</p>
 <h3 id="manual-control">Manual Control</h3>
-<p>Except for automatic placement and animation flow, IsaManim still provides several methods for users to control the generated animation.</p>
-<p>First, the option <code>align_width</code> controls to place the generated object in the same row as the specified object.</p>
-<p>Then, for groups of function units, <code>force_hw_ratio</code> controls the number of units within one row. Otherwise, the number of units is auto-adjusted to fit the scene.</p>
-<p>Further, <code>end_section()</code> is applied to control the animation flow. <code>end_section</code> performs like a barrier. Animations before the <code>end_section</code> in programming order must finished before the <code>end_section</code>. Meanwhile, Animations after the <code>end_section</code> in programming order must start after the <code>end_section</code>.</p>
+<p>In addition to automatic placement and animation flow, ISAManim provides several methods for users to control the generated animation.</p>
+<p>Users can control the object placement through several options in APIs:</p>
+<ol>
+<li>Users can place the generated object in the same row as one specified object with the option <code>align_with</code>.</li>
+<li>Users can place one group of function units in the same row with the option <code>force_hw_ratio</code>. Otherwise, the number of units in the same row is auto-adjusted to fit the scene.</li>
+</ol>
+<p>Users can use <code>end_section()</code> to control the animation flow. <code>end_section</code> performs like a barrier. Animations before the <code>end_section</code> in programming order must finished before the <code>end_section</code>. Meanwhile, Animations after the <code>end_section</code> in programming order must start after the <code>end_section</code>.</p>
 <p>Take the above vector instruction as an example again. The animation of the first element plays separately from animations of other elements because <code>end_section</code> is called when <code>e</code> is 0.</p>
 <div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">elements</span><span class="p">):</span>
     <span class="n">op_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_elem</span><span class="p">(</span><span class="n">zn</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
@@ -1418,15 +1435,15 @@
 </code></pre></div>
 <p><code>end_section</code> provides the following options:</p>
 <ul>
-<li><code>wait</code> specifies the duration between sections. A suitable pause can help a lot for audiences to understand the animation.</li>
-<li><code>fade_out</code> specifies whether all objects on the scene should be faded out. The default value is <code>True</code>.</li>
+<li>The option <code>wait</code> specifies the duration between sections. A suitable pause can help audiences to understand the animation.</li>
+<li>The option <code>fade_out</code> specifies whether all objects on the scene should be faded out. The default value is <code>True</code>, which removes all objects.</li>
 </ul>
 <blockquote>
-<p><code>fade_out</code> does not control the title.</p>
+<p>The option <code>fade_out</code> controls the subtitle but does not control the title.</p>
 </blockquote>
-<p>the following options are only available in <code>MultiIsaScene</code>.</p>
+<p>The following options are only available in <code>MultiIsaScene</code>.</p>
 <ul>
-<li><code>keep_objects</code> specifies which objects and element units should be kept while other objects should be faded out. This option is very useful for one animation with several phases, like memory copy instruction.</li>
+<li><code>keep_objects</code> specifies which objects and element units should be kept on the scene while other objects should be faded out. This option benefits one animation with several phases, like CISC-style instructions.</li>
 <li><code>keep_pos</code> specifies whether the position of objects within <code>keep_objects</code> should be kept.</li>
 </ul>
 <h2 id="examples">Examples</h2>
@@ -1438,9 +1455,9 @@
 <p>Source code: <a href="https://github.com/wangeddie67/isa_manim/blob/main/tests/isa_scene/test_multi_isa_scene.py"><em>test_multi_isa_scene.py</em></a></p>
 <h2 id="isa_scene">isa_scene</h2>
 <h3 id="isa-scene-for-single-instruction">ISA Scene for Single Instruction</h3>
-<p><code>isa_manim.isa_scene.single_isa_scene.SingleIsaScene</code> is used to describe one single instruction. Hence, it only provides one title, by function <code>draw_title</code>.</p>
-<p>The height of the frame is 9 while the width of the frame is 16.</p>
-<p><code>isa_manim.isa_scene.single_isa_scene.SingleIsaScene</code> applies <code>ZoomedScene</code>. The camera frame of the zoomed scene covers the area of the object placement while the display frame of the zoomed scene covers the area below the title (from 3.0 to the bottom, from the left to the right).</p>
+<p><code>isa_manim.isa_scene.single_isa_scene.SingleIsaScene</code> is used to describe one single instruction. <code>SingleIsaScene</code> only provides one title. The function <code>draw_title</code> sets the title of the animation.</p>
+<p>The height of the frame is 9, while the width of the frame is 16.</p>
+<p><code>isa_manim.isa_scene.single_isa_scene.SingleIsaScene</code> applies <code>ZoomedScene</code>. The camera frame of the zoomed scene covers the area of the object placement, while the display frame covers the area below the title (from 3.0 to the bottom, from the left to the right).</p>
 
 
 <div class="doc doc-object doc-class">
@@ -1450,7 +1467,7 @@
 <a id="isa_manim.isa_scene.single_isa_scene.SingleIsaScene"></a>
   <div class="doc doc-contents first">
           <p class="doc doc-class-bases">
-            Bases: <code><span title="manim.ZoomedScene">ZoomedScene</span></code>, <code><a class="autorefs autorefs-internal" title="isa_manim.isa_scene.isa_data_flow.IsaDataFlow" href="../../1-references/30-scene/35-data_flow/#isa_manim.isa_scene.isa_data_flow.IsaDataFlow">IsaDataFlow</a></code></p>
+            Bases: <code><span title="manim.ZoomedScene">ZoomedScene</span></code>, <code><span title="isa_manim.isa_scene.isa_data_flow.IsaDataFlow">IsaDataFlow</span></code></p>
 
   
       <p>ISA scene with single instructions.</p>
@@ -1675,6 +1692,53 @@
 </div>
 
 
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.single_isa_scene.SingleIsaScene.inherit_cfgs" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">inherit_cfgs</span><span class="p">(</span><span class="o">*</span><span class="n">cfg_items</span><span class="p">,</span> <span class="o">**</span><span class="n">fix_cfg_items</span><span class="p">)</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Inherit configuration structure.</p>
+
+
+
+  <p><span class="doc-section-title">Returns:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td>
+                <code><span title="typing.List">List</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>List of configuration structure.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
 
   </div>
 
@@ -1682,8 +1746,8 @@
 
 
 </div><h3 id="isa-scene-for-multiple-instructions">ISA Scene for Multiple Instructions</h3>
-<p><code>isa_manim.isa_scene.multi_isa_scene.MultiIsaScene</code> performs the same behavior as above, except it provides one subtitle below the title by function <code>draw_subtitle</code>. Hence, the display frame of the zoomed scene covers the area below the subtitle (from 2.0 to the bottom, from the left to the right).</p>
-<p>Moreover, the function <code>start_section</code> is provided to reset the object placement, which should be placed before each instruction. As below:</p>
+<p><code>isa_manim.isa_scene.multi_isa_scene.MultiIsaScene</code> performs the same behavior, except it provides one subtitle below the title. The functions <code>draw_subtitle</code> and <code>start_section</code> set the subtitle of the animation. The display frame of the zoomed scene covers the area below the subtitle (from 2.0 to the bottom, from the left to the right).</p>
+<p>Moreover, <code>MultiIsaScene</code> provides the function <code>start_section</code> to reset the object placement and animation scheduling. <code>start_section</code> should be placed before each section, as below:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">construct_isa_flow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">start_section</span><span class="p">(</span><span class="s2">&quot;instruction 1&quot;</span><span class="p">)</span>
     <span class="c1"># Instruction behaviors.</span>
@@ -1702,7 +1766,7 @@
 <a id="isa_manim.isa_scene.multi_isa_scene.MultiIsaScene"></a>
   <div class="doc doc-contents first">
           <p class="doc doc-class-bases">
-            Bases: <code><span title="manim.ZoomedScene">ZoomedScene</span></code>, <code><a class="autorefs autorefs-internal" title="isa_manim.isa_scene.isa_data_flow.IsaDataFlow" href="../../1-references/30-scene/35-data_flow/#isa_manim.isa_scene.isa_data_flow.IsaDataFlow">IsaDataFlow</a></code></p>
+            Bases: <code><span title="manim.ZoomedScene">ZoomedScene</span></code>, <code><span title="isa_manim.isa_scene.isa_data_flow.IsaDataFlow">IsaDataFlow</span></code></p>
 
   
       <p>ISA scene with multiple instructions.</p>
@@ -1966,6 +2030,53 @@
           </td>
           <td>
                 <code>True</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.multi_isa_scene.MultiIsaScene.inherit_cfgs" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">inherit_cfgs</span><span class="p">(</span><span class="o">*</span><span class="n">cfg_items</span><span class="p">,</span> <span class="o">**</span><span class="n">fix_cfg_items</span><span class="p">)</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Inherit configuration structure.</p>
+
+
+
+  <p><span class="doc-section-title">Returns:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td>
+                <code><span title="typing.List">List</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>List of configuration structure.</p>
+            </div>
           </td>
         </tr>
     </tbody>

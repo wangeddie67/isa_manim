@@ -306,7 +306,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -494,7 +494,7 @@
         
   
   <span class="md-ellipsis">
-    Register Unit
+    Register Units
   </span>
   
 
@@ -515,7 +515,7 @@
         
   
   <span class="md-ellipsis">
-    Function Unit
+    Function Units
   </span>
   
 
@@ -716,8 +716,6 @@
       
         
           
-        
-      
         
       
         
@@ -966,6 +964,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.get_object_group" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_object_group
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.get_placement_height" class="md-nav__link">
     <span class="md-ellipsis">
       get_placement_height
@@ -996,6 +1003,15 @@
   <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.has_object" class="md-nav__link">
     <span class="md-ellipsis">
       has_object
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.has_object_group" class="md-nav__link">
+    <span class="md-ellipsis">
+      has_object_group
     </span>
   </a>
   
@@ -1066,7 +1082,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -1088,27 +1104,6 @@
   
   <span class="md-ellipsis">
     Element Reference Counter
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../35-data_flow/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Data flow
   </span>
   
 
@@ -1286,6 +1281,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.get_object_group" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_object_group
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.get_placement_height" class="md-nav__link">
     <span class="md-ellipsis">
       get_placement_height
@@ -1316,6 +1320,15 @@
   <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.has_object" class="md-nav__link">
     <span class="md-ellipsis">
       has_object
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_placement.IsaPlacementMap.has_object_group" class="md-nav__link">
+    <span class="md-ellipsis">
+      has_object_group
     </span>
   </a>
   
@@ -1382,13 +1395,13 @@
 
 
 <h1 id="objects-placement">Objects Placement</h1>
-<p><code>isa_manim.isa_scene.isa_placement.IsaPlacementMap</code> provides the data structures and function interfaces for object placement. The major duty of <code>IsaPlacementMap</code> includes:</p>
+<p><code>isa_manim.isa_scene.isa_placement.IsaPlacementMap</code> provides the data structures and function interfaces for object placement. The primary of <code>IsaPlacementMap</code> contains:</p>
 <ul>
-<li><code>_placement_object_dict</code> provides one dictionary of objects in the scene. The key of the dictionary can be an integer or string. The value of the dictionary is an entity of <code>isa_manim.isa_scene.isa_placement.IsaPlacementItem</code>. The data structure provides the position information of one object.</li>
+<li><code>_placement_object_dict</code> provides one dictionary of objects in the scene. The dictionary key can be an integer or string. The value of the dictionary is an entity of <code>isa_manim.isa_scene.isa_placement.IsaPlacementItem</code>. The data structure provides the position information of one object.</li>
 <li><code>_placement_map</code> presents the placement map as a 2-D array of an integer. Each element in the array presents the status of one single square of the grid.</li>
 </ul>
-<p><code>IsaPlacementMap</code> provides several groups of APIs to operate the dictionary and the map. At first, <code>has_object</code> and <code>get_object</code> are used to operate the placement dictionary. <code>has_object</code> checks whether one specified hash exists in the dictionary and <code>get_object</code> returns the object associated with the specified hash.</p>
-<p>Then, <code>place_object</code> adds one single object to the placement map and <code>place_object_group</code> adds a group of objects to the placement map. Both of these two functions call <code>place_placement_item</code> to find an appropriate space to place objects.</p>
+<p><code>IsaPlacementMap</code> provides several groups of APIs to operate the dictionary and the map. At first, <code>has_object</code> and <code>get_object</code> are used to operate the placement dictionary. <code>has_object</code> checks whether one specified hash exists in the dictionary, and <code>get_object</code> returns the object associated with the specified hash.</p>
+<p>Then, <code>place_object</code> adds one single object to the placement map, and <code>place_object_group</code> adds a group of objects to the placement map. These two functions call <code>place_placement_item</code> to find an appropriate space to place objects.</p>
 <p>The following functions return the status of the placement map:</p>
 <ul>
 <li><code>get_placement_width</code> and <code>get_placement_height</code> returns the width and height of the actual occupied map. Only occupied columns/rows or margins are counted.</li>
@@ -2174,6 +2187,79 @@ item of IsaPlacementItem.</p>
 
 
 
+<h2 id="isa_manim.isa_scene.isa_placement.IsaPlacementMap.get_object_group" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">get_object_group</span><span class="p">(</span><span class="n">place_hash</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Return a list of object with prefix hash.</p>
+
+
+
+  <p><span class="doc-section-title">Parameters:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code>place_hash</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Hash value of ISA object.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  <p><span class="doc-section-title">Returns:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td>
+                <code><span title="typing.List">List</span>[<span title="manim.Mobject">Mobject</span>]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A list of objects for the specified ISA.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
 <h2 id="isa_manim.isa_scene.isa_placement.IsaPlacementMap.get_placement_height" class="doc doc-heading">
           <code class="highlight language-python"><span class="n">get_placement_height</span><span class="p">()</span></code>
 
@@ -2361,6 +2447,79 @@ item of IsaPlacementItem.</p>
           <td>
             <div class="doc-md-description">
               <p>True means the hash exists in the placement dictionary.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_scene.isa_placement.IsaPlacementMap.has_object_group" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">has_object_group</span><span class="p">(</span><span class="n">place_hash</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Check whether there is object with prefix.</p>
+
+
+
+  <p><span class="doc-section-title">Parameters:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code>place_hash</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Hash value of ISA object.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  <p><span class="doc-section-title">Returns:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td>
+                <code>bool</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>True means the hash as prefix exists in the placement dictionary.</p>
             </div>
           </td>
         </tr>

@@ -20,7 +20,7 @@
     
     
       
-        <title>Register Unit - Manim for ISA</title>
+        <title>Register Units - Manim for ISA</title>
       
     
     
@@ -64,7 +64,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#register-unit" class="md-skip">
+        <a href="#register-units" class="md-skip">
           Skip to content
         </a>
       
@@ -100,7 +100,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Register Unit
+              Register Units
             
           </span>
         </div>
@@ -306,7 +306,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -505,7 +505,7 @@
           
   
   <span class="md-ellipsis">
-    Register Unit
+    Register Units
   </span>
   
 
@@ -516,7 +516,7 @@
         
   
   <span class="md-ellipsis">
-    Register Unit
+    Register Units
   </span>
   
 
@@ -568,6 +568,24 @@
   <a href="#isa_manim.isa_objects.reg_unit.RegUnit.__init__" class="md-nav__link">
     <span class="md-ellipsis">
       __init__
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_objects.reg_unit.RegUnit.__repr__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __repr__
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_objects.reg_unit.RegUnit.__str__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __str__
     </span>
   </a>
   
@@ -656,7 +674,7 @@
         
   
   <span class="md-ellipsis">
-    Function Unit
+    Function Units
   </span>
   
 
@@ -865,8 +883,6 @@
       
         
       
-        
-      
     
     
     
@@ -958,7 +974,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -980,27 +996,6 @@
   
   <span class="md-ellipsis">
     Element Reference Counter
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../30-scene/35-data_flow/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Data flow
   </span>
   
 
@@ -1088,6 +1083,24 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#isa_manim.isa_objects.reg_unit.RegUnit.__repr__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __repr__
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_objects.reg_unit.RegUnit.__str__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __str__
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#isa_manim.isa_objects.reg_unit.RegUnit.get_elem_pos" class="md-nav__link">
     <span class="md-ellipsis">
       get_elem_pos
@@ -1165,12 +1178,12 @@
                   
 
 
-<h1 id="register-unit">Register Unit</h1>
-<p><code>isa_manim.isa_objects.reg_unit</code> presents one single register or a group of registers. It can be used for general-purpose registers, vector registers and matrix registers.</p>
-<p>One example of a single register is as below:</p>
+<h1 id="register-units">Register Units</h1>
+<p><code>isa_manim.isa_objects.reg_unit</code> presents one register or a group of registers. It can be used for general-purpose registers, vector registers, and matrix registers.</p>
+<p>One example of a single register is shown below:</p>
 <p><img alt="" src="../../../image/TestOneDimReg.png" /></p>
 <p>Source code: <a href="https://github.com/wangeddie67/isa_manim/blob/main/tests/isa_objects/test_one_dim_reg.py"><em>test_one_dim_reg.py</em></a></p>
-<p>One example of a list of registers is as below:</p>
+<p>One example of a list of registers is shown below:</p>
 <p><img alt="" src="../../../image/TestTwoDimReg.png" /></p>
 <p>Source code: <a href="https://github.com/wangeddie67/isa_manim/blob/main/tests/isa_objects/test_two_dim_reg.py"><em>test_two_dim_reg.py</em></a></p>
 <p>As shown in the above figures, one register unit contains the following Manim objects:
@@ -1179,10 +1192,10 @@
   - The height of <code>reg_rect</code> presents the number of registers or the row count of one matrix register. If there is only one register, the height is 1.0. 
 - <code>label_text_list</code> contains the labels that present the name of the register. The vertical distance between the position of labels is 1.0. The right boundary of labels is close to the left boundary of <code>reg_rect</code>.</p>
 <blockquote>
-<p>As the green dot shown in the above figures, the origin point of one register unit is located in the center position of the first row in <code>reg_rect</code>, which is different from the geometry center position of this object. It is suggested to use function <code>shift</code> rather than function <code>move_to</code> to change the location of the register.</p>
+<p>As the green dot shown in the above figures, the origin point of one register unit is located in the centre position of the first row in <code>reg_rect</code>, which is different from the geometry centre position of this object. It is suggested to use function <code>shift</code> rather than function <code>move_to</code> to change the location of the register.</p>
 </blockquote>
 <p>Function <code>get_elem_center</code> returns the position of one specified element. The bit width of the specified element can be different from the element bit width of the vector. </p>
-<p>Register units can maintain values of the register in the format of one single value (for GPRs), a 1-D array of values (for vector registers) or a 2-D array of values (for matrix registers). Function <code>get_elem_value</code> returns the value of one specified element, while function <code>set_elem_value</code> modifies the value of one specified element.</p>
+<p>Register units can maintain values of the register in the format of one single value (for GPRs), a 1-D array of values (for vector registers), or a 2-D array of values (for matrix registers). Function <code>get_elem_value</code> returns the value of one specified element, while function <code>set_elem_value</code> modifies the value of one specified element.</p>
 <blockquote>
 <p>Thus, arguments for all methods are designed to support matrix registers. If creating or operating on vector registers, <code>nreg</code> must be 1 in the constructor function and <code>reg_idx</code> is ignored in other methods. If creating or operating on general-purpose registers, <code>elements</code> must be 1 in the constructor function and <code>index</code> is ignored in other methods.</p>
 </blockquote>
@@ -1516,6 +1529,92 @@
           </td>
           <td>
               <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_objects.reg_unit.RegUnit.__repr__" class="doc doc-heading">
+          <code class="highlight language-python"><span class="fm">__repr__</span><span class="p">()</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Return a string for debugging.</p>
+
+
+
+  <p><span class="doc-section-title">Returns:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td>
+                <code>str</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A string for debugging.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_objects.reg_unit.RegUnit.__str__" class="doc doc-heading">
+          <code class="highlight language-python"><span class="fm">__str__</span><span class="p">()</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Return a string for debugging.</p>
+
+
+
+  <p><span class="doc-section-title">Returns:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td>
+                <code>str</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A string for debugging.</p>
+            </div>
           </td>
         </tr>
     </tbody>

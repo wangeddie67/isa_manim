@@ -306,7 +306,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -496,7 +496,7 @@
         
   
   <span class="md-ellipsis">
-    Register Unit
+    Register Units
   </span>
   
 
@@ -517,7 +517,7 @@
         
   
   <span class="md-ellipsis">
-    Function Unit
+    Function Units
   </span>
   
 
@@ -726,8 +726,6 @@
       
         
       
-        
-      
     
     
     
@@ -819,7 +817,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -841,27 +839,6 @@
   
   <span class="md-ellipsis">
     Element Reference Counter
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../30-scene/35-data_flow/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Data flow
   </span>
   
 
@@ -920,16 +897,16 @@
 
 
 <h1 id="objects-for-isa-animation">Objects for ISA Animation</h1>
-<p><strong>isa_manim</strong> provides several graphic objects that appear in ISA frequently. These objects can be used in animate as objects provided by Manim.</p>
+<p><strong>isa_manim</strong> provides several graphic objects that frequently appear in ISA. These objects can be used in animate as objects provided by Manim.</p>
 <ul>
 <li><a href="11-register-unit/"><code>isa_manim.isa_objects.reg_unit.RegUnit</code></a> presents registers in ISA. This object can be used for general-purpose registers, vector registers, and matrix registers.</li>
 <li><a href="12-function-unit/"><code>isa_manim.isa_objects.func_unit.FunctionUnit</code></a> presents function units in ISA. This object provides the name of the function unit, as well as input arguments and output results.</li>
 <li><a href="13-memory-unit/"><code>isa_manim.isa_objects.mem_unit.MemoryUnit</code></a> presents the memory unit in ISA. This object also presents a range of memory access.</li>
 <li><a href="14-element-unit/"><code>isa_manim.isa_objects.elem_unit.ElemUnit</code></a> presents data elements in ISA. This object can be used to present data read from/written to registers and memory.</li>
 </ul>
-<p>Each object consists of a series of MObject (Text, Rectangle, Eclipse or Arrow) packed into one VGroup. The definition of objects provides the constructor function to create one object. Objects also provide functions to return some positions in the object to control animations. For example, the position of a specified element in one vector, or the position of one source/destination operand in one function unit.</p>
-<p>Register units and element units can also maintain values. Values can be any type: integer, floating-point, and string. If values exist, element units show values while register units do not show any value. The output format of values can be controlled by the global configuration option <code>elem_value_format</code> and the option <code>value_format</code> in the constructor function. One string following the format string of Python is necessary.</p>
-<p>Function units can also maintain one pointer to a Python function. If element units as source operands provide valid values, one function unit can perform functionality and return a valid value.</p>
+<p>Each object is comprised of a series of MObject (Text, Rectangle, and Eclipse) packed into one VGroup. The definition of objects provides the constructor function to create one object. Objects also provide functions to return some positions in the object to control animations — for example, the position of a specified element in one vector register.</p>
+<p>Register units and element units can also maintain values. Values can be any type: integer, floating-point, and string. Element units show values if one value is assigned. However, register units do not show any value. The global configuration option <code>elem_value_format</code> and the option <code>value_format</code> in the constructor function control the output format of values.</p>
+<p>Function units can also maintain one pointer to a Python function. If element units as source operands provide valid values, one function unit calls the Python function and returns a valid value to element units as destination operands.</p>
 <blockquote>
 <p>It is not suggested to directly create and operate the above objects in user's codes. Instead, please use APIs provided in ISA scenes.</p>
 </blockquote>

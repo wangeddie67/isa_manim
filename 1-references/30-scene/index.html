@@ -306,7 +306,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -494,7 +494,7 @@
         
   
   <span class="md-ellipsis">
-    Register Unit
+    Register Units
   </span>
   
 
@@ -515,7 +515,7 @@
         
   
   <span class="md-ellipsis">
-    Function Unit
+    Function Units
   </span>
   
 
@@ -726,8 +726,6 @@
       
         
       
-        
-      
     
     
     
@@ -819,7 +817,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -841,27 +839,6 @@
   
   <span class="md-ellipsis">
     Element Reference Counter
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="35-data_flow/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Data flow
   </span>
   
 
@@ -920,12 +897,40 @@
 
 
 <h1 id="scene">Scene</h1>
-<p>In below pages introduce the implementation details about the auto-placement and auto-schedule of animations.</p>
+<p><code>isa_scene</code> provides two animation scenes, <code>SingleIsaScene</code> and <code>MultiIsaScene</code>, for ISA animations. These two scenes hide the auto-scheduling and auto-placement behind APIs. </p>
+<p>The inherent relationship between components is shown in below figure:</p>
+<pre class="mermaid"><code>flowchart TB
+
+A1[IsaAnimationFlow]
+A2[IsaElemRefCount]
+A3[IsaPlacementMap]
+A4[IsaColorMap]
+B[IsaDataFlow]
+C1[SingleIsaScene]
+C2[MultiIsaScene]
+D[ZoomedScene]
+
+subgraph IsaManim
+A1--&gt;B
+A2--&gt;B
+A3--&gt;B
+A4--&gt;B
+B--&gt;C1
+B--&gt;C2
+end
+
+subgraph Manim
+D--&gt;C1
+D--&gt;C2
+end</code></pre>
+<p>The animation class is inherited from <code>SingleIsaScene</code> and <code>MultiIsaScene</code>. Meanwhile, <code>SingleIsaScene</code> and <code>MultiIsaScene</code> are inherited from <code>IsaDataFlow</code>. Hence, the animation class can directly apply these APIs to create animation.</p>
+<p>The pages below introduce the implementation details for the auto-placement and auto-schedule of animations.</p>
 <ul>
-<li>The <a href="31-color-map/">Color map</a> assigns color to element units automatically.</li>
-<li>The <a href="32-placement/">Placement</a> places the register units, function units and memory units on the scene automatically.</li>
-<li>The <a href="33-animation-flow/">Animation flow</a> and the <a href="34-refer-count/">Reference counter</a> introduce how to schedule the animation flow.</li>
+<li>The <a href="31-color-map/">Color map</a> (<code>IsaColorMap</code>) assigns color to element units automatically.</li>
+<li>The <a href="32-placement/">Placement</a> (<code>IsaPlacementMap</code>) automatically places the register, function, and memory units on the scene.0</li>
+<li>The <a href="33-animation-flow/">Animation flow</a> (<code>IsaAnimationFlow</code>) and the <a href="34-refer-count/">Reference counter</a> (<code>IsaElemRefCount</code>) introduce how to schedule the animation flow.</li>
 </ul>
+<p><code>IsaDataFlow</code> integrates <code>IsaAnimationFlow</code>, <code>IsaElemRefCount</code>, <code>IsaPlacementMap</code>, and <code>IsaColorMap</code>. Meanwhile, <code>IsaDataFlow</code> provides the animation API as the base of animation scenes. The list of APIs is listed in <a href="../../0-introductions/02-animation-apis/">Animation APIs</a>. </p>
 
 
 

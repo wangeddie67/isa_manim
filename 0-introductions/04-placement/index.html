@@ -308,7 +308,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -570,7 +570,7 @@
         
   
   <span class="md-ellipsis">
-    Register Unit
+    Register Units
   </span>
   
 
@@ -591,7 +591,7 @@
         
   
   <span class="md-ellipsis">
-    Function Unit
+    Function Units
   </span>
   
 
@@ -800,8 +800,6 @@
       
         
       
-        
-      
     
     
     
@@ -893,7 +891,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -915,27 +913,6 @@
   
   <span class="md-ellipsis">
     Element Reference Counter
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../1-references/30-scene/35-data_flow/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Data flow
   </span>
   
 
@@ -1039,26 +1016,26 @@
 
 <h1 id="object-placement">Object Placement</h1>
 <p>As explained in previous pages, the object placement algorithm and function interfaces are hidden behind the APIs provided by scenes. However, it would be useful to understand the placement algorithm so that users can use options in API to guide the final placement.</p>
-<p>ISA objects are placed into the placement according to a specified algorithm. <code>isa_manim.isa_scene.isa_placement.IsaPlacementMap</code> provides the implementation and function interfaces. <code>IsaPlacementMap</code> provides two major functions:</p>
+<p>ISA objects are placed into the placement according to a specified algorithm. <code>isa_manim.isa_scene.isa_placement.IsaPlacementMap</code> provides the implementation and function interfaces. <code>IsaPlacementMap</code> provides two primary functions:</p>
 <ul>
-<li>Object dictionary for all registers, function units and memory units within the animation.</li>
+<li>Object dictionary for all registers, function units, and memory units within the animation.</li>
 <li>Placement objects into a scalable scene.</li>
 </ul>
-<p>By default, the area of the placement is defined by <code>config.frame_height</code> and <code>config.frame_width</code>. The upper-left corner of the placement is the origin point of the frame. As the increasing of objects, the range of placement is scaled, but the ratio of height and width is fixed.</p>
+<p>By default, the area of the placement is defined by <code>config.frame_height</code> and <code>config.frame_width</code>. The upper-left corner of the placement is the origin point of the frame. With the increasing of objects, the placement range is scaled, but the ratio of height and width is fixed.</p>
 <p>The placement algorithm must address the following limitations:</p>
 <ul>
 <li>There is a margin of 1.0 around each object in all directions.</li>
-<li>There is a margin of 1.0 between each object and the boundary of the placement.</li>
+<li>There is a margin of 1.0 between each object and the placement boundary.</li>
 <li>The ratio of height and width of the placement is kept as the h/v ratio of the frame.</li>
 <li>In one row, only the same kind of object can be allocated.</li>
 <li>For example, function units can be placed vertically aligned, but function units cannot be placed in the same row with registers.</li>
 </ul>
 <h2 id="placement-map">Placement Map</h2>
-<p>The area of the placement is abstracted as a grid, each metric in the grid presents 1.0 in the vertical or horizontal direction. Objects are abstracted as rectangles with integer width and height as well. For example, if the width of one object is 3.2 and the height of one object is 4.6, that object will occupy one rectangle of 4 in horizontal and 5 in vertical. </p>
+<p>The area of the placement is abstracted as a grid. Each coordinate in the grid presents 1.0 in the vertical or horizontal direction. Objects are abstracted as rectangles with integer width and height as well. For example, if the width of one object is 3.2 and the height of one object is 4.6, that object will occupy one rectangle of 4 in horizontal and 5 in vertical.</p>
 <p>The status of one 1.0x1.0 square in the grid is present by one integer:</p>
 <ul>
 <li>0 means the item is free to allocate;</li>
-<li>1 means the item is a margin between objects or a margin between objects and items.</li>
+<li>1 means the item is a margin between objects or a margin around placement.</li>
 <li>2 means the item is occupied by a register.</li>
 <li>3 means the item is occupied by a function unit.</li>
 <li>4 means the item is occupied by a memory unit.</li>
@@ -1103,31 +1080,32 @@
 <p>The placement algorithm became one question to find one rectangle space in the placement 
 array, which addresses all the following conditions:</p>
 <ul>
-<li>The candidate rectangle space is free to allocate (all squares are 0) and it is large enough for the object to be placed.</li>
+<li>The candidate rectangle space is free to allocate (all squares are 0)</li>
+<li>The candidate rectangle is large enough for the object to be placed.</li>
 <li>Squares around the candidate rectangle have not been allocated by another object (all squares are 0 or 1). So that there will be at least a margin of 1.0 between the new object and existing objects.</li>
-<li>All items on the same row with the candidate rectangle should be free (0), margin (1) or the same type of the new object to be placed.</li>
+<li>All items on the same row with the candidate rectangle should be free (0), margin (1), or the same type of the new object to be placed.</li>
+<li>By default, the placement algorithm searches the candidate space among the placement map using the "RB" or "BR" strategy. The "RB" strategy means attempting to place the new object <strong>beside</strong> existing items first. The "BR" strategy means attempting to place the new object <strong>below</strong> existing items first. The default strategy is "RB".</li>
 </ul>
-<p>By default, the placement algorithm searches the candidate space among the placement map by "RB" or "BR" strategy. The "RB" strategy means attempting to place the new object <strong>beside</strong> existing items first. The "BR" strategy means attempting to place the new object <strong>below</strong> existing items first. The default strategy is "RB".</p>
-<p>The initialize size of the placement map is determined by <code>config.frame_width</code> and <code>config.frame_height</code>. As the increase of objects, the initialized size is not enough in most situations. When there is no space for one new object, the placement map is extended before another try. The extension does not change the ratio of horizontal and vertical. For example, if the initialized height is 9 and the initialized width is 16, the step to extend the placement map would be:</p>
+<p>The initial size of the placement map is determined by <code>config.frame_width</code> and <code>config.frame_height</code>. With the increase of objects, the initialized size is insufficient in most situations. When there is no space for one new object, the placement map is extended before another try. The extension does not change the ratio of horizontal and vertical. For example, if the initialized height is 9 and the initialized width is 16, the step to extend the placement map would be:</p>
 <p>(16,9) -&gt; (17,10) -&gt; (18,11) -&gt; (19,11) -&gt; (20,12) ...</p>
-<p>Besides the "RB" or "BR" strategies, <code>align_with</code> is another way to guide the placement algorithm. When <code>align_with</code> is specified, the new object is placed in the same row as the specified <code>align_with</code>. If there is not enough space for the new object, the placement map is extended.</p>
+<p>Besides the "RB" or "BR" strategies, <code>align_with</code> is another way to guide the placement algorithm. When <code>align_with</code> is specified, the new object is placed in the same row as the specified <code>align_with</code>. The placement map is extended if there is not enough space for the new object.</p>
 <blockquote>
 <p>The specified object by <code>align_with</code> must be the same type as the new object. Otherwise, the program will fill in dead-loop.</p>
 </blockquote>
 <p><img alt="" src="../../image/TestIsaPlacementMap.png" /></p>
 <p>Source code: <a href="https://github.com/wangeddie67/isa_manim/blob/main/tests/isa_scene/test_isa_placement_map.py"><em>test_isa_placement_map.py</em></a></p>
-<p>As shown in the below figure, Zm is placed aligned with Zn.</p>
+<p>As shown in the above figure, Zm is placed in a position aligned with Zn.</p>
 <h2 id="place-a-group-of-objects">Place a Group of Objects</h2>
-<p>For vector instructions, the animation needs a group of function units so that vector elements can be handled parallelly. In consideration of good-looking, these function units are placed into the placement map as a group. Then, each function unit is placed into the placement map within the space of the group. A group of objects cannot be aligned with any other objects.</p>
-<p>The space occupied by a group of objects depends on the number of objects in one row. The number is auto-adjusted according to the ratio of horizontal and vertical of the placement map. The h/v ratio of the group of objects should not be smaller than the h/v ratio of the placement map.</p>
-<p>As shown in the below example. The h/v ratio of the group is 16/9=1.778. The h/v ratio of "+(a,b)" function units is 39/11=3.545, which is larger than 1.778. If there are only 2 function units in one row, the h/v ratio of "+(a,b)" function units is 19/23=0.826, which is smaller than 1.778.</p>
+<p>Animations need a group of function units for vector instructions to handle vector elements parallelly. Considering that they are good-looking, these function units are placed into the placement map as a group. Then, each function unit is placed into the placement map within the group's space. A group of objects cannot be aligned with any other objects.</p>
+<p>The space occupied by a group of objects depends on the number of objects in one row. The number is auto-adjusted according to the horizontal and vertical ratio of the placement map. The h/v ratio of the group of objects should not be smaller than the h/v ratio of the placement map.</p>
+<p>As shown in the below example, the h/v ratio of the group is 16/9=1.778. The h/v ratio of "+(a,b)" function units is 39/11=3.545, larger than 1.778. If only two function units are in one row, the h/v ratio of "+(a,b)" function units is 19/23=0.826, smaller than 1.778.</p>
 <p><img alt="" src="../../image/TestIsaPlacementMap2.png" /></p>
 <p>Source code: <a href="https://github.com/wangeddie67/isa_manim/blob/main/tests/isa_scene/test_isa_placement_map_2.py"><em>test_isa_placement_map_2.py</em></a></p>
-<p>Instead of the auto-adjust shape, the option <code>force_hv_ratio</code> forces all function units in one single row. As the "*(a,b)" function units in the above figure.</p>
+<p>Instead of the auto-adjust shape, the option <code>force_hv_ratio</code> forces all function units in one row. As the "*(a,b)" function units in the above figure.</p>
 <p>Please reference to <a href="../../1-references/30-scene/32-placement/">Reference/Scene/Object Placement</a> for implementation.</p>
 <h2 id="keep-objects-between-section">Keep Objects between Section</h2>
-<p>For animations with multiple sections, some objects should be kept in the scene between sections. The option <code>keep_objects</code> specifies a list of objects to be kept.</p>
-<p>During the process, all objects are removed and the placement map is reset to the initialized size. Then, the objects specified by <code>keep_objects</code> are added back with the same hash value. If option <code>keep_pos</code> is 1, these objects are added at the same position in the previous section. Otherwise, the positions of these objects are recalculated.</p>
+<p>Some objects should be kept in the scene between sections for animations with multiple sections. The option <code>keep_objects</code> specifies a list of objects to be kept.</p>
+<p>All objects are removed during the switching of sections, and the placement map is reset to the initialized size. Then, the objects specified by <code>keep_objects</code> are added back with the same hash value. If option <code>keep_pos</code> is 1, these objects are added at the same position in the previous section. Otherwise, the positions of these objects are recalculated.</p>
 
 
 

@@ -314,7 +314,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -500,7 +500,7 @@
         
   
   <span class="md-ellipsis">
-    Register Unit
+    Register Units
   </span>
   
 
@@ -521,7 +521,7 @@
         
   
   <span class="md-ellipsis">
-    Function Unit
+    Function Units
   </span>
   
 
@@ -730,8 +730,6 @@
       
         
       
-        
-      
     
     
     
@@ -823,7 +821,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -845,27 +843,6 @@
   
   <span class="md-ellipsis">
     Element Reference Counter
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="1-references/30-scene/35-data_flow/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Data flow
   </span>
   
 
@@ -924,16 +901,25 @@
 
 
 <h1 id="welcome-to-manim-for-isa">Welcome to Manim for ISA</h1>
-<p>This project aims to create a well-using framework to generate animations presenting the function 
-of one instruction or an instruction sequence.</p>
-<p>The whole project is based on <a href="https://docs.manim.community/en/stable/index.html">Manim</a>, which is 
-a very powerful Python-based animation framework for mathematics and algorithms. Meanwhile, it is 
-very simple to use. Manim has been widely used in education and research. </p>
+<p>The instruction set is the most important component of the Computer Architecture. To help users quickly and correctly understand the definition and behavior of instructions, the Computer Specification uses many pages to provide textual descriptions and pseudocode for each instruction.</p>
+<p>However, static descriptions, such as textual and pseudocode, still have the following problems for instructions with complex functionality and behaviors.</p>
+<ul>
+<li>The textual description is not intuitively clear enough and leads to ambiguity, especially for non-native English users.</li>
+<li>Pseudocode can clear ambiguity to some extent, depending on the coding ability of users.</li>
+</ul>
+<p>ISAManim aims to create a well-using framework to generate animations presenting the function of one instruction or an instruction sequence. The project is developed based on <a href="https://docs.manim.community/en/stable/index.html">Manim</a>, a Python-based animation framework for mathematics and algorithms. </p>
+<p>ISAManim majorly focuses on the data flow of the instructions. Animations can present the following behaviors:</p>
+<ul>
+<li>Read/write elements from registers.</li>
+<li>Arithmetic/logic operation.</li>
+<li>Memory access.</li>
+</ul>
+<p>ISAManim offers automatic animation management and object placement by providing dedicated animation scenes and APIs. Users do not need to pay attention on the animation. Instead, users only need to program the animation as the instruction behavior. </p>
 <h1 id="installation">Installation</h1>
-<p>The whole project is developed based on Python3. The required environment can be easily set up.</p>
+<p>The whole project is developed based on Python3.</p>
 <h2 id="install-manim">Install Manim</h2>
-<p>The process to install Manim in different OS can be found in Page <a href="https://docs.manim.community/en/stable/installation.html">Installation</a>.</p>
-<p>The typical process to install Manim in Ubuntu is as below:</p>
+<p>Page <a href="https://docs.manim.community/en/stable/installation.html">Installation</a> provides the flow to install Manim on different OSs.</p>
+<p>The typical process to install Manim in Ubuntu is as follows:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Install requirements of Manim</span>
 sudo<span class="w"> </span>apt<span class="w"> </span>update
 sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>build-essential<span class="w"> </span>python3-dev<span class="w"> </span>libcairo2-dev<span class="w"> </span>libpango1.0-dev<span class="w"> </span>ffmpeg
@@ -945,8 +931,7 @@ sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> <
 pip3<span class="w"> </span>install<span class="w"> </span>manim
 </code></pre></div>
 <h2 id="clone-repository">Clone repository</h2>
-<p>The project repository is stored at https://github.com/wangeddie67/isa_manim. Fellow commands 
-clone the project to local.</p>
+<p>Follow commands to clone the project to local.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># git clone repository</span>
 git<span class="w"> </span>clone<span class="w"> </span>git@github.com:wangeddie67/isa_manim.git
 
@@ -954,18 +939,19 @@ git<span class="w"> </span>clone<span class="w"> </span>git@github.com:wangeddie
 pip3<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>isa_manim/requirements.txt
 </code></pre></div>
 <h2 id="generate-documents">Generate Documents</h2>
-<p>The document for this project is generated by MkDocs. The environment of MkDocs can be set up by 
-following commands:</p>
+<p>MkDocs is applied to generate the document for this project. The environment of MkDocs can be set up by following commands:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>/root/to/isa_sim_utils/docs
 
 <span class="c1"># Install MkDocs and plugin</span>
 pip3<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
 </code></pre></div>
-<p>The document can be generated through Makefile.</p>
+<p>The document can be generated by following commands:</p>
 <div class="highlight"><pre><span></span><code>make<span class="w"> </span>doc
+
+<span class="c1"># Publish to GitHub Pages</span>
+mkdocs<span class="w"> </span>gh-deploy<span class="w"> </span>--force
 </code></pre></div>
-<p>The generated documents are located in the directory <code>docs/site</code>. The index page of generated
-documents is <code>docs/site/index.html</code>.</p>
+<p>Users can access the generated documents in the directory <code>docs/site</code>. The index page of generated documents is <code>docs/site/index.html</code>.</p>
 
 
 

@@ -20,7 +20,7 @@
     
     
       
-        <title>Animation Flow - Manim for ISA</title>
+        <title>Animation Scheduling - Manim for ISA</title>
       
     
     
@@ -64,7 +64,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#animation-flow" class="md-skip">
+        <a href="#animation-scheduling" class="md-skip">
           Skip to content
         </a>
       
@@ -100,7 +100,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Animation Flow
+              Animation Scheduling
             
           </span>
         </div>
@@ -306,7 +306,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -494,7 +494,7 @@
         
   
   <span class="md-ellipsis">
-    Register Unit
+    Register Units
   </span>
   
 
@@ -515,7 +515,7 @@
         
   
   <span class="md-ellipsis">
-    Function Unit
+    Function Units
   </span>
   
 
@@ -726,8 +726,6 @@
       
         
       
-        
-      
     
     
     
@@ -828,7 +826,7 @@
           
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -839,7 +837,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -1034,27 +1032,6 @@
   
   <span class="md-ellipsis">
     Element Reference Counter
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../35-data_flow/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Data flow
   </span>
   
 
@@ -1273,18 +1250,18 @@
                   
 
 
-<h1 id="animation-flow">Animation Flow</h1>
-<p>Several data structures are implemented for the animation flow algorithm:</p>
+<h1 id="animation-scheduling">Animation Scheduling</h1>
+<p><a href="../../../0-introductions/03-animation-flow/">Animation Scheduling</a> has introduced the algorithm to schedule animations. This page introduces the data structure for animation scheduling.</p>
 <ul>
 <li><code>isa_manim.isa_scene.isa_animate.IsaAnimateItem</code> provides the data structure of one single animation, including <code>IsaAnimateItem</code> of dependency objects.</li>
 <li><code>isa_manim.isa_scene.isa_animate._IsaAnimateSection</code> provides the data structure of one animation section.</li>
 <li><code>isa_manim.isa_scene.isa_animate._IsaAnimateStep</code> provides the data structure of one animation step.</li>
 </ul>
-<p><code>isa_manim.isa_scene.isa_animate.IsaAnimationFlow</code> provides the animation flow algorithm. When registering one animation, <code>add_animation</code> is called to generate the <code>IsaAnimationItem</code> and recognize the dependency with registered animations. At the end of one section, <code>switch_section</code> is called to generate the <code>_IsaAnimateSection</code>.</p>
+<p><code>isa_manim.isa_scene.isa_animate.IsaAnimationFlow</code> provides the animation scheduling. <code>add_animation</code> is called to generate the <code>IsaAnimationItem</code> and recognize the dependency with registered animations when registering one animation. At the end of one section, <code>switch_section</code> is called to generate the <code>_IsaAnimateSection</code>.</p>
 <blockquote>
 <p>When sequentially calling <code>switch_section</code> more than once, the final efforts look like the intersection of two <code>switch_section</code>.</p>
 </blockquote>
-<p>When rendering the animation, <code>analysis_animation_flow</code> is called to analyze the animation flow and generate <code>_IsaAnimateStep</code>. As the result of the animation flow algorithm, Animation steps are stored in <code>animation_step_list</code>.</p>
+<p>When rendering the animation, <code>analysis_animation_flow</code> is called to analyze the animation flow and generate <code>_IsaAnimateStep</code>. As the result of the animation flow algorithm, animation steps are stored in <code>animation_step_list</code>.</p>
 <h2 id="isaanimateitem">IsaAnimateItem</h2>
 
 

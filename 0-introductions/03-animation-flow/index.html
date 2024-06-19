@@ -20,7 +20,7 @@
     
     
       
-        <title>Animation Flow - Manim for ISA</title>
+        <title>Animation Scheduling - Manim for ISA</title>
       
     
     
@@ -64,7 +64,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#animation-flow" class="md-skip">
+        <a href="#animation-scheduling" class="md-skip">
           Skip to content
         </a>
       
@@ -100,7 +100,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Animation Flow
+              Animation Scheduling
             
           </span>
         </div>
@@ -317,7 +317,7 @@
           
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -328,7 +328,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -561,7 +561,7 @@
         
   
   <span class="md-ellipsis">
-    Register Unit
+    Register Units
   </span>
   
 
@@ -582,7 +582,7 @@
         
   
   <span class="md-ellipsis">
-    Function Unit
+    Function Units
   </span>
   
 
@@ -791,8 +791,6 @@
       
         
       
-        
-      
     
     
     
@@ -884,7 +882,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -906,27 +904,6 @@
   
   <span class="md-ellipsis">
     Element Reference Counter
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../1-references/30-scene/35-data_flow/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Data flow
   </span>
   
 
@@ -1019,42 +996,65 @@
                   
 
 
-<h1 id="animation-flow">Animation Flow</h1>
-<p>As explained in previous pages, the animation flow algorithm and function interfaces are hidden behind the APIs provided by scenes. However, users still need to understand the animation flow algorithm so that users can apply APIs at the appropriate time.</p>
-<p>In the original Manim, animations are ordered by the order to apply <code>play()</code>. However, when describing instructions with parallel behaviors, not only vector instructions but also some scalar instructions, it will be not convenient to manage the order of animations by hand.</p>
+<h1 id="animation-scheduling">Animation Scheduling</h1>
+<p>As explained in previous pages, the animation scheduling and function interfaces are hidden behind the APIs provided by scenes. However, users still need to understand the animation scheduling algorithm so that users can apply APIs at the appropriate time.</p>
+<p>In the original Manim, animations are ordered by the order to apply <code>play()</code>. However, when describing instructions with parallel behaviors, not only vector instructions but also some scalar instructions, it will not be convenient to manage the order of animations by hand.</p>
 <p>The animation flow algorithm takes the responsibility for ordering the animations according to their dependencies. When all the dependency is released, one animation can play. There are two ways to build up dependencies between animations:</p>
 <p>One kind of dependency is referenced as consumer-producer dependency. Animations always consume some objects and generate new objects. If any consumed object of one animation (A) is the produced object of another element (B), it is defined that the first animation (A) depends on the second animation (B). The first animation (A) must play after the second animation (B). Consumer objects include not only the source objects but also background objects. For example, the consumer objects of animation to call a function include both source elements and the function unit.</p>
-<p>The other kind of dependency is called serialization dependency. For function units and memory units, it is limited that only one animation related to such units can play once. </p>
-<p>The animations are organized into two levels:</p>
+<p>The other kind of dependency is called serialization dependency. For function and memory units, it is limited to only one animation related to such units that can play once. </p>
+<p>One animation can play only the following conditions are addressed:</p>
 <ul>
-<li>Animation sections consist of a sequence of animations. The splitter between sections is signed by <code>end_section()</code>. The animations after <code>end_section()</code> cannot play before <code>end_section()</code>. Similarly, the animation before <code>end_section()</code> cannot play after <code>end_section()</code> either.</li>
-<li>Animation steps consist of animations that can play parallelly. For example, the same animation on vector elements. Animations within one step do not have dependencies with each other. The animation flow algorithm analyzes the dependencies between animations and collects animations without dependencies into one step.</li>
+<li>All consumer-producer dependencies of one animation are addressed.</li>
+<li>There is no conflict of serialization dependency.</li>
 </ul>
+<p>The animations are organized into two levels.</p>
+<ul>
+<li>
+<p>Animation steps consist of animations that can play parallelly. For example, the same animation applies to vector elements. Animations within one step do not have dependencies with each other. The animation flow algorithm analyzes the dependencies between animations and collects animations without dependencies into one step.</p>
+</li>
+<li>
+<p>Animation sections consist of a sequence of animation steps. The splitter between sections is signed by <code>end_section()</code>. The animations after <code>end_section()</code> cannot play before <code>end_section()</code>. Similarly, the animation before <code>end_section()</code> cannot play after <code>end_section()</code> either. Hence, there is no dependency between animations within different sections.</p>
+</li>
+</ul>
+<p>The algorithm to schedule animation within one section is shown below:</p>
+<pre class="mermaid"><code>flowchart TB
+
+A(Begin)
+B[Build dependency graph]
+C[While dependency graph&lt;br&gt; is not empty]
+D[Select animation items&lt;br&gt; with all depedency addressed]
+E[Remove selected animation&lt;br&gt; items from dependency graph]
+F[Pack selected animation&lt;br&gt; items into one animation step]
+G[Add animation step into&lt;br&gt; animation section]
+Z(End)
+
+A--&gt;B--&gt;C--&gt;D--&gt;E--&gt;F--&gt;G--&gt;C
+C--"graph is empty"--&gt;Z</code></pre>
 <p>Moreover, several additional steps are added in the section:</p>
 <ul>
 <li>At the first step of one section, the camera is moved or scaled if necessary.</li>
-<li>At the last step of one section, <code>wait()</code> is applied to keep the animation for users to better understand.</li>
+<li>At the last step of one section, <code>wait()</code> is applied to keep the animation.</li>
 <li>After the last step of one section, items on the scene are removed unless:</li>
-<li>if <code>fade_out</code> is False, no item is removed.</li>
-<li>if <code>keep_object</code> is not empty, specified items are kept on the scene.</li>
+<li>if the option of <code>fade_out</code> is <code>False</code>, no item is removed.</li>
+<li>if the option of <code>keep_object</code> is not empty, specified items are kept on the scene.</li>
 </ul>
 <p>Please reference <a href="../../1-references/30-scene/33-animation-flow/">Reference/Scene/Animation Flow</a> for implementation.</p>
 <h2 id="color-scheme">Color Scheme</h2>
 <p>The color of objects in ISA scenes can be allocated automatically by color scheme. Each new item 
 will be assigned a color in the color scheme. </p>
 <p>:py:class:<code>isa_manim.isa_scene.isa_color_map.IsaColorMap</code> provides the functionality to manage
-object color. The default color and the color scheme can all be changed by the constructor function.</p>
-<p>The color of objects can be controlled by a hash. The objects with the same hash value share the 
+object color. The constructor function can change the default color and the color scheme.</p>
+<p>A hash controls the color of objects. The objects with the same hash value share the 
 same color.</p>
 <h2 id="advanced-schedule-features">Advanced schedule features</h2>
 <p>To generate richer and clearer animations, animation flow scheduling also provides the following features:</p>
 <ul>
-<li>Reuse elements from the same index of the same register. When reading one element from one register, the accessed element is recorded. If the element is accessed again, the recorded element is used, rather than creating a new element.</li>
+<li>Reuse elements from the same index of the same register. When reading one element from one register, the accessed element is recorded. If the element is accessed again, the recorded element is used rather than creating a new element.</li>
 <li>Duplicate elements with multiple consumers. If one element has multiple consumers, the first consumer references the original element unit, while other consumers reference the copy of this element unit.</li>
 </ul>
 <p>Please reference <a href="../../1-references/30-scene/34-refer-count/">Reference/Scene/Reference Counter</a> for implementation.</p>
 <h2 id="tips-to-control-the-animation-flow">Tips to Control the Animation Flow</h2>
-<p>In general, it is not necessary to call extra functions to control the animation flow. In some situations, more guidance can achieve a better experience.</p>
+<p>In general, it is not necessary to call extra functions to control the animation flow. In some situations, more guidance can help users achieve a better experience.</p>
 <ul>
 <li><code>end_section()</code> can perform as a barrier to split animations into several sections and stop animations to execute parallelly. For example, <code>end_section()</code> is appropriate if you want animations about one vector element to play separately as a highlight from other vector elements.<ul>
 <li><code>fade_out=False</code> keeps all objects on the scene.</li>

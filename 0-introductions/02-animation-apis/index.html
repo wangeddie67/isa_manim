@@ -387,6 +387,30 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#read_elem_value" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_elem_value
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_data_flow.IsaDataFlow.read_elem_value" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_elem_value
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="read_elem_value">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#move_elem" class="md-nav__link">
     <span class="md-ellipsis">
       move_elem
@@ -516,6 +540,30 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#func_group_call" class="md-nav__link">
+    <span class="md-ellipsis">
+      func_group_call
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_data_flow.IsaDataFlow.func_group_call" class="md-nav__link">
+    <span class="md-ellipsis">
+      func_group_call
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="func_group_call">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#read_func_imm" class="md-nav__link">
     <span class="md-ellipsis">
       read_func_imm
@@ -639,7 +687,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -825,7 +873,7 @@
         
   
   <span class="md-ellipsis">
-    Register Unit
+    Register Units
   </span>
   
 
@@ -846,7 +894,7 @@
         
   
   <span class="md-ellipsis">
-    Function Unit
+    Function Units
   </span>
   
 
@@ -1055,8 +1103,6 @@
       
         
       
-        
-      
     
     
     
@@ -1148,7 +1194,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -1170,27 +1216,6 @@
   
   <span class="md-ellipsis">
     Element Reference Counter
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../1-references/30-scene/35-data_flow/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Data flow
   </span>
   
 
@@ -1297,6 +1322,30 @@
   </a>
   
     <nav class="md-nav" aria-label="read_elem">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#read_elem_value" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_elem_value
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_data_flow.IsaDataFlow.read_elem_value" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_elem_value
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="read_elem_value">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1429,6 +1478,30 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#func_group_call" class="md-nav__link">
+    <span class="md-ellipsis">
+      func_group_call
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_scene.isa_data_flow.IsaDataFlow.func_group_call" class="md-nav__link">
+    <span class="md-ellipsis">
+      func_group_call
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="func_group_call">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#read_func_imm" class="md-nav__link">
     <span class="md-ellipsis">
       read_func_imm
@@ -1550,7 +1623,6 @@
 <h1 id="animation-apis">Animation APIs</h1>
 <p>The following APIs can be called within <code>SingleIsaScene</code> and <code>MultiIsaScene</code>.</p>
 <p>Please reference <a href="../../1-references/20-animation/">Animation for ISA Behaviors</a> for the details about animation.</p>
-<p>Please reference <a href="../../1-references/30-scene/35-data_flow/">Data flow</a> for additional information about <code>isa_data_flow</code>.</p>
 <h2 id="apis-for-registers-and-elements">APIs for Registers and Elements</h2>
 <h3 id="decl_register">decl_register</h3>
 
@@ -1854,6 +1926,20 @@ register <code>vector</code> and return one element unit.</p>
           </td>
         </tr>
         <tr class="doc-section-item">
+          <td><code>value_color</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Assign different colors for different values.</p>
+            </div>
+          </td>
+          <td>
+                <code>False</code>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
           <td><code>value</code></td>
           <td>
                 <code><span title="typing.Any">Any</span></code>
@@ -1942,7 +2028,7 @@ If not specified, take the value from global configuration <code>elem_value_form
 
   </div>
 
-</div><p><code>read_elem</code> has three overloading methods for different shapes of registers.</p>
+</div><p><code>read_elem</code> has three overloading methods for different shapes of registers:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Scalar register.</span>
 <span class="nd">@overload</span>
 <span class="k">def</span> <span class="nf">read_elem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
@@ -1960,6 +2046,227 @@ If not specified, take the value from global configuration <code>elem_value_form
 <span class="k">def</span> <span class="nf">read_elem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
               <span class="n">vector</span><span class="p">:</span> <span class="n">RegUnit</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
               <span class="n">value</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">color_hash</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fill_opacity</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">font_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_FONT_SIZE</span><span class="p">,</span> <span class="n">value_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ElemUnit</span><span class="p">:</span> <span class="o">...</span>
+</code></pre></div>
+<h3 id="read_elem_value">read_elem_value</h3>
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<a id="isa_manim.isa_scene.isa_data_flow.IsaDataFlow.read_elem_value"></a>
+  <div class="doc doc-contents first">
+  
+      <p>Read one element from the specified position (<code>reg_idx</code> and <code>index</code>) of the specified
+register <code>vector</code> and return the value of this element unit.</p>
+<p>The color of element unit is selected according to the value of the element.</p>
+
+
+
+  <p><span class="doc-section-title">Parameters:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code>vector</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="isa_manim.isa_objects.RegUnit" href="../../1-references/10-objects/11-register-unit/#isa_manim.isa_objects.reg_unit.RegUnit">RegUnit</a></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Register.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>index</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Element index.</p>
+            </div>
+          </td>
+          <td>
+                <code>0</code>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>reg_idx</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Regsiter index.</p>
+            </div>
+          </td>
+          <td>
+                <code>0</code>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>offset</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Offset of LSB.</p>
+            </div>
+          </td>
+          <td>
+                <code>0</code>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>width</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Width of element in bit.</p>
+            </div>
+          </td>
+          <td>
+                <code>0</code>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>color_hash</code></td>
+          <td>
+                <code><span title="typing.Union">Union</span>[int, str]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Hash to get color from color scheme.</p>
+            </div>
+          </td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>value</code></td>
+          <td>
+                <code><span title="typing.Any">Any</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Value of this register, single element or 1-D/2-D array.
+If not specified, assign None.</p>
+            </div>
+          </td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>fill_opacity</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Fill opacity.
+If not specified, take the value from global configuration <code>elem_fill_opacity</code>.</p>
+            </div>
+          </td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>font_size</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Font size of element value.
+If not specified, take the value of <code>DEFAULT_FONT_SIZE</code>.</p>
+            </div>
+          </td>
+          <td>
+                <code><span title="manim.DEFAULT_FONT_SIZE">DEFAULT_FONT_SIZE</span></code>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>value_format</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Format to print data value.
+If not specified, take the value from global configuration <code>elem_value_format</code>.</p>
+            </div>
+          </td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  <p><span class="doc-section-title">Returns:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td>
+                <code><span title="typing.Any">Any</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The value of accessed element unit.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div><p><code>read_elem</code> has three overloading methods for different shapes of registers:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Scalar register.</span>
+<span class="nd">@overload</span>
+<span class="k">def</span> <span class="nf">read_elem_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                    <span class="n">vector</span><span class="p">:</span> <span class="n">RegUnit</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">color_hash</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fill_opacity</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">font_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_FONT_SIZE</span><span class="p">,</span> <span class="n">value_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span> <span class="o">...</span>
+
+<span class="c1"># Vector register</span>
+<span class="nd">@overload</span>
+<span class="k">def</span> <span class="nf">read_elem_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                    <span class="n">vector</span><span class="p">:</span> <span class="n">RegUnit</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">color_hash</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fill_opacity</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">font_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_FONT_SIZE</span><span class="p">,</span> <span class="n">value_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span> <span class="o">...</span>
+
+<span class="c1"># Matrix register or a list of regsiters.</span>
+<span class="nd">@overload</span>
+<span class="k">def</span> <span class="nf">read_elem_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                    <span class="n">vector</span><span class="p">:</span> <span class="n">RegUnit</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">color_hash</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fill_opacity</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">font_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_FONT_SIZE</span><span class="p">,</span> <span class="n">value_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span> <span class="o">...</span>
 </code></pre></div>
 <h3 id="move_elem">move_elem</h3>
 
@@ -2105,7 +2412,7 @@ specified register <code>vector</code>. </p>
 </div><blockquote>
 <p>If there are further animations on this element unit, must replace variables of this element unit with return value.</p>
 </blockquote>
-<p><code>move_elem</code> has three overloading methods for different shapes of registers.</p>
+<p><code>move_elem</code> has three overloading methods for different shapes of registers:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Scalar register.</span>
 <span class="nd">@overload</span>
 <span class="k">def</span> <span class="nf">move_elem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elem</span><span class="p">:</span> <span class="n">ElemUnit</span><span class="p">,</span> <span class="n">vector</span><span class="p">:</span> <span class="n">RegUnit</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span> <span class="o">...</span>
@@ -2439,7 +2746,7 @@ If not specified, placement follows automatic strategy.</p>
 
   </div>
 
-</div><p>Function units are identified by hash values because some function units may share the same name. For example, one instruction applies multiple adders (<code>name</code> is "Adder"). If the option <code>name</code> is not provided, the generated function unit applies <code>isa_hash</code> as the name.</p>
+</div><p>Hash values identify function units because some may share the same name. For example, one instruction applies multiple adders (<code>name</code> is "Adder"). If the option <code>name</code> is not provided, the generated function unit applies <code>isa_hash</code> as the name.</p>
 <p><code>args_width</code> and <code>args_name</code> should have the same number of elements. <code>res_width</code> and <code>res_name</code> also should have the same number of elements. If there is only one return value, <code>res_width</code> and <code>res_name</code> can be single elements. For example:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Adder without carry bit.</span>
 <span class="bp">self</span><span class="o">.</span><span class="n">decl_function</span><span class="p">(</span><span class="s2">&quot;adder&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span> <span class="mi">16</span><span class="p">,</span> <span class="n">args_name</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">],</span> <span class="n">res_name</span><span class="o">=</span><span class="s2">&quot;sum&quot;</span><span class="p">)</span>
@@ -2672,7 +2979,7 @@ according to the scene h/w ratio.</p>
   </div>
 
 </div><p>Generated function units share the <code>args_width</code>, <code>res_width</code>, <code>args_name</code>, <code>res_name</code>, <code>font_size</code>, <code>value_format</code> and <code>func_callee</code>. <code>args_width</code> and <code>args_name</code> should have the same number of elements. <code>res_width</code> and <code>res_name</code> also should have the same number of elements. If there is only one return value, <code>res_width</code> and <code>res_name</code> can be single elements. </p>
-<p><code>num_unit</code> specifies the number of units. If one single integer is provided, the integer presents the number of units. If a list of integers is provided, the list presents the hierarchy of units. For example, <code>[2, 4]</code> means 2 groups of units and each group has 4 units.</p>
+<p><code>num_unit</code> specifies the number of units. If one single integer is provided, the integer presents the number of units. If a list of integers is provided, the list presents the hierarchy of units. For example, <code>[2, 4]</code> means 2 groups of units, and each group has 4 units.</p>
 <p>The hash value of each function unit is specified by <code>isa_hash</code>. If one single string is provided, <code>decl_func_group</code> will generate one individual hash for each element. Take <code>isa_hash</code> is "Addr" as an example:</p>
 <ul>
 <li>If <code>num_unit</code> is 8, the hash values are <code>Addr0</code>, <code>Addr1</code>, <code>Addr2</code>, ..., <code>Addr7</code>.</li>
@@ -2887,7 +3194,7 @@ If not specified, take the value from global configuration <code>elem_value_form
 
   </div>
 
-</div><p>To reduce the coding complexity, <code>function_call</code> provides the capacity to perform the functionality. If one callable function has been provided to the function unit through option <code>func_callee</code> and all the argument element units have assigned value (<code>elem_value</code>), <code>function_call</code> performs the functionality by calling <code>func_callee</code> with value from all <code>args</code>. An example is as below:</p>
+</div><p><code>function_call</code> provides the capacity to perform the functionality. If one callable function has been provided to the function unit through option <code>func_callee</code> and all the argument element units have assigned value (<code>elem_value</code>), <code>function_call</code> performs the functionality by calling <code>func_callee</code> with value from all <code>args</code>. An example is shown below:</p>
 <div class="highlight"><pre><span></span><code><span class="n">mbytes</span> <span class="o">=</span> <span class="mi">4</span>
 
 <span class="c1"># Registers</span>
@@ -2912,7 +3219,7 @@ If not specified, take the value from global configuration <code>elem_value_form
 <span class="n">base</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">function_call</span><span class="p">(</span><span class="s2">&quot;addrgen&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">base</span><span class="p">,</span> <span class="n">offset</span><span class="p">])</span>
 <span class="c1"># element value of `base` is 0x100 + 0x400 = 0x500</span>
 </code></pre></div>
-<p>In some situations, argument element units and result element units may not cover all bits as the bit-width of arguments and results. For example, some multiply instructions only return the high-half of the product. For such situations, <code>args_offset</code> and <code>res_offset</code> specify the LSB offset of element units. An example is as below:</p>
+<p>In some situations, element units used as source and destination operands may not cover all bits as the bit-width of arguments and results. For example, some multiply instructions only return the high-half of the product. For such situations, <code>args_offset</code> and <code>res_offset</code> specify the LSB offset of element units. An example is shown below:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Registers</span>
 <span class="n">rn_reg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decl_register</span><span class="p">(</span><span class="s2">&quot;rn&quot;</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
 <span class="n">rm_reg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decl_register</span><span class="p">(</span><span class="s2">&quot;rm&quot;</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="n">align_with</span><span class="o">=</span><span class="n">rn_reg</span><span class="p">)</span>
@@ -2925,6 +3232,225 @@ If not specified, take the value from global configuration <code>elem_value_form
 <span class="n">rm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_elem</span><span class="p">(</span><span class="n">rm_reg</span><span class="p">)</span>
 <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">function_call</span><span class="p">(</span><span class="s2">&quot;multiply&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">rn</span><span class="p">,</span> <span class="n">rm</span><span class="p">],</span> <span class="n">res_width</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">res_offset</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
 </code></pre></div>
+<h3 id="func_group_call">func_group_call</h3>
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<a id="isa_manim.isa_scene.isa_data_flow.IsaDataFlow.func_group_call"></a>
+  <div class="doc doc-contents first">
+  
+      <p>Function call among a parallel function group. The function unit is specified by
+<code>grp_isa_hash</code> and <code>para_index</code>.</p>
+
+
+
+  <p><span class="doc-section-title">Parameters:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td><code>grp_isa_hash</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Hash value of the specified function unit.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>para_index</code></td>
+          <td>
+                <code><span title="typing.Union">Union</span>[int, <span title="typing.List">List</span>[int]]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Index of unit in parallel function group.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>args</code></td>
+          <td>
+                <code><span title="typing.List">List</span>[<a class="autorefs autorefs-internal" title="isa_manim.isa_objects.ElemUnit" href="../../1-references/10-objects/14-element-unit/#isa_manim.isa_objects.elem_unit.ElemUnit">ElemUnit</a>]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Element units as arguments.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>args_offset</code></td>
+          <td>
+                <code><span title="typing.List">List</span>[int]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>LSB offset for the argument elements.
+If not specified, 0 for each argument elements.</p>
+            </div>
+          </td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>color_hash</code></td>
+          <td>
+                <code><span title="typing.Union">Union</span>[int, str]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Specified hash to get color from scheme.</p>
+            </div>
+          </td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>res_width</code></td>
+          <td>
+                <code><span title="typing.Union">Union</span>[int, <span title="typing.List">List</span>[int]]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Bit-width of return values. If there is only one return value, one single
+interger is required.</p>
+            </div>
+          </td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>res_offset</code></td>
+          <td>
+                <code><span title="typing.Union">Union</span>[int, <span title="typing.List">List</span>[int]]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>LSB offset for the result element units.
+If not specified, 0 for each result element units.</p>
+            </div>
+          </td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>res_value</code></td>
+          <td>
+                <code><span title="typing.Union">Union</span>[<span title="typing.Any">Any</span>, <span title="typing.List">List</span>[<span title="typing.Any">Any</span>]]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Value of the result element units.
+If not specified, assign None or calculate by inline function.</p>
+            </div>
+          </td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>res_fill_opacity</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Fill opacity.
+If not specified, take the value from global configuration <code>elem_fill_opacity</code>.</p>
+            </div>
+          </td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>res_font_size</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Font size of result element unit.
+If not specified, take the value of <code>DEFAULT_FONT_SIZE</code>.</p>
+            </div>
+          </td>
+          <td>
+                <code><span title="manim.DEFAULT_FONT_SIZE">DEFAULT_FONT_SIZE</span></code>
+          </td>
+        </tr>
+        <tr class="doc-section-item">
+          <td><code>res_value_format</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Format to print result value.
+If not specified, take the value from global configuration <code>elem_value_format</code>.</p>
+            </div>
+          </td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  <p><span class="doc-section-title">Returns:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td>
+                <code><span title="typing.Union">Union</span>[<a class="autorefs autorefs-internal" title="isa_manim.isa_objects.ElemUnit" href="../../1-references/10-objects/14-element-unit/#isa_manim.isa_objects.elem_unit.ElemUnit">ElemUnit</a>, <span title="typing.List">List</span>[<a class="autorefs autorefs-internal" title="isa_manim.isa_objects.ElemUnit" href="../../1-references/10-objects/14-element-unit/#isa_manim.isa_objects.elem_unit.ElemUnit">ElemUnit</a>]]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Result element units. If only one result value, only one element unit returns.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div><p><code>func_group_call</code> performs the same function as <code>function_call</code>, except <code>func_group_call</code> can select the function unit from a group of units. The specified function unit is specified by <code>grp_isa_hash</code> and <code>para_index</code>. <code>grp_isa_hash</code> is the same as the value specified by <code>isa_hash</code> in <code>decl_func_group</code>.</p>
 <h3 id="read_func_imm">read_func_imm</h3>
 
 
@@ -3069,8 +3595,8 @@ If not specified, take the value from global configuration <code>elem_value_form
 
   </div>
 
-</div><p>The function of <code>read_func_imm</code> does not register animation directly. Instead, the tuple of element unit and fade-in animation is delivered to <code>funcion_call</code>, so that the fade-in animation will be integrated into the animation of <code>function_call</code>.</p>
-<p>During the first step of the animation to call a function, the immediate operands fade in at the position of function arguments while other operands move to the position of function arguments.</p>
+</div><p>The function of <code>read_func_imm</code> does not register animation directly. Instead, the tuple of element unit and fade-in animation is delivered to <code>funcion_call</code> so that the fade-in animation can be integrated into the animation of <code>function_call</code>.</p>
+<p>During the first step of the animation to call a function, the immediate operands fade in at the position of function arguments. In contrast, other operands move to the position of function arguments.</p>
 <blockquote>
 <p>If directly deliver the return value of <code>read_func_imm</code> to the argument of <code>function_call</code>, it is not necessary to unpack the return value of <code>read_func_imm</code>.</p>
 <p>It is recommand that only deliver the return value of <code>read_func_imm</code> to the argument of <code>function_call</code>.</p>
@@ -3266,7 +3792,7 @@ with this memory unit must be serialized.</p>
 
   </div>
 
-</div><p>In most situations, there is only one memory unit in the animation. The hash of this memory unit is <code>Memory</code>. Users can still declare more than one memory unit by the option <code>isa_hash</code>.</p>
+</div><p>In most situations, there is only one memory unit in the animation. The hash of this memory unit is <code>Memory</code>. Users can still declare more than one memory unit using the option <code>isa_hash</code>.</p>
 <h3 id="read_memory">read_memory</h3>
 
 
@@ -3768,7 +4294,7 @@ If not specified, operate on the memory unit with the hash of "Memory".</p>
 <li>If <code>has_status_output</code> is True, <code>read_memory</code> and <code>write_memory</code> generate the status output.</li>
 <li><code>read_memory</code> returns the tuple of the data and status element unit. <code>write_memory</code> returns the status element unit.</li>
 </ul>
-<p>The attributes of the generated data element unit are specified by <code>res_value</code>, <code>res_fill_opacity</code>, <code>res_font_size</code> and <code>res_value_format</code>. The attributes of the status element unit are specified by another group of options, i.e. <code>status_width</code>, <code>status_value</code>, <code>status_fill_opacity</code>, <code>status_font_size</code> and <code>status_value_format</code>.</p>
+<p>The attributes of the generated data element unit are specified by <code>res_value</code>, <code>res_fill_opacity</code>, <code>res_font_size</code>, and <code>res_value_format</code>. The attributes of the status element unit are specified by another group of options, i.e., <code>status_width</code>, <code>status_value</code>, <code>status_fill_opacity</code>, <code>status_font_size</code>, and <code>status_value_format</code>.</p>
 <p>By default, <code>read_memory</code> and <code>write_memory</code> operate on the memory unit with the hash of "Memory". Still, users can specify a specified memory unit by the option of <code>mem_isa_hash</code>.</p>
 
 

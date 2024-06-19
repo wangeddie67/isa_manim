@@ -12,8 +12,6 @@
         <link rel="prev" href="../33-animation-flow/">
       
       
-        <link rel="next" href="../35-data_flow/">
-      
       
       <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.21">
@@ -306,7 +304,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -494,7 +492,7 @@
         
   
   <span class="md-ellipsis">
-    Register Unit
+    Register Units
   </span>
   
 
@@ -515,7 +513,7 @@
         
   
   <span class="md-ellipsis">
-    Function Unit
+    Function Units
   </span>
   
 
@@ -726,8 +724,6 @@
       
         
       
-        
-      
     
     
     
@@ -819,7 +815,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -1094,27 +1090,6 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../35-data_flow/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Data flow
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
       
@@ -1377,7 +1352,8 @@
 
 <h1 id="element-reference-counter">Element Reference Counter</h1>
 <h2 id="reuse-elements-from-the-same-index-of-the-same-register">Reuse elements from the same index of the same register</h2>
-<p>When reading one element from one register, the accessed element is recorded. If the element is accessed again, the recorded element is used, rather than creating a new element.</p>
+<p>If one element in one register is read more than once, playing the animation only once is much better to avoid overlapping element units on the scene.</p>
+<p>When reading one element from one register, the accessed element is recorded. If the element is reaccessed, the recorded element is used rather than creating a new element.</p>
 <p>The recorded element is identified by all the following attributes:</p>
 <ul>
 <li>The source register.</li>
@@ -1386,10 +1362,11 @@
 <li>The bit offset of LSB.</li>
 <li>The width of the accessed element.</li>
 </ul>
-<p>The recorded element is returned, only when all the above attributes match.</p>
+<p>When reading one element from one register, return the recorded element only when all the above attributes match.</p>
 <p><code>isa_manim.isa_scene.isa_elem_refcount.IsaElemRefCount.set_elem_source</code> records one element and the source attributes of this element. <code>isa_manim.isa_scene.isa_elem_refcount.IsaElemRefCount.get_elem_by_source</code> returns the record element by the source attributes. If no matched recorded element, <code>get_elem_by_source</code> returns <code>None</code>.</p>
 <h2 id="duplicate-elements-with-multiple-consumers">Duplicate elements with multiple consumers</h2>
-<p>The animation to create one element is referenced as the producer. The animation that references one element as a source is referenced as the consumer. In most situations, one element has only one producer and multiple consumers. </p>
+<p>If one element is used as source operands of more than one animation, this element should be duplicated.</p>
+<p>The animation to create one element is referenced as the producer. The animation referencing one element as a source is referenced as the consumer. In most situations, one element has only one producer and multiple consumers. </p>
 <ul>
 <li><code>isa_manim.isa_scene.isa_elem_refcount.IsaElemRefCount.set_elem_producer</code> registers one element when the element is generated. The initial value of the reference counter is 0. <code>set_elem_producer</code> is applied where the element unit is created.</li>
 <li><code>isa_manim.isa_scene.isa_elem_refcount.IsaElemRefCount.set_elem_cusumer</code> registers the last consumer animation and increases the reference counter by 1. The <code>set_elem_cusumer</code> is applied where the element unit is used as the source.</li>
@@ -1434,12 +1411,12 @@ operate1--&gt;End
 operate2--&gt;End
 operate3--&gt;End</code></pre>
 <h3 id="general-flow-within-animation-api">General flow within animation API</h3>
-<p>The general flow within an animation API is as below:</p>
+<p>The general flow within an animation API is shown below:</p>
 <pre class="mermaid"><code>flowchart TB
 
 A1[Call &lt;code&gt;get_duplicate_item&lt;/code&gt; for source elements]
 A2[Create destination elements]
-A3[Play animations&lt;br&gt; Animations operate on duplicated element]
+A3[Play animations&lt;br&gt;Animations operate on duplicated element]
 A4[Call &lt;code&gt;set_elem_cusumer&lt;/code&gt; for source elements]
 A5[Call &lt;code&gt;set_elem_producer&lt;/code&gt; for destination elements]
 

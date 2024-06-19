@@ -306,7 +306,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -496,7 +496,7 @@
         
   
   <span class="md-ellipsis">
-    Register Unit
+    Register Units
   </span>
   
 
@@ -517,7 +517,7 @@
         
   
   <span class="md-ellipsis">
-    Function Unit
+    Function Units
   </span>
   
 
@@ -601,6 +601,24 @@
   <a href="#isa_manim.isa_objects.mem_unit.MemoryUnit.__init__" class="md-nav__link">
     <span class="md-ellipsis">
       __init__
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_objects.mem_unit.MemoryUnit.__repr__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __repr__
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_objects.mem_unit.MemoryUnit.__str__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __str__
     </span>
   </a>
   
@@ -919,8 +937,6 @@
       
         
       
-        
-      
     
     
     
@@ -1012,7 +1028,7 @@
         
   
   <span class="md-ellipsis">
-    Animation Flow
+    Animation Scheduling
   </span>
   
 
@@ -1034,27 +1050,6 @@
   
   <span class="md-ellipsis">
     Element Reference Counter
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../30-scene/35-data_flow/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Data flow
   </span>
   
 
@@ -1127,6 +1122,24 @@
   <a href="#isa_manim.isa_objects.mem_unit.MemoryUnit.__init__" class="md-nav__link">
     <span class="md-ellipsis">
       __init__
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_objects.mem_unit.MemoryUnit.__repr__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __repr__
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isa_manim.isa_objects.mem_unit.MemoryUnit.__str__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __str__
     </span>
   </a>
   
@@ -1284,23 +1297,22 @@
 <li><code>addr_rect</code> presents the address port of the memory unit. The width of <code>addr_rect</code> presents the bit width of the address port.</li>
 <li><code>data_rect</code> presents the data port of the memory unit. The width of <code>data_rect</code> presents the bit width of the data port.</li>
 <li><code>mem_map_list</code> presents a list of rectangles for memory maps. Each rectangle presents a range in memory. The read/write operation on memory will add memory marks within the range of the rectangle that covers the accessed locations.</li>
-<li>The width of one rectangle of the memory map should cover <code>mem_rect</code>, <code>addr_rect</code> and <code>data_rect</code>.</li>
+<li>The width of one rectangle of the memory map should cover <code>mem_rect</code>, <code>addr_rect</code>, and <code>data_rect</code>.</li>
 <li>The height of one rectangle of the memory map is 1.0.</li>
-<li><code>mem_map_text</code> presents a list of texts that mark the lowest address and highest address of each rectangle for the memory map.</li>
-<li>Texts in <code>mem_map_text</code> are aligned with the left or right boundary of the rectangle for the memory map, and below the rectangle for the memory map.</li>
+<li><code>mem_map_text</code> presents a list of texts that mark each rectangle's lowest and highest address for the memory map.</li>
+<li>Texts in <code>mem_map_text</code> are aligned with the left or right boundary of the rectangle for the memory map and below the rectangle for the memory map.</li>
 </ul>
 <p>If there is only one rectangle for the memory map, the height of the entire memory unit is 6.0 because the rectangle and the texts of the memory map cost 1.0 in height individually.</p>
 <blockquote>
 <p>As the green dot shown in the above figure, the orign point of one memory unit is located in the center position of <code>mem_rect</code>, which is different from the geometry center position of this object. It is suggested to use function <code>shift</code> rather than function <code>move_to</code> to change the location of the register.</p>
 </blockquote>
-<p><code>get_addr_pos</code> and <code>get_data_pos</code> return the position within the address port and the data port. The width of elements may not cover the entire address port and the data port. For example, read one byte through a data bus of eight bytes. The option <code>width</code> provides the actual element width. It is assumed that elements are always placed at the lowest side.</p>
-<p>In some instructions, memory operations return status to present whether options succeed or not. By giving the option <code>status_width</code> in the constructor function a non-zero value, one <code>status_rect</code> is added within <code>mem_rect</code> to present the status port. <code>get_status_pos</code> returns the position within the status port.</p>
+<p><code>get_addr_pos</code> and <code>get_data_pos</code> return the position within the address and data port. The width of elements may not cover the entire address and data port. For example, read one byte through a data bus of eight bytes. The option <code>width</code> provides the actual element width. It is assumed that elements are always placed at the lowest side.</p>
+<p>In some instructions, memory operations return status to present whether options succeed or not. One <code>status_rect</code> is added within <code>mem_rect</code> to present the status port if a non-zero value is provided to the option <code>status_width</code> in the constructor function. <code>get_status_pos</code> returns the position within the status port.</p>
 <p><img alt="" src="../../../image/TestMemoryUnitStatus.png" /></p>
 <p>Source code: <a href="https://github.com/wangeddie67/isa_manim/blob/main/tests/isa_objects/test_mem_unit_status.py"><em>test_mem_unit_status.py</em></a></p>
-<p>Several functions are provided to work with the animation to read/write the memory. See for details.</p>
 <p>The read/write-memory animation switch affects whether accessed locations match any memory map. Function <code>is_mem_range_cover</code> returns True if the accessed memory location has the matched memory map.</p>
 <p>Moreover, animations will generate address marks and memory marks to show the accessed location on memory maps. <code>get_addr_mark</code> returns one address mark at a specified address. <code>get_rd_mem_mark</code> and <code>get_wr_mem_mark</code> return memory marks covering the specified memory range.</p>
-<p>Address marks are cleared from the Manim scene before the end of one animation to read/write memory. But memory marks will stay in the Manim scene until the end of one animation section. Hence, the memory marks are collected in <code>mem_mark_list</code>. <code>append_mem_mark_list</code> appends one memory mark to <code>mem_mark_list</code>; <code>get_mem_mark_list</code> returns <code>mem_mark_list</code>.</p>
+<p>Address marks are cleared from the Manim scene before the end of one animation to read/write memory. However, memory marks will stay in the Manim scene until the end of one animation section. Hence, the memory marks are collected in <code>mem_mark_list</code>. <code>append_mem_mark_list</code> appends one memory mark to <code>mem_mark_list</code>; <code>get_mem_mark_list</code> returns <code>mem_mark_list</code>.</p>
 <h2 id="memunit">MemUnit</h2>
 
 
@@ -1686,6 +1698,92 @@ not.</p>
           </td>
           <td>
               <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_objects.mem_unit.MemoryUnit.__repr__" class="doc doc-heading">
+          <code class="highlight language-python"><span class="fm">__repr__</span><span class="p">()</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Return a string for debugging.</p>
+
+
+
+  <p><span class="doc-section-title">Returns:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td>
+                <code>str</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A string for debugging.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="isa_manim.isa_objects.mem_unit.MemoryUnit.__str__" class="doc doc-heading">
+          <code class="highlight language-python"><span class="fm">__str__</span><span class="p">()</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Return a string for debugging.</p>
+
+
+
+  <p><span class="doc-section-title">Returns:</span></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr class="doc-section-item">
+          <td>
+                <code>str</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A string for debugging.</p>
+            </div>
           </td>
         </tr>
     </tbody>
