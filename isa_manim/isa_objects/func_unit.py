@@ -115,10 +115,6 @@ class FunctionUnit(VGroup):
                     .move_to(arg_pos)
             arg_text = Text(arg_name, color=color, font_size=font_size * 0.75) \
                     .move_to(arg_pos + DOWN * (0.5 + font_size / 200))
-            # Scale
-            # if arg_text.width > arg_rect.width:
-            #     arg_text_scale = arg_rect.width / arg_text.width
-            #     arg_text.scale(arg_text_scale)
 
             self.args_rect_list.append(arg_rect)
             self.args_text_list.append(arg_text)
@@ -133,10 +129,6 @@ class FunctionUnit(VGroup):
                     .move_to(res_pos)
             res_text = Text(res_name, color=color, font_size=font_size * 0.75) \
                     .move_to(res_pos + UP * (0.5 + font_size / 200))
-            # Scale
-            # if res_text.width > res_rect.width:
-            #     res_text_scale = res_rect.width / res_text.width
-            #     res_text.scale(res_text_scale)
 
             self.res_rect_list.append(res_rect)
             self.res_text_list.append(res_text)
@@ -237,3 +229,28 @@ class FunctionUnit(VGroup):
         x = col + self.func_rect.width / 2
         y = row + 2.5
         self.move_to(RIGHT * x + DOWN * y)
+
+    # Utility functions for debugging.
+    def __str__(self) -> str:
+        """
+        Return a string for debugging.
+
+        Returns:
+            A string for debugging.
+        """
+        string = f"{self.func_name}(" \
+            + ",".join([f"{width}b" for width in self.func_args_width_list]) + ")->(" \
+            + ",".join([f"{width}b" for width in self.func_res_width_list]) + ")"
+        return string
+
+    def __repr__(self) -> str:
+        """
+        Return a string for debugging.
+
+        Returns:
+            A string for debugging.
+        """
+        string = f"{self.func_name}(" \
+            + ",".join([f"{width}b" for width in self.func_args_width_list]) + ")->(" \
+            + ",".join([f"{width}b" for width in self.func_res_width_list]) + ")"
+        return string

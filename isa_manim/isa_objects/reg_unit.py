@@ -1,5 +1,5 @@
 """
-Register Unit.
+Register Units.
 """
 
 from colour import Color
@@ -308,9 +308,21 @@ class RegUnit(VGroup):
 
     # Utility functions for debugging.
     def __str__(self) -> str:
+        """
+        Return a string for debugging.
+
+        Returns:
+            A string for debugging.
+        """
         string = f"{self.reg_name_list}({self.reg_width}b,{self.elem_count},{self.reg_count})"
         return string
 
     def __repr__(self) -> str:
+        """
+        Return a string for debugging.
+
+        Returns:
+            A string for debugging.
+        """
         string = f"{self.reg_name_list}({self.reg_width}b,{self.elem_count},{self.reg_count})"
         return string

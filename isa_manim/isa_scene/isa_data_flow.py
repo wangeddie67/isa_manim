@@ -41,6 +41,7 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
         Args:
             strategy: Placement strategy, options: RB or BR.
             default_color: Default color of item, used for register and functions.
+            color_scheme: Color scheme for automatically color assignment.
         """
         IsaAnimationFlow.__init__(self)
         IsaElemRefCount.__init__(self)
@@ -297,7 +298,9 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
                         value_format: str = None) -> Any:
         """
         Read one element from the specified position (`reg_idx` and `index`) of the specified
-        register `vector` and return one element unit.
+        register `vector` and return the value of this element unit.
+
+        The color of element unit is selected according to the value of the element.
 
         Args:
             vector: Register.
@@ -316,7 +319,7 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
                 If not specified, take the value from global configuration `elem_value_format`.
 
         Returns:
-            Generated element unit.
+            The value of accessed element unit.
         """
         # Return new element
         elem: ElemUnit = self.read_elem(vector, index, reg_idx, offset, width, color_hash, True,
@@ -754,7 +757,8 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
                         res_font_size: int = DEFAULT_FONT_SIZE,
                         res_value_format: str = None) -> Union[ElemUnit, List[ElemUnit]]:
         """
-        Function call among a parallel function group.
+        Function call among a parallel function group. The function unit is specified by
+        `grp_isa_hash` and `para_index`.
 
         Args:
             grp_isa_hash: Hash value of the specified function unit.
@@ -786,7 +790,7 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
 
         if color_hash is None:
             color_hash = self._traceback_hash()
-        
+
         return self.function_call(isa_hash, args, args_offset, color_hash, res_width, res_offset,
                                   res_value, res_fill_opacity, res_font_size, res_value_format)
 

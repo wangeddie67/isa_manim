@@ -200,7 +200,7 @@ class MemoryUnit(VGroup):
         Returns:
             Return true if the memory unit has status port
         """
-        return self.status_rect != None
+        return self.status_rect is not None
 
     def _index_of_mem_range(self, addr: int) -> int:
         """
@@ -393,9 +393,21 @@ class MemoryUnit(VGroup):
 
     # Utility functions for debugging.
     def __str__(self) -> str:
-        string = f"Memory_{self.mem_addr_width}b_{self.mem_data_width}b"
+        """
+        Return a string for debugging.
+
+        Returns:
+            A string for debugging.
+        """
+        string = f"Memory({self.mem_addr_width}b,{self.mem_data_width}b)"
         return string
 
     def __repr__(self) -> str:
-        string = f"Memory_{self.mem_addr_width}b_{self.mem_data_width}b"
+        """
+        Return a string for debugging.
+
+        Returns:
+            A string for debugging.
+        """
+        string = f"Memory({self.mem_addr_width}b,{self.mem_data_width}b)"
         return string

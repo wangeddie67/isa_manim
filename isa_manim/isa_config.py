@@ -155,10 +155,12 @@ class OptionDef:
             name: Name of config option.
             opt_type: Option type. Options: FIX_CFG, CONFIG_CFG, RANDOM_CFG.
             default: Default value of config option.
-            options: Option values of config option. Defaults to None.
-            condition: Condition of config option. Defaults to None.
-            opt_range: Value range of config option. Defaults to None.
-            transform: Function to transfer configured value. Defaults to None.
+
+        Kwargs:
+
+        * options: Option values of config option. Defaults to None.
+        * condition: Condition of config option. Defaults to None.
+        * opt_range: Value range of config option. Defaults to None.
         """
         self.name = name
         self.opt_type = opt_type
@@ -166,7 +168,6 @@ class OptionDef:
         self.options = None
         self.condition = None
         self.opt_range = None
-        self.transform = None
 
         if "options" in kwargs:
             self.options = kwargs["options"]
@@ -174,8 +175,6 @@ class OptionDef:
             self.condition = kwargs["condition"]
         if "opt_range" in kwargs:
             self.opt_range = kwargs["opt_range"]
-        if "transform" in kwargs:
-            self.transform = kwargs["transform"]
 
 def def_cfg(name: str, default: Any, **kwargs) -> OptionDef:
     """
@@ -184,10 +183,12 @@ def def_cfg(name: str, default: Any, **kwargs) -> OptionDef:
     Args:
         name: Name of config option.
         default: Default value of config option.
-        options: Option values of config option. Defaults to None.
-        condition: Condition of config option. Defaults to None.
-        opt_range: Value range of config option. Defaults to None.
-        transform: Function to transfer configured value. Defaults to None.
+
+    Kwargs:
+
+    * options (List[Any]): Option values of config option. Defaults to None.
+    * condition (Callable): Condition of config option. Defaults to None.
+    * opt_range (Tuple[int, int]): Value range of config option. Defaults to None.
 
     Returns:
         Structure for configuration option.
@@ -200,8 +201,11 @@ def def_random_cfg(name: str, **kwargs) -> OptionDef:
 
     Args:
         name: Name of config option.
-        options: Option values of config option. Defaults to None.
-        opt_range: Value range of config option. Defaults to None.
+
+    Kwargs:
+
+    * options (List[Any]): Option values of config option. Defaults to None.
+    * opt_range (Tuple[int, int]): Value range of config option. Defaults to None.
 
     Returns:
         Structure for configuration option.
@@ -227,6 +231,12 @@ def def_value_cfg(name: str, **kwargs) -> OptionDef:
 
     Args:
         name: Name of config option.
+
+    Kwargs:
+
+    * options (List[Any]): Option values of config option. Defaults to None.
+    * condition (Callable): Condition of config option. Defaults to None.
+    * opt_range (Tuple[int, int]): Value range of config option. Defaults to None.
 
     Returns:
         Structure for configuration option.
@@ -290,14 +300,19 @@ def get_cfgs(cfgs_list: List[OptionDef]) -> Dict:
 
 def inherit_cfgs(old_list: List[OptionDef],
                  *cfg_items: OptionDef,
-                 **fix_cfg_items) -> List[OptionDef]:
+                 **fix_cfg_items: Dict[str, Any]) -> List[OptionDef]:
     """
-    Append configuration item.
+    Inherit configurations.
+    
+    `cfg_items` add new options to `old_list` or override existing options in `old_list`.
+    
+    `fix_cfg_items` add new fixed options to `old_list` or override existing options in `old_list`
+    with fixed options.
 
     Args:
         old_list: Old list of configuration options.
-        cfg_item: List of configurable options.
-        fix_cfg_item: List of fixed options.
+        cfg_items: List of configurable options.
+        fix_cfg_items: List of fixed options.
 
     Returns:
         New list of options.
