@@ -2,7 +2,9 @@
 
 ## Reuse elements from the same index of the same register
 
-When reading one element from one register, the accessed element is recorded. If the element is accessed again, the recorded element is used, rather than creating a new element.
+If one element in one register is read more than once, playing the animation only once is much better to avoid overlapping element units on the scene.
+
+When reading one element from one register, the accessed element is recorded. If the element is reaccessed, the recorded element is used rather than creating a new element.
 
 The recorded element is identified by all the following attributes:
 
@@ -12,13 +14,15 @@ The recorded element is identified by all the following attributes:
 - The bit offset of LSB.
 - The width of the accessed element.
 
-The recorded element is returned, only when all the above attributes match.
+When reading one element from one register, return the recorded element only when all the above attributes match.
 
 `isa_manim.isa_scene.isa_elem_refcount.IsaElemRefCount.set_elem_source` records one element and the source attributes of this element. `isa_manim.isa_scene.isa_elem_refcount.IsaElemRefCount.get_elem_by_source` returns the record element by the source attributes. If no matched recorded element, `get_elem_by_source` returns `None`.
 
 ## Duplicate elements with multiple consumers
 
-The animation to create one element is referenced as the producer. The animation that references one element as a source is referenced as the consumer. In most situations, one element has only one producer and multiple consumers. 
+If one element is used as source operands of more than one animation, this element should be duplicated.
+
+The animation to create one element is referenced as the producer. The animation referencing one element as a source is referenced as the consumer. In most situations, one element has only one producer and multiple consumers. 
 
 - `isa_manim.isa_scene.isa_elem_refcount.IsaElemRefCount.set_elem_producer` registers one element when the element is generated. The initial value of the reference counter is 0. `set_elem_producer` is applied where the element unit is created.
 - `isa_manim.isa_scene.isa_elem_refcount.IsaElemRefCount.set_elem_cusumer` registers the last consumer animation and increases the reference counter by 1. The `set_elem_cusumer` is applied where the element unit is used as the source.
@@ -68,14 +72,14 @@ operate3-->End
 
 ### General flow within animation API
 
-The general flow within an animation API is as below:
+The general flow within an animation API is shown below:
 
 ``` mermaid
 flowchart TB
 
 A1[Call <code>get_duplicate_item</code> for source elements]
 A2[Create destination elements]
-A3[Play animations<br> Animations operate on duplicated element]
+A3[Play animations<br>Animations operate on duplicated element]
 A4[Call <code>set_elem_cusumer</code> for source elements]
 A5[Call <code>set_elem_producer</code> for destination elements]
 

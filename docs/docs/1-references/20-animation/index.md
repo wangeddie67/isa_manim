@@ -1,11 +1,11 @@
 
 # Animation for ISA Behaviors
 
-**isa_manim** provides several animations that appear in ISA frequently so that users can build up ISA behaviors simply by choosing appropriate functions.
+**isa_manim** provides several animations that frequently appear in ISA so that users can build up ISA behaviors simply by choosing appropriate functions.
 
 Animations can be categorized into three categories:
 
-- [Animation for Registers and Elements](21-register-animation.md), including declaring and replacing registers, as well as reading, assigning and replacing elements.
+- [Animation for Registers and Elements](21-register-animation.md), including declaring and replacing registers, as well as reading, assigning, and replacing elements.
 - [Animation for Functions](22-function-animation.md), including declaring and calling functions.
 - [Animation for Memory](23-memory-animation.md), including declaring and reading/writing memory.
 

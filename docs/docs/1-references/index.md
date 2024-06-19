@@ -6,7 +6,7 @@
     - *isa_manim*: Root path of source codes.
         - *isa_animate*: Per-defined animations.
         - *isa_objects*: Objects in animations.
-        - *isa_scene*: Controls of animations.
+        - *isa_scene*: Animations fow management.
     - *tests*: Test codes
 
 # Table of Contents
