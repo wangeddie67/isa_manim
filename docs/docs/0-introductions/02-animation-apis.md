@@ -3,7 +3,8 @@
 
 The following APIs can be called within `SingleIsaScene` and `MultiIsaScene`.
 
-Please reference [Animation for ISA Behaviors](../1-references/20-animation/index.md) for the details about animation.
+Please reference [Animation for ISA Behaviors](../1-references/20-animation/index.md)
+for the details about animation.
 
 ## APIs for Registers and Elements
 
@@ -16,18 +17,24 @@ Please reference [Animation for ISA Behaviors](../1-references/20-animation/inde
 ``` python
 # Scalar register.
 @overload
-def decl_register(self, text: str, width: int,
-                  value: Any = None, font_size: int = DEFAULT_FONT_SIZE, value_format: str = None, align_with = None) -> RegUnit: ...
+def decl_register(
+    self, text: str, width: int,
+    value: Any = None, font_size: int = DEFAULT_FONT_SIZE, value_format: str = None,
+    align_with = None) -> RegUnit: ...
 
 # Vector register
 @overload
-def decl_register(self, text: str, width: int, elements: int,
-                  value: List[Any] = None, font_size: int = DEFAULT_FONT_SIZE, value_format: str = None, align_with = None) -> RegUnit: ...
+def decl_register(
+    self, text: str, width: int, elements: int,
+    value: List[Any] = None, font_size: int = DEFAULT_FONT_SIZE,
+    value_format: str = None, align_with = None) -> RegUnit: ...
 
 # Matrix register or a list of regsiters.
 @overload
-def decl_register(self, text: str, width: int, elements: int, nreg: int,
-                  value: List[List[Any]] = None, font_size: int = DEFAULT_FONT_SIZE, value_format: str = None, align_with = None) -> RegUnit: ...
+def decl_register(
+    self, text: str, width: int, elements: int, nreg: int,
+    value: List[List[Any]] = None, font_size: int = DEFAULT_FONT_SIZE,
+    value_format: str = None, align_with = None) -> RegUnit: ...
 ```
 
 ### read_elem
@@ -39,21 +46,24 @@ def decl_register(self, text: str, width: int, elements: int, nreg: int,
 ``` python
 # Scalar register.
 @overload
-def read_elem(self,
-              vector: RegUnit, offset: int = 0, width: int = -1,
-              value = None, color_hash = None, fill_opacity: float = None, font_size: int = DEFAULT_FONT_SIZE, value_format: str = None) -> ElemUnit: ...
+def read_elem(
+    self, vector: RegUnit, offset: int = 0, width: int = -1,
+    value = None, color_hash = None, fill_opacity: float = None,
+    font_size: int = DEFAULT_FONT_SIZE, value_format: str = None) -> ElemUnit: ...
 
 # Vector register
 @overload
-def read_elem(self,
-              vector: RegUnit, index: int, offset: int = 0, width: int = -1,
-              value = None, color_hash = None, fill_opacity: float = None, font_size: int = DEFAULT_FONT_SIZE, value_format: str = None) -> ElemUnit: ...
+def read_elem(
+    self, vector: RegUnit, index: int, offset: int = 0, width: int = -1,
+    value = None, color_hash = None, fill_opacity: float = None,
+    font_size: int = DEFAULT_FONT_SIZE, value_format: str = None) -> ElemUnit: ...
 
 # Matrix register or a list of regsiters.
 @overload
-def read_elem(self,
-              vector: RegUnit, index: int, reg_idx: int, offset: int = 0, width: int = -1,
-              value = None, color_hash = None, fill_opacity: float = None, font_size: int = DEFAULT_FONT_SIZE, value_format: str = None) -> ElemUnit: ...
+def read_elem(
+    self, vector: RegUnit, index: int, reg_idx: int, offset: int = 0, width: int = -1,
+    value = None, color_hash = None, fill_opacity: float = None,
+    font_size: int = DEFAULT_FONT_SIZE, value_format: str = None) -> ElemUnit: ...
 ```
 
 ### read_elem_value
@@ -65,43 +75,53 @@ def read_elem(self,
 ``` python
 # Scalar register.
 @overload
-def read_elem_value(self,
-                    vector: RegUnit, offset: int = 0, width: int = -1,
-                    value = None, color_hash = None, fill_opacity: float = None, font_size: int = DEFAULT_FONT_SIZE, value_format: str = None) -> Any: ...
+def read_elem_value(
+    self, vector: RegUnit, offset: int = 0, width: int = -1,
+    value = None, color_hash = None, fill_opacity: float = None,
+    font_size: int = DEFAULT_FONT_SIZE, value_format: str = None) -> Any: ...
 
 # Vector register
 @overload
-def read_elem_value(self,
-                    vector: RegUnit, index: int, offset: int = 0, width: int = -1,
-                    value = None, color_hash = None, fill_opacity: float = None, font_size: int = DEFAULT_FONT_SIZE, value_format: str = None) -> Any: ...
+def read_elem_value(
+    self, vector: RegUnit, index: int, offset: int = 0, width: int = -1,
+    value = None, color_hash = None, fill_opacity: float = None,
+    font_size: int = DEFAULT_FONT_SIZE, value_format: str = None) -> Any: ...
 
 # Matrix register or a list of regsiters.
 @overload
-def read_elem_value(self,
-                    vector: RegUnit, index: int, reg_idx: int, offset: int = 0, width: int = -1,
-                    value = None, color_hash = None, fill_opacity: float = None, font_size: int = DEFAULT_FONT_SIZE, value_format: str = None) -> Any: ...
+def read_elem_value(
+    self, vector: RegUnit, index: int, reg_idx: int, offset: int = 0, width: int = -1,
+    value = None, color_hash = None, fill_opacity: float = None,
+    font_size: int = DEFAULT_FONT_SIZE, value_format: str = None) -> Any: ...
 ```
 
 ### move_elem
 
 ::: isa_manim.isa_scene.isa_data_flow.IsaDataFlow.move_elem
 
-> If there are further animations on this element unit, must replace variables of this element unit with return value.
+> If there are further animations on this element unit, must replace variables of this
+> element unit with return value.
 
 `move_elem` has three overloading methods for different shapes of registers:
 
 ``` python
 # Scalar register.
 @overload
-def move_elem(self, elem: ElemUnit, vector: RegUnit, offset: int = 0, width: int = 0): ...
+def move_elem(
+    self, elem: ElemUnit, vector: RegUnit,
+    offset: int = 0, width: int = 0): ...
 
 # Vector register
 @overload
-def move_elem(self, elem: ElemUnit, vector: RegUnit, index: int, offset: int = 0, width: int = 0): ...
+def move_elem(
+    self, elem: ElemUnit, vector: RegUnit, index: int,
+    offset: int = 0, width: int = 0): ...
 
 # Matrix register or a list of regsiters.
 @overload
-def move_elem(self, elem: ElemUnit, vector: RegUnit, index: int, reg_idx: int, offset: int = 0, width: int = 0): ...
+def move_elem(
+    self, elem: ElemUnit, vector: RegUnit, index: int, reg_idx: int,
+    offset: int = 0, width: int = 0): ...
 ```
 
 ### data_extend
@@ -110,7 +130,8 @@ def move_elem(self, elem: ElemUnit, vector: RegUnit, index: int, reg_idx: int, o
 
 > The `width` can be lower than the width of original element, as a narrow convert.
 
-> If there are further animations on this element unit, must replace variables of this element unit with return value.
+> If there are further animations on this element unit, must replace variables of this
+> element unit with return value.
 
 ## APIs for Function Units
 
@@ -118,49 +139,78 @@ def move_elem(self, elem: ElemUnit, vector: RegUnit, index: int, reg_idx: int, o
 
 ::: isa_manim.isa_scene.isa_data_flow.IsaDataFlow.decl_function
 
-Hash values identify function units because some may share the same name. For example, one instruction applies multiple adders (`name` is "Adder"). If the option `name` is not provided, the generated function unit applies `isa_hash` as the name.
+Hash values identify function units because some may share the same name. For example,
+one instruction applies multiple adders (`name` is "Adder"). If the option `name` is not
+provided, the generated function unit applies `isa_hash` as the name.
 
-`args_width` and `args_name` should have the same number of elements. `res_width` and `res_name` also should have the same number of elements. If there is only one return value, `res_width` and `res_name` can be single elements. For example:
+`args_width` and `args_name` should have the same number of elements. `res_width` and
+`res_name` also should have the same number of elements. If there is only one return
+value, `res_width` and `res_name` can be single elements. For example:
 
 ``` python
 # Adder without carry bit.
 self.decl_function("adder", [16, 16], 16, args_name=["a", "b"], res_name="sum")
 
 # Adder with carry bit
-self.decl_function("adder", [16, 16, 1], [1, 16], args_name=["a", "b", "cin"], res_name=["cout", "sum"])
+self.decl_function(
+    "adder", [16, 16, 1], [1, 16], args_name=["a", "b", "cin"],
+    res_name=["cout", "sum"])
 ```
 
-> If one instruction apply multiple heterogenous function units, apply `decl_function` to generate each function unit and apply option `align_with` to guide the layout of function units.
+> If one instruction apply multiple heterogenous function units, apply `decl_function`
+> to generate each function unit and apply option `align_with` to guide the layout of
+> function units.
 
-> If one instruction apply multiple homogenous function unit, apply `decl_func_group` as below.
+> If one instruction apply multiple homogenous function unit, apply `decl_func_group`
+> as below.
 
 ### decl_func_group
 
 ::: isa_manim.isa_scene.isa_data_flow.IsaDataFlow.decl_func_group
 
-Generated function units share the `args_width`, `res_width`, `args_name`, `res_name`, `font_size`, `value_format` and `func_callee`. `args_width` and `args_name` should have the same number of elements. `res_width` and `res_name` also should have the same number of elements. If there is only one return value, `res_width` and `res_name` can be single elements. 
+Generated function units share the `args_width`, `res_width`, `args_name`, `res_name`,
+`font_size`, `value_format` and `func_callee`. `args_width` and `args_name` should have
+the same number of elements. `res_width` and `res_name` also should have the same number
+of elements. If there is only one return value, `res_width` and `res_name` can be single
+elements. 
 
-`num_unit` specifies the number of units. If one single integer is provided, the integer presents the number of units. If a list of integers is provided, the list presents the hierarchy of units. For example, `[2, 4]` means 2 groups of units, and each group has 4 units.
+`num_unit` specifies the number of units. If one single integer is provided, the integer
+presents the number of units. If a list of integers is provided, the list presents the
+hierarchy of units. For example, `[2, 4]` means 2 groups of units, and each group has 4
+units.
 
-The hash value of each function unit is specified by `isa_hash`. If one single string is provided, `decl_func_group` will generate one individual hash for each element. Take `isa_hash` is "Addr" as an example:
+The hash value of each function unit is specified by `isa_hash`. If one single string is
+provided, `decl_func_group` will generate one individual hash for each element. Take
+`isa_hash` is "Addr" as an example:
 
-- If `num_unit` is 8, the hash values are `Addr0`, `Addr1`, `Addr2`, ..., `Addr7`.
-- If `num_unit` is [8, 8], the hash value are `Addr0_0`, `Addr0_1`, ..., `Addr_1_0`, `Addr_1_1`, ..., `Addr7_7`
+-   If `num_unit` is 8, the hash values are `Addr0`, `Addr1`, `Addr2`, ..., `Addr7`.
+-   If `num_unit` is [8, 8], the hash value are `Addr0_0`, `Addr0_1`, ..., `Addr_1_0`,
+    `Addr_1_1`, ..., `Addr7_7`
 
-If a list is provided to the option `isa_hash`, the list must follow the hierarchy defined by `num_unit`. So that `isa_hash` can be assigned to each function unit.
+If a list is provided to the option `isa_hash`, the list must follow the hierarchy
+defined by `num_unit`. So that `isa_hash` can be assigned to each function unit.
 
-The option `func_name` specifies names for function units. If `func_name` is not specified, take `isa_hash` as the name. If one single string is provided, all function units share the same function name. Otherwise, `func_name` should follow the hierarchy defined by `num_unit`.
+The option `func_name` specifies names for function units. If `func_name` is not
+specified, take `isa_hash` as the name. If one single string is provided, all function
+units share the same function name. Otherwise, `func_name` should follow the hierarchy
+defined by `num_unit`.
 
-The shape of a function group is auto-adjusted if `force_hw_ratio` is False. See [Objects Placement](../1-references/30-scene/32-placement.md) as an example.
+The shape of a function group is auto-adjusted if `force_hw_ratio` is False. See
+[Objects Placement](../1-references/30-scene/32-placement.md) as an example.
 
 
-> It is recommand to provide one single element to `num_unit`, `isa_hash` and `func_name`. `decl_func_group` will generate one individual hash for each element.
+> It is recommand to provide one single element to `num_unit`, `isa_hash` and
+> `func_name`. `decl_func_group` will generate one individual hash for each element.
 
 ### function_call
 
 ::: isa_manim.isa_scene.isa_data_flow.IsaDataFlow.function_call
 
-`function_call` provides the capacity to perform the functionality. If one callable function has been provided to the function unit through option `func_callee` and all the argument element units have assigned value (`elem_value`), `function_call` performs the functionality by calling `func_callee` with value from all `args`. An example is shown below:
+`function_call` provides the capacity to perform the functionality. If one callable
+function has been provided to the function unit through option `func_callee` and all
+the argument element units have assigned value (`elem_value`), `function_call` performs
+the functionality by calling `func_callee` with value from all `args`. An example is
+shown below:
 
 ``` python
 mbytes = 4
@@ -170,12 +220,12 @@ rn_reg = self.decl_register("rn", addrlen, value=0x100)
 rm_reg = self.decl_register("rm", addrlen, value=0x100, align_with=rn_reg)
 
 # Function unit
-self.decl_function("addrgen", [addrlen, addrlen], addrlen,
-                    name="base+offset", args_name=["base", "offset"],
-                    func_callee=lambda x, y: x + y)
-self.decl_function("scale", [addrlen], addrlen,
-                    name=f"offset*{mbytes}", args_name=["offset"],
-                    func_callee=lambda x: x * mbytes)
+self.decl_function(
+    "addrgen", [addrlen, addrlen], addrlen, name="base+offset",
+    args_name=["base", "offset"], func_callee=lambda x, y: x + y)
+self.decl_function(
+    "scale", [addrlen], addrlen, name=f"offset*{mbytes}", args_name=["offset"],
+    func_callee=lambda x: x * mbytes)
 
 # Behaviors
 base = self.read_elem(rn_reg)
@@ -188,7 +238,11 @@ base = self.function_call("addrgen", [base, offset])
 # element value of `base` is 0x100 + 0x400 = 0x500
 ```
 
-In some situations, element units used as source and destination operands may not cover all bits as the bit-width of arguments and results. For example, some multiply instructions only return the high-half of the product. For such situations, `args_offset` and `res_offset` specify the LSB offset of element units. An example is shown below:
+In some situations, element units used as source and destination operands may not cover
+all bits as the bit-width of arguments and results. For example, some multiply
+instructions only return the high-half of the product. For such situations,
+`args_offset` and `res_offset` specify the LSB offset of element units. An example is
+shown below:
 
 ``` python
 # Registers
@@ -208,19 +262,28 @@ result = self.function_call("multiply", [rn, rm], res_width=32, res_offset=32)
 
 ::: isa_manim.isa_scene.isa_data_flow.IsaDataFlow.func_group_call
 
-`func_group_call` performs the same function as `function_call`, except `func_group_call` can select the function unit from a group of units. The specified function unit is specified by `grp_isa_hash` and `para_index`. `grp_isa_hash` is the same as the value specified by `isa_hash` in `decl_func_group`.
+`func_group_call` performs the same function as `function_call`, except
+`func_group_call` can select the function unit from a group of units. The 
+function unit is specified by `grp_isa_hash` and `para_index`. `grp_isa_hash` is the
+same as the value specified by `isa_hash` in `decl_func_group`.
 
 ### read_func_imm
 
 ::: isa_manim.isa_scene.isa_data_flow.IsaDataFlow.read_func_imm
 
-The function of `read_func_imm` does not register animation directly. Instead, the tuple of element unit and fade-in animation is delivered to `funcion_call` so that the fade-in animation can be integrated into the animation of `function_call`.
+The function of `read_func_imm` does not register animation directly. Instead, the tuple
+of element unit and fade-in animation is delivered to `funcion_call` so that the fade-in
+animation can be integrated into the animation of `function_call`.
 
-During the first step of the animation to call a function, the immediate operands fade in at the position of function arguments. In contrast, other operands move to the position of function arguments.
+During the first step of the animation to call a function, the immediate operands fade
+in at the position of function arguments. In contrast, other operands move to the
+position of function arguments.
 
-> If directly deliver the return value of `read_func_imm` to the argument of `function_call`, it is not necessary to unpack the return value of `read_func_imm`.
+> If directly deliver the return value of `read_func_imm` to the argument of
+> `function_call`, it is not necessary to unpack the return value of `read_func_imm`.
 
-> It is recommand that only deliver the return value of `read_func_imm` to the argument of `function_call`.
+> It is recommand that only deliver the return value of `read_func_imm` to the argument
+> of `function_call`.
 
 ## APIs for Memory Units
 
@@ -228,7 +291,9 @@ During the first step of the animation to call a function, the immediate operand
 
 ::: isa_manim.isa_scene.isa_data_flow.IsaDataFlow.decl_memory
 
-In most situations, there is only one memory unit in the animation. The hash of this memory unit is `Memory`. Users can still declare more than one memory unit using the option `isa_hash`.
+In most situations, there is only one memory unit in the animation. The hash of this
+memory unit is `Memory`. Users can still declare more than one memory unit using the
+option `isa_hash`.
 
 ### read_memory
 
@@ -238,13 +303,31 @@ In most situations, there is only one memory unit in the animation. The hash of 
 
 ::: isa_manim.isa_scene.isa_data_flow.IsaDataFlow.write_memory
 
-The option `has_status_output` determines whether `read_memory` and `write_memory` generate status output. If the memory unit does not have a status port, option `has_status_output` is ignored. When the memory unit has a status port:
+### read_memory_pair
 
-- If `has_status_output` is False, `read_memory` and `write_memory` do not generate the status output.
-  - `read_memory` returns the data element unit. `write_memory` returns None.
-- If `has_status_output` is True, `read_memory` and `write_memory` generate the status output.
-  - `read_memory` returns the tuple of the data and status element unit. `write_memory` returns the status element unit.
+::: isa_manim.isa_scene.isa_data_flow.IsaDataFlow.read_memory_pair
 
-The attributes of the generated data element unit are specified by `res_value`, `res_fill_opacity`, `res_font_size`, and `res_value_format`. The attributes of the status element unit are specified by another group of options, i.e., `status_width`, `status_value`, `status_fill_opacity`, `status_font_size`, and `status_value_format`.
+### write_memory_pair
 
-By default, `read_memory` and `write_memory` operate on the memory unit with the hash of "Memory". Still, users can specify a specified memory unit by the option of `mem_isa_hash`.
+::: isa_manim.isa_scene.isa_data_flow.IsaDataFlow.write_memory_pair
+
+The option `has_status_output` determines whether `read_memory` and `write_memory`
+generate status output. If the memory unit does not have a status port, option
+`has_status_output` is ignored. When the memory unit has a status port:
+
+-   If `has_status_output` is False, `read_memory` and `write_memory` do not generate
+    the status output.
+    -   `read_memory` returns the data element unit. `write_memory` returns None.
+-   If `has_status_output` is True, `read_memory` and `write_memory` generate the status
+    output.
+    -   `read_memory` returns the tuple of the data and status element unit.
+        `write_memory` returns the status element unit.
+
+The attributes of the generated data element unit are specified by `res_value`,
+`res_fill_opacity`, `res_font_size`, and `res_value_format`. The attributes of the
+status element unit are specified by another group of options, i.e., `status_width`,
+`status_value`, `status_fill_opacity`, `status_font_size`, and `status_value_format`.
+
+By default, `read_memory` and `write_memory` operate on the memory unit with the hash of
+"Memory". Still, users can specify a specified memory unit by the option of
+`mem_isa_hash`.

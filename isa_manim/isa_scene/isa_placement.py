@@ -6,6 +6,7 @@ import numpy as np
 from typing import List, Dict, Tuple, Union
 from manim import Mobject, config, RIGHT, DOWN
 
+
 class IsaPlacementItem:
     """
     Data structure of one object for auto placement.
@@ -49,7 +50,8 @@ class IsaPlacementItem:
 
     def get_height(self) -> int:
         """
-        Return the height of this object for placement. The height is ceil to an integer.
+        Return the height of this object for placement. The height is ceil to an
+        integer.
 
         Returns:
             The height of this object.
@@ -67,8 +69,8 @@ class IsaPlacementItem:
 
     def set_corner(self, row: int, col: int):
         """
-        Set the position of object by the left-up corner position. Move object to the specified
-        position.
+        Set the position of object by the left-up corner position. Move object to the
+        specified position.
 
         Args:
             row: Vertical ordinate of left-up corner.
@@ -78,14 +80,13 @@ class IsaPlacementItem:
         self.col = col
         self.isa_object.set_placement_corner(row, col)
 
+
 class _IsaPlaceHolderObject:
     """
     Data structure for auto placement.
     """
 
-    def __init__(self,
-                 width: int,
-                 height: int):
+    def __init__(self, width: int, height: int):
         """
         Construct one data structure for animate.
         """
@@ -112,7 +113,8 @@ class _IsaPlaceHolderObject:
 
     def get_placement_height(self) -> int:
         """
-        Return the height of this object for placement. The height is ceil to an integer.
+        Return the height of this object for placement. The height is ceil to an
+        integer.
 
         Returns:
             The height of this object.
@@ -130,8 +132,8 @@ class _IsaPlaceHolderObject:
 
     def set_placement_corner(self, row: int, col: int):
         """
-        Set the position of object by the left-up corner position. Move object to the specified
-        position.
+        Set the position of object by the left-up corner position. Move object to the
+        specified position.
 
         Args:
             row: Vertical ordinate of left-up corner.
@@ -139,13 +141,14 @@ class _IsaPlaceHolderObject:
         """
         pass
 
+
 class IsaPlacementMap:
     """
     This class manages the position of objects in scene.
 
     Attributes:
-        _placement_object_dict: Dictionary of objects, key is one hash value and the value is
-            item of IsaPlacementItem.
+        _placement_object_dict: Dictionary of objects, key is one hash value and the
+            value is item of IsaPlacementItem.
         _placement_map: Array of the placement.
         _placement_width: Width of the placement.
         _placement_height: Height of the placement.
@@ -165,9 +168,10 @@ class IsaPlacementMap:
         self._placement_width: int = 0
         self._placement_height: int = 0
         self._placement_hv_ratio: float = None
-        self._placement_strategy: str = strategy # "BR", "RB"
+        self._placement_strategy: str = strategy  # "BR", "RB"
 
-        self.resize_placement(new_width=config.frame_width, new_height=config.frame_height)
+        self.resize_placement(
+            new_width=config.frame_width, new_height=config.frame_height)
 
     # Placement dictionary
     def has_object(self, place_hash: str) -> bool:
@@ -275,7 +279,9 @@ class IsaPlacementMap:
         Returns:
             Return the center position of the placement map.
         """
-        return RIGHT * self.get_placement_width() / 2 + DOWN * self.get_placement_height() / 2
+        return (
+            RIGHT * self.get_placement_width() / 2 +
+            DOWN * self.get_placement_height() / 2)
 
     def get_camera_scale(self, camera_width: float, camera_height: float) -> float:
         """
@@ -288,12 +294,11 @@ class IsaPlacementMap:
         Returns:
             Scale factor of the camera.
         """
-        return max((self.get_placement_height() + 1) / camera_height,
-                   (self.get_placement_width() + 1) / camera_width)
+        return max(
+            (self.get_placement_height() + 1) / camera_height,
+            (self.get_placement_width() + 1) / camera_width)
 
-    def resize_placement(self,
-                         new_width: int,
-                         new_height: int):
+    def resize_placement(self, new_width: int, new_height: int):
         """
         Resize placement map while keeping items in the old placement map.
 
@@ -311,8 +316,9 @@ class IsaPlacementMap:
                 if new_width <= old_width:
                     new_placement_row = self._placement_map[row][0:new_width]
                 else:
-                    new_placement_row = \
-                        self._placement_map[row] + [0 for _ in range(old_width, new_width)]
+                    new_placement_row = self._placement_map[row] + [
+                        0 for _ in range(old_width, new_width)
+                    ]
                 new_placement_map.append(new_placement_row)
             else:
                 new_placement_map.append([0 for _ in range(0, new_width)])
@@ -322,10 +328,14 @@ class IsaPlacementMap:
         self._placement_hv_ratio = self._placement_height / self._placement_width
         self._placement_map = new_placement_map
 
-    def reset_placement(self, keep_objects: List[Mobject] = None, keep_pos: bool = True):
+    def reset_placement(
+        self,
+        keep_objects: List[Mobject] = None,
+        keep_pos: bool = True,
+    ):
         """
         Reset placement map.
-        
+
         Args:
             keep_objects: Objects should keep in the scene.
             keep_pos: True means keep the position of keep objects in the new placement.
@@ -343,7 +353,8 @@ class IsaPlacementMap:
         self._placement_map = []
         self._placement_width = 0
         self._placement_height = 0
-        self.resize_placement(new_width=config.frame_width, new_height=config.frame_height)
+        self.resize_placement(
+            new_width=config.frame_width, new_height=config.frame_height)
 
         # Add keep objects back to the placement map.
         for place_item in keep_place_items:
@@ -360,25 +371,28 @@ class IsaPlacementMap:
         map_str = ""
         for row in self._placement_map:
             for item in row:
-                if item == 0:   # Not occupied
+                if item == 0:  # Not occupied
                     map_str += " "
-                elif item == 1: # Margin
+                elif item == 1:  # Margin
                     map_str += "*"
-                else:           # Occupied
+                else:  # Occupied
                     map_str += "O"
             map_str += "\n"
         return map_str
 
     # Find a suitable position for one item.
-    def _placement_check_rect(self,
-                              corner_row: int,
-                              corner_col: int,
-                              rect_width: int,
-                              rect_height: int,
-                              marker: int = None) -> bool:
+    def _placement_check_rect(
+        self,
+        corner_row: int,
+        corner_col: int,
+        rect_width: int,
+        rect_height: int,
+        marker: int = None,
+    ) -> bool:
         """
         Check whether there is a spare rectangle space in the placement map.
-        Placement map should not only contains the rectangle, but also a boundary around it.
+        Placement map should not only contains the rectangle, but also a boundary around
+        it.
 
         Args:
             corner_row: Left-up corner position of rectangle.
@@ -403,21 +417,23 @@ class IsaPlacementMap:
         if marker is not None:
             for row in range(corner_row - 1, corner_row + rect_height + 1):
                 for col in range(0, corner_col - 1):
-                    if self._placement_map[row][col] > 1 \
-                            and self._placement_map[row][col] != marker:
+                    if (self._placement_map[row][col] > 1
+                            and self._placement_map[row][col] != marker):
                         return False
 
         return True
 
-    def _placement_mark_rect(self,
-                             marker: int,
-                             corner_row: int,
-                             corner_col: int,
-                             rect_width: int,
-                             rect_height: int):
+    def _placement_mark_rect(
+        self,
+        marker: int,
+        corner_row: int,
+        corner_col: int,
+        rect_width: int,
+        rect_height: int,
+    ):
         """
-        Mark one rectangle in placement map with provided marker. Meanwhile, mark the elements
-        around the rectangle with 1.
+        Mark one rectangle in placement map with provided marker. Meanwhile, mark the
+        elements around the rectangle with 1.
 
         Args:
             marker: Marker.
@@ -435,18 +451,21 @@ class IsaPlacementMap:
                     continue
 
                 # Elements around rectangle
-                if row == corner_row - 1 or row == corner_row + rect_height \
-                        or col == corner_col - 1 or col == corner_col + rect_width:
+                if (row == corner_row - 1 or row == corner_row + rect_height
+                        or col == corner_col - 1 or col == corner_col + rect_width):
                     self._placement_map[row][col] = 1
                 else:
                     self._placement_map[row][col] = marker
 
-    def _placement_check_space(self,
-                               placement_item: IsaPlacementItem,
-                               force: bool = False,
-                               align_row: int = None) -> Union[Tuple[int, int], None]:
+    def _placement_check_space(
+        self,
+        placement_item: IsaPlacementItem,
+        force: bool = False,
+        align_row: int = None,
+    ) -> Union[Tuple[int, int], None]:
         """
-        Check whether there is space to allocate the object into the current placement map.
+        Check whether there is space to allocate the object into the current placement
+        map.
 
         Args:
             placement_item: Object item to place in the map.
@@ -455,10 +474,10 @@ class IsaPlacementMap:
             align_row: The object item must be specified at the specified row.
 
         Returns:
-            If there is space to place the object, return a tuple contains the coordianate of
-                object. The first element in the tuple is the vertical coordinate of the left-up
-                corner while the second element is the horizontal coordinate. Return None if there
-                is no space to place the object.
+            If there is space to place the object, return a tuple contains the
+            coordianate of object. The first element in the tuple is the vertical
+            coordinate of the left-up corner while the second element is the horizontal
+            coordinate. Return None if there is no space to place the object.
         """
         rect_width = placement_item.get_width()
         rect_height = placement_item.get_height()
@@ -479,9 +498,11 @@ class IsaPlacementMap:
             for col in range(1, self._placement_width - rect_width + 1):
                 if self._placement_map[align_row][col] != 0:
                     continue
-                if self._placement_check_rect(align_row, col, rect_width, rect_height, marker):
+                if self._placement_check_rect(align_row, col, rect_width, rect_height,
+                                              marker):
                     placement_item.set_corner(align_row, col)
-                    self._placement_mark_rect(marker, align_row, col, rect_width, rect_height)
+                    self._placement_mark_rect(
+                        marker, align_row, col, rect_width, rect_height)
                     return (align_row, col)
 
         # RB strategy, first try to place item under exist item. Row -> Col.
@@ -490,9 +511,11 @@ class IsaPlacementMap:
                 for col in range(1, self._placement_width - rect_width + 1):
                     if self._placement_map[row][col] != 0:
                         continue
-                    if self._placement_check_rect(row, col, rect_width, rect_height, marker):
+                    if self._placement_check_rect(row, col, rect_width, rect_height,
+                                                  marker):
                         placement_item.set_corner(row, col)
-                        self._placement_mark_rect(marker, row, col, rect_width, rect_height)
+                        self._placement_mark_rect(
+                            marker, row, col, rect_width, rect_height)
                         return (row, col)
 
         # BR strategy, first try to place item beside exist item. Col -> Row.
@@ -501,22 +524,25 @@ class IsaPlacementMap:
                 for row in range(1, self._placement_height - rect_height + 1):
                     if self._placement_map[row][col] != 0:
                         continue
-                    if self._placement_check_rect(row, col, rect_width, rect_height, marker):
+                    if self._placement_check_rect(row, col, rect_width, rect_height,
+                                                  marker):
                         return (row, col)
 
         return None
 
     # Place placement item.
-    def place_placement_item(self,
-                             placement_item: IsaPlacementItem,
-                             force: bool = False,
-                             align_row: int = None):
+    def place_placement_item(
+        self,
+        placement_item: IsaPlacementItem,
+        force: bool = False,
+        align_row: int = None,
+    ):
         """
         Place one item into the placement map.
 
-        This function tries to allocate the item into the placement map. If placement fails, this
-        function will resize the placement map and try again. This function continues iteration
-        until the object can be allocated into the placement map.
+        This function tries to allocate the item into the placement map. If placement
+        fails, this function will resize the placement map and try again. This function
+        continues iteration until the object can be allocated into the placement map.
 
         Args:
             placement_item: Object item to place in the map.
@@ -548,10 +574,12 @@ class IsaPlacementMap:
                 break
 
     # Place object(s).
-    def place_object(self,
-                     place_object: Mobject,
-                     place_hash: Union[int, str],
-                     align_with: Mobject = None):
+    def place_object(
+        self,
+        place_object: Mobject,
+        place_hash: Union[int, str],
+        align_with: Mobject = None,
+    ):
         """
         Add object into the dictionary and place it into the placement map.
 
@@ -577,10 +605,12 @@ class IsaPlacementMap:
         # Add placement item to placement map.
         self.place_placement_item(placement_item, align_row=align_row)
 
-    def place_object_group(self,
-                           place_object_list: List[Mobject],
-                           place_hash_list: List[Union[int,str]],
-                           force_hw_ratio: Union[int, None] = None):
+    def place_object_group(
+        self,
+        place_object_list: List[Mobject],
+        place_hash_list: List[Union[int, str]],
+        force_hw_ratio: Union[int, None] = None,
+    ):
         """
         Add a group of object into the dictionary and place it into the placement map.
 
@@ -594,17 +624,22 @@ class IsaPlacementMap:
                 raise ValueError("Argument must be Mobject.")
 
         # Create placement item.
-        place_item_list = [IsaPlacementItem(place_object, place_hash)
-                           for place_object, place_hash in zip(place_object_list, place_hash_list)]
+        place_item_list = [
+            IsaPlacementItem(place_object, place_hash)
+            for place_object, place_hash in zip(place_object_list, place_hash_list)
+        ]
 
         # Convert to matrix according to width of placement.
         if force_hw_ratio is None:
             split = 1
             screen_factor = config.frame_width / config.frame_height
             while split < len(place_item_list):
-                temp_width = sum(item.get_width() for item in place_item_list[0:split]) + split - 1
-                temp_height = place_item_list[0].get_height() * (len(place_item_list) // split) \
-                    + (len(place_item_list) // split) - 1
+                temp_width = (
+                    sum(item.get_width()
+                        for item in place_item_list[0:split]) + split - 1)
+                temp_height = (
+                    place_item_list[0].get_height() * (len(place_item_list) // split) +
+                    (len(place_item_list) // split) - 1)
                 if temp_width / temp_height > screen_factor:
                     break
                 else:
@@ -612,15 +647,19 @@ class IsaPlacementMap:
         else:
             split = force_hw_ratio
 
-        place_item_matrix: List[List[IsaPlacementItem]] = \
-            [place_item_list[left:left + split][::-1] \
-                for left in range(0, len(place_item_list), split)]
+        place_item_matrix: List[List[IsaPlacementItem]] = [
+            place_item_list[left:left + split][::-1]
+            for left in range(0, len(place_item_list), split)
+        ]
 
-        matrix_row_width_list = [sum(item.get_width() for item in row) + len(row) - 1 \
-            for row in place_item_matrix]
+        matrix_row_width_list = [
+            sum(item.get_width() for item in row) + len(row) - 1
+            for row in place_item_matrix
+        ]
         matrix_width = max(matrix_row_width_list)
-        matrix_row_height_list = [max(item.get_height() for item in row) \
-            for row in place_item_matrix]
+        matrix_row_height_list = [
+            max(item.get_height() for item in row) for row in place_item_matrix
+        ]
         matrix_height = sum(matrix_row_height_list) + len(place_item_matrix) - 1
 
         # Allocate location of the entire group without side-effort.

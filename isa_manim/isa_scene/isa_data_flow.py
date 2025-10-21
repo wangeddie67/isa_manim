@@ -8,18 +8,10 @@ from typing import overload
 from colour import Color
 import sys
 from manim import (WHITE, DEFAULT_FONT_SIZE, Animation)
-from ..isa_animate import (decl_register,
-                           read_elem,
-                           assign_elem,
-                           replace_elem,
-                           decl_func_unit,
-                           read_func_imm,
-                           function_call,
-                           decl_memory_unit,
-                           read_memory_without_addr,
-                           write_memory_without_addr,
-                           read_memory,
-                           write_memory)
+from ..isa_animate import (
+    decl_register, read_elem, assign_elem, replace_elem, decl_func_unit, read_func_imm,
+    function_call, decl_memory_unit, read_memory_without_addr,
+    write_memory_without_addr, read_memory, write_memory)
 from ..isa_objects import ElemUnit, RegUnit, FunctionUnit, MemoryUnit
 from .isa_animate import IsaAnimationFlow
 from .isa_elem_refcount import IsaElemRefCount
@@ -27,14 +19,18 @@ from .isa_placement import IsaPlacementMap
 from .isa_color_map import IsaColorMap
 from ..isa_config import get_config
 
+
 class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMap):
     """
     Data flow of ISA, used to define API for ISA animation.
     """
-    def __init__(self,
-                 strategy: str ="RB",
-                 default_color: Color = WHITE,
-                 color_scheme: List[Color] = None):
+
+    def __init__(
+        self,
+        strategy: str = "RB",
+        default_color: Color = WHITE,
+        color_scheme: List[Color] = None,
+    ):
         """
         Construct animation and placement manager.
 
@@ -46,7 +42,8 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
         IsaAnimationFlow.__init__(self)
         IsaElemRefCount.__init__(self)
         IsaPlacementMap.__init__(self, strategy=strategy)
-        IsaColorMap.__init__(self, default_color=default_color, color_scheme=color_scheme)
+        IsaColorMap.__init__(
+            self, default_color=default_color, color_scheme=color_scheme)
 
     def _traceback_hash(self, depth: int = 2) -> int:
         """
@@ -55,66 +52,79 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
         # frame 0 is _traceback_hash
         # frame 1 is animation API
         # frame 2 is the caller of animation API
-        frame = sys._getframe(depth)    # pylint: disable=protected-access
+        frame = sys._getframe(depth)  # pylint: disable=protected-access
         return hash(str(frame))
 
     #
     # Animations APIs
     #
     @overload
-    def decl_register(self,
-                      text: str,
-                      width: int,
-                      elements: int,
-                      nreg: int,
-                      value: List[List[Any]] = None,
-                      font_size: int = DEFAULT_FONT_SIZE,
-                      value_format: str = None,
-                      align_with: Union[RegUnit, FunctionUnit, MemoryUnit] = None) -> RegUnit: ...
+    def decl_register(
+        self,
+        text: str,
+        width: int,
+        elements: int,
+        nreg: int,
+        value: List[List[Any]] = None,
+        font_size: int = DEFAULT_FONT_SIZE,
+        value_format: str = None,
+        align_with: Union[RegUnit, FunctionUnit, MemoryUnit] = None,
+    ) -> RegUnit:
+        ...
 
     @overload
-    def decl_register(self,
-                      text: str,
-                      width: int,
-                      elements: int,
-                      value: List[Any] = None,
-                      font_size: int = DEFAULT_FONT_SIZE,
-                      value_format: str = None,
-                      align_with: Union[RegUnit, FunctionUnit, MemoryUnit] = None) -> RegUnit: ...
+    def decl_register(
+        self,
+        text: str,
+        width: int,
+        elements: int,
+        value: List[Any] = None,
+        font_size: int = DEFAULT_FONT_SIZE,
+        value_format: str = None,
+        align_with: Union[RegUnit, FunctionUnit, MemoryUnit] = None,
+    ) -> RegUnit:
+        ...
 
     @overload
-    def decl_register(self,
-                      text: str,
-                      width: int,
-                      value: Any = None,
-                      font_size: int = DEFAULT_FONT_SIZE,
-                      value_format: str = None,
-                      align_with: Union[RegUnit, FunctionUnit, MemoryUnit] = None) -> RegUnit: ...
+    def decl_register(
+        self,
+        text: str,
+        width: int,
+        value: Any = None,
+        font_size: int = DEFAULT_FONT_SIZE,
+        value_format: str = None,
+        align_with: Union[RegUnit, FunctionUnit, MemoryUnit] = None,
+    ) -> RegUnit:
+        ...
 
-    def decl_register(self,
-                      text: str,
-                      width: int,
-                      elements: int = 1,
-                      nreg: int = 1,
-                      value: List[List[Any]] = None,
-                      font_size: int = DEFAULT_FONT_SIZE,
-                      value_format: str = None,
-                      align_with: Union[RegUnit, FunctionUnit, MemoryUnit] = None) -> RegUnit:
+    def decl_register(
+        self,
+        text: str,
+        width: int,
+        elements: int = 1,
+        nreg: int = 1,
+        value: List[List[Any]] = None,
+        font_size: int = DEFAULT_FONT_SIZE,
+        value_format: str = None,
+        align_with: Union[RegUnit, FunctionUnit, MemoryUnit] = None,
+    ) -> RegUnit:
         """
-        Declare one register with a specified name (`text`) and bit width (`width`) and add it to
-        the scene.
+        Declare one register with a specified name (`text`) and bit width (`width`) and
+        add it to the scene.
         
         Args:
             text: Name of this register.
             width: Width of this register width, in bit.
-            elements: Elements count in this register, or horizontal size of this register.
+            elements: Elements count in this register, or horizontal size of this
+                register.
             nreg: Number of registers, or vertical size of this register.
             value: Value of this register, single element or 1-D/2-D array.
                 If not specified, assign None.
             font_size: Font size of register name.
                 If not specified, take the value of `DEFAULT_FONT_SIZE`.
             value_format: Format to print data value.
-                If not specified, take the value from global configuration `elem_value_format`.
+                If not specified, take the value from global configuration
+                `elem_value_format`.
             align_with: Align with specified element when placement.
                 If not specified, placement follows automatic strategy.
 
@@ -129,7 +139,8 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
 
         # Create register unit.
         color = self.colormap_default_color
-        reg_unit = RegUnit(text, color, width, elements, nreg, value, font_size, value_format)
+        reg_unit = RegUnit(
+            text, color, width, elements, nreg, value, font_size, value_format)
 
         # Placement register unit.
         self.place_object(reg_unit, hash(reg_unit), align_with=align_with)
@@ -140,56 +151,67 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
         return reg_unit
 
     @overload
-    def read_elem(self,
-                  vector: RegUnit,
-                  index: int,
-                  reg_idx: int,
-                  offset: int = 0,
-                  width: int = -1,
-                  color_hash: Union[int, str] = None,
-                  value: Any = None,
-                  fill_opacity: float = None,
-                  font_size: int = DEFAULT_FONT_SIZE,
-                  value_format: str = None) -> ElemUnit: ...
+    def read_elem(
+        self,
+        vector: RegUnit,
+        index: int,
+        reg_idx: int,
+        offset: int = 0,
+        width: int = -1,
+        color_hash: Union[int, str] = None,
+        value: Any = None,
+        fill_opacity: float = None,
+        font_size: int = DEFAULT_FONT_SIZE,
+        value_format: str = None,
+    ) -> ElemUnit:
+        ...
 
     @overload
-    def read_elem(self,
-                  vector: RegUnit,
-                  index: int,
-                  offset: int = 0,
-                  width: int = -1,
-                  value: Any = None,
-                  color_hash: Union[int, str] = None,
-                  fill_opacity: float = None,
-                  font_size: int = DEFAULT_FONT_SIZE,
-                  value_format: str = None) -> ElemUnit: ...
+    def read_elem(
+        self,
+        vector: RegUnit,
+        index: int,
+        offset: int = 0,
+        width: int = -1,
+        value: Any = None,
+        color_hash: Union[int, str] = None,
+        fill_opacity: float = None,
+        font_size: int = DEFAULT_FONT_SIZE,
+        value_format: str = None,
+    ) -> ElemUnit:
+        ...
 
     @overload
-    def read_elem(self,
-                  vector: RegUnit,
-                  offset: int = 0,
-                  width: int = -1,
-                  value: Any = None,
-                  color_hash: Union[int, str] = None,
-                  fill_opacity: float = None,
-                  font_size: int = DEFAULT_FONT_SIZE,
-                  value_format: str = None) -> ElemUnit: ...
+    def read_elem(
+        self,
+        vector: RegUnit,
+        offset: int = 0,
+        width: int = -1,
+        value: Any = None,
+        color_hash: Union[int, str] = None,
+        fill_opacity: float = None,
+        font_size: int = DEFAULT_FONT_SIZE,
+        value_format: str = None,
+    ) -> ElemUnit:
+        ...
 
-    def read_elem(self,
-                  vector: RegUnit,
-                  index: int = 0,
-                  reg_idx: int = 0,
-                  offset: int = 0,
-                  width: int = 0,
-                  color_hash: Union[int, str] = None,
-                  value_color: bool = False,
-                  value: Any = None,
-                  fill_opacity: float = None,
-                  font_size: int = DEFAULT_FONT_SIZE,
-                  value_format: str = None) -> ElemUnit:
+    def read_elem(
+        self,
+        vector: RegUnit,
+        index: int = 0,
+        reg_idx: int = 0,
+        offset: int = 0,
+        width: int = 0,
+        color_hash: Union[int, str] = None,
+        value_color: bool = False,
+        value: Any = None,
+        fill_opacity: float = None,
+        font_size: int = DEFAULT_FONT_SIZE,
+        value_format: str = None,
+    ) -> ElemUnit:
         """
-        Read one element from the specified position (`reg_idx` and `index`) of the specified
-        register `vector` and return one element unit.
+        Read one element from the specified position (`reg_idx` and `index`) of the
+        specified register `vector` and return one element unit.
 
         Args:
             vector: Register.
@@ -202,11 +224,13 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
             value: Value of this register, single element or 1-D/2-D array.
                 If not specified, assign None.
             fill_opacity: Fill opacity.
-                If not specified, take the value from global configuration `elem_fill_opacity`.
+                If not specified, take the value from global configuration
+                `elem_fill_opacity`.
             font_size: Font size of element value.
                 If not specified, take the value of `DEFAULT_FONT_SIZE`.
             value_format: Format to print data value.
-                If not specified, take the value from global configuration `elem_value_format`.
+                If not specified, take the value from global configuration
+                `elem_value_format`.
 
         Returns:
             Generated element unit.
@@ -236,7 +260,8 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
 
         # Create new element.
         color = self.colormap_get_color(color_hash)
-        elem = ElemUnit(color, width, value, fill_opacity, font_size, value_format, 0, False)
+        elem = ElemUnit(
+            color, width, value, fill_opacity, font_size, value_format, 0, False)
 
         # Create animation.
         self.add_animation(
@@ -250,55 +275,66 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
         return elem
 
     @overload
-    def read_elem_value(self,
-                        vector: RegUnit,
-                        index: int,
-                        reg_idx: int,
-                        offset: int = 0,
-                        width: int = -1,
-                        color_hash: Union[int, str] = None,
-                        value: Any = None,
-                        fill_opacity: float = None,
-                        font_size: int = DEFAULT_FONT_SIZE,
-                        value_format: str = None) -> Any: ...
+    def read_elem_value(
+        self,
+        vector: RegUnit,
+        index: int,
+        reg_idx: int,
+        offset: int = 0,
+        width: int = -1,
+        color_hash: Union[int, str] = None,
+        value: Any = None,
+        fill_opacity: float = None,
+        font_size: int = DEFAULT_FONT_SIZE,
+        value_format: str = None,
+    ) -> Any:
+        ...
 
     @overload
-    def read_elem_value(self,
-                        vector: RegUnit,
-                        index: int,
-                        offset: int = 0,
-                        width: int = -1,
-                        value: Any = None,
-                        color_hash: Union[int, str] = None,
-                        fill_opacity: float = None,
-                        font_size: int = DEFAULT_FONT_SIZE,
-                        value_format: str = None) -> Any: ...
+    def read_elem_value(
+        self,
+        vector: RegUnit,
+        index: int,
+        offset: int = 0,
+        width: int = -1,
+        value: Any = None,
+        color_hash: Union[int, str] = None,
+        fill_opacity: float = None,
+        font_size: int = DEFAULT_FONT_SIZE,
+        value_format: str = None,
+    ) -> Any:
+        ...
 
     @overload
-    def read_elem_value(self,
-                        vector: RegUnit,
-                        offset: int = 0,
-                        width: int = -1,
-                        value: Any = None,
-                        color_hash: Union[int, str] = None,
-                        fill_opacity: float = None,
-                        font_size: int = DEFAULT_FONT_SIZE,
-                        value_format: str = None) -> Any: ...
+    def read_elem_value(
+        self,
+        vector: RegUnit,
+        offset: int = 0,
+        width: int = -1,
+        value: Any = None,
+        color_hash: Union[int, str] = None,
+        fill_opacity: float = None,
+        font_size: int = DEFAULT_FONT_SIZE,
+        value_format: str = None,
+    ) -> Any:
+        ...
 
-    def read_elem_value(self,
-                        vector: RegUnit,
-                        index: int = 0,
-                        reg_idx: int = 0,
-                        offset: int = 0,
-                        width: int = 0,
-                        color_hash: Union[int, str] = None,
-                        value: Any = None,
-                        fill_opacity: float = None,
-                        font_size: int = DEFAULT_FONT_SIZE,
-                        value_format: str = None) -> Any:
+    def read_elem_value(
+        self,
+        vector: RegUnit,
+        index: int = 0,
+        reg_idx: int = 0,
+        offset: int = 0,
+        width: int = 0,
+        color_hash: Union[int, str] = None,
+        value: Any = None,
+        fill_opacity: float = None,
+        font_size: int = DEFAULT_FONT_SIZE,
+        value_format: str = None,
+    ) -> Any:
         """
-        Read one element from the specified position (`reg_idx` and `index`) of the specified
-        register `vector` and return the value of this element unit.
+        Read one element from the specified position (`reg_idx` and `index`) of the
+        specified register `vector` and return the value of this element unit.
 
         The color of element unit is selected according to the value of the element.
 
@@ -312,55 +348,69 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
             value: Value of this register, single element or 1-D/2-D array.
                 If not specified, assign None.
             fill_opacity: Fill opacity.
-                If not specified, take the value from global configuration `elem_fill_opacity`.
+                If not specified, take the value from global configuration
+                `elem_fill_opacity`.
             font_size: Font size of element value.
                 If not specified, take the value of `DEFAULT_FONT_SIZE`.
             value_format: Format to print data value.
-                If not specified, take the value from global configuration `elem_value_format`.
+                If not specified, take the value from global configuration
+                `elem_value_format`.
 
         Returns:
             The value of accessed element unit.
         """
         # Return new element
-        elem: ElemUnit = self.read_elem(vector, index, reg_idx, offset, width, color_hash, True,
-                                        value, fill_opacity, font_size, value_format)
+        elem: ElemUnit = self.read_elem(
+            vector, index, reg_idx, offset, width, color_hash, True, value,
+            fill_opacity, font_size, value_format)
         # Return value of new element
         return elem.elem_value
 
     @overload
-    def move_elem(self,
-                  elem: ElemUnit,
-                  vector: RegUnit,
-                  index: int,
-                  reg_idx: int,
-                  offset: int = 0,
-                  width: int = 0) -> ElemUnit: ...
+    def move_elem(
+        self,
+        elem: ElemUnit,
+        vector: RegUnit,
+        index: int,
+        reg_idx: int,
+        offset: int = 0,
+        width: int = 0,
+    ) -> ElemUnit:
+        ...
 
     @overload
-    def move_elem(self,
-                  elem: ElemUnit,
-                  vector: RegUnit,
-                  index: int,
-                  offset: int = 0,
-                  width: int = 0) -> ElemUnit: ...
+    def move_elem(
+        self,
+        elem: ElemUnit,
+        vector: RegUnit,
+        index: int,
+        offset: int = 0,
+        width: int = 0,
+    ) -> ElemUnit:
+        ...
 
     @overload
-    def move_elem(self,
-                  elem: ElemUnit,
-                  vector: RegUnit,
-                  offset: int = 0,
-                  width: int = 0) -> ElemUnit: ...
+    def move_elem(
+        self,
+        elem: ElemUnit,
+        vector: RegUnit,
+        offset: int = 0,
+        width: int = 0,
+    ) -> ElemUnit:
+        ...
 
-    def move_elem(self,
-                  elem: ElemUnit,
-                  vector: RegUnit,
-                  index: int = 0,
-                  reg_idx: int = 0,
-                  offset: int = 0,
-                  width: int = 0) -> ElemUnit:
+    def move_elem(
+        self,
+        elem: ElemUnit,
+        vector: RegUnit,
+        index: int = 0,
+        reg_idx: int = 0,
+        offset: int = 0,
+        width: int = 0,
+    ) -> ElemUnit:
         """
-        Aassign one element `elem` to the specified position (`reg_idx` and `index`) of the
-        specified register `vector`. 
+        Aassign one element `elem` to the specified position (`reg_idx` and `index`) of
+        the specified register `vector`. 
 
         Args:
             elem: Element object.
@@ -386,17 +436,16 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
         high_bits = elem.elem_high_bits
         high_zero = elem.elem_high_zero
         new_elem = ElemUnit(
-            color, width, value, fill_opacity, font_size, value_format, high_bits, high_zero)
+            color, width, value, fill_opacity, font_size, value_format, high_bits,
+            high_zero)
 
         # Create animation. Replace dup_elem with new_elem.
         dup_elem = self.get_duplicate_item(elem)
         old_dep = self.get_last_deps(elem)
         animation_item = self.add_animation(
             assign_elem(dup_elem, new_elem, vector, index, reg_idx, offset),
-            [elem, dup_elem], new_elem,
-            dep=[old_dep, vector] if old_dep else [vector],
-            remove_after=[dup_elem],
-            add_after=[new_elem])
+            [elem, dup_elem], new_elem, dep=[old_dep, vector] if old_dep else [vector],
+            remove_after=[dup_elem], add_after=[new_elem])
 
         # Update element reference counter.
         self.set_elem_cusumer(elem, animation_item, vector)
@@ -409,19 +458,22 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
         # Return new element.
         return new_elem
 
-    def data_extend(self,
-                    elem: ElemUnit,
-                    width: float,
-                    zero_extend: bool = False,
-                    value: Any = None) -> ElemUnit:
+    def data_extend(
+        self,
+        elem: ElemUnit,
+        width: float,
+        zero_extend: bool = False,
+        value: Any = None,
+    ) -> ElemUnit:
         """
-        Signaled extend or zero-extend element `elem` to bitwidth `width. Return the new element
-        after extension.
+        Signaled extend or zero-extend element `elem` to bitwidth `width. Return the new
+        element after extension.
 
         Args:
             elem: Origin element unit.
             width: Target width for extend.
-            zero_extend: True means zero extension. The extend part will be assign with zero.
+            zero_extend: True means zero extension. The extend part will be assign with
+                zero.
             value: New value of the element unit.
                 If not specified, inherent value from the origin element.
 
@@ -446,7 +498,8 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
         font_size = elem.elem_font_size
         value_format = elem.elem_value_format
         new_elem = ElemUnit(
-            color, width, value, fill_opacity, font_size, value_format, high_bits, zero_extend)
+            color, width, value, fill_opacity, font_size, value_format, high_bits,
+            zero_extend)
 
         # Create animation. Replace dup_elem with new_elem.
         dup_elem = self.get_duplicate_item(elem)
@@ -465,34 +518,38 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
     #
     # Function behavior
     #
-    def decl_function(self,
-                      isa_hash: str,
-                      args_width: List[float],
-                      res_width: Union[int, List[int]],
-                      name: str = None,
-                      args_name: List[str] = None,
-                      res_name: Union[str, List[str]] = None,
-                      font_size: int = DEFAULT_FONT_SIZE,
-                      value_format: str = None,
-                      align_with: Union[RegUnit, FunctionUnit, MemoryUnit] = None,
-                      func_callee: Callable = None) -> FunctionUnit:
+    def decl_function(
+        self,
+        isa_hash: str,
+        args_width: List[float],
+        res_width: Union[int, List[int]],
+        name: str = None,
+        args_name: List[str] = None,
+        res_name: Union[str, List[str]] = None,
+        font_size: int = DEFAULT_FONT_SIZE,
+        value_format: str = None,
+        align_with: Union[RegUnit, FunctionUnit, MemoryUnit] = None,
+        func_callee: Callable = None,
+    ) -> FunctionUnit:
         """
-        Declare one function unit with a specified hash (`isa_hash`), arguments (`arg_width`), and
-        return values (`res_width`) and add it to the scene.
+        Declare one function unit with a specified hash (`isa_hash`), arguments
+        (`arg_width`), and return values (`res_width`) and add it to the scene.
 
         Args:
             isa_hash: Hash value of this function unit, used by `function_call`.
             args_width: A list of bit-width of arguments.
-            res_width: Bit-width of return values. If there is only one return value, one single
-                interger is required.
+            res_width: Bit-width of return values. If there is only one return value,
+                one single interger is required.
             name: Function name. If not specified, take `isa_hash` as function name.
-            args_name: A list of name of arguments. The number of elements should be same as
-                `args_width`.
-            res_name: Name of return value. The number of elements should be same as `res_name`.
+            args_name: A list of name of arguments. The number of elements should be
+                same as `args_width`.
+            res_name: Name of return value. The number of elements should be same as
+                `res_name`.
             font_size: Font size of register name.
                 If not specified, take the value of `DEFAULT_FONT_SIZE`.
             value_format: Format to print data value.
-                If not specified, take the value from global configuration `elem_value_format`.
+                If not specified, take the value from global configuration
+                `elem_value_format`.
             align_with: Align with specified element when placement.
                 If not specified, placement follows automatic strategy.
             func_callee: Pointer to a function to perform the functionality. 
@@ -523,8 +580,9 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
 
         # Create function unit.
         color = self.colormap_default_color
-        func_unit = FunctionUnit(name, color, args_width, res_width, args_name, res_name,
-                                 font_size, value_format, func_callee)
+        func_unit = FunctionUnit(
+            name, color, args_width, res_width, args_name, res_name, font_size,
+            value_format, func_callee)
 
         # Placement function unit.
         self.place_object(func_unit, isa_hash, align_with=align_with)
@@ -534,47 +592,53 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
         # Return function unit.
         return func_unit
 
-    def decl_func_group(self,
-                        num_unit: Union[int, List[int]],
-                        isa_hash: Union[str, List[str]],
-                        args_width: List[float],
-                        res_width: Union[int, List[int]],
-                        func_name: Union[str, List[str]] = None,
-                        args_name: List[str] = None,
-                        res_name: Union[str, List[str]] = None,
-                        font_size: int = DEFAULT_FONT_SIZE,
-                        value_format: str = None,
-                        force_hw_ratio: bool = False,
-                        func_callee: Callable = None) -> List[FunctionUnit]:
+    def decl_func_group(
+        self,
+        num_unit: Union[int, List[int]],
+        isa_hash: Union[str, List[str]],
+        args_width: List[float],
+        res_width: Union[int, List[int]],
+        func_name: Union[str, List[str]] = None,
+        args_name: List[str] = None,
+        res_name: Union[str, List[str]] = None,
+        font_size: int = DEFAULT_FONT_SIZE,
+        value_format: str = None,
+        force_hw_ratio: bool = False,
+        func_callee: Callable = None,
+    ) -> List[FunctionUnit]:
         """
-        Declare a group of function units with a sequential of specified hash (`isa_hash`),
-        arguments (`arg_width`), and return values (`res_width`) and add them to the scene as a
-        group.
+        Declare a group of function units with a sequential of specified hash
+        (`isa_hash`), arguments (`arg_width`), and return values (`res_width`) and add
+        them to the scene as a group.
 
         Args:
             num_unit: The number of units. More than one hierachy level is accepted.
             isa_hash: Hash value of this function unit, used by `function_call`.
                 Both a single hash and a sequence of hash are accepted.
             args_width: A list of bit-width of arguments.
-            res_width: Bit-width of return values. If there is only one return value, one single
-                interger is required.
-            func_name: Function name. If not specified, take `isa_hash` as function name.
-            args_name: A list of name of arguments. The number of elements should be same as
-                `args_width`.
-            res_name: Name of return value. The number of elements should be same as `res_name`.
+            res_width: Bit-width of return values. If there is only one return value,
+                one single interger is required.
+            func_name: Function name. If not specified, take `isa_hash` as function
+                name.
+            args_name: A list of name of arguments. The number of elements should be
+                same as `args_width`.
+            res_name: Name of return value. The number of elements should be same as
+                `res_name`.
             font_size: Font size of register name.
                 If not specified, take the value of `DEFAULT_FONT_SIZE`.
             value_format: Format to print data value.
-                If not specified, take the value from global configuration `elem_value_format`.
-            force_hw_ratio: If `force_hw_ratio` is true, the number of units in one row is forced
-                by the last item in `num_unit`.
-                If `force_hw_ratio` is false, the shape of function groups is auto-adjusted
-                according to the scene h/w ratio.
+                If not specified, take the value from global configuration
+                `elem_value_format`.
+            force_hw_ratio: If `force_hw_ratio` is true, the number of units in one row
+                is forced by the last item in `num_unit`.
+                If `force_hw_ratio` is false, the shape of function groups is
+                auto-adjusted according to the scene h/w ratio.
             func_callee: Pointer to a function to perform the functionality.
 
         Returns:
             A list of generated function unit.
         """
+
         def _generate_name_with_index(name: Union[str, List[str]], num_id: List[int]):
             if not isinstance(name, list):
                 return name + "_".join([str(sub_id) for sub_id in num_id])
@@ -614,32 +678,36 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
             else:
                 name = _generate_name_with_index(isa_hash, num_id)
             color = self.colormap_default_color
-            func_unit = FunctionUnit(name, color, args_width, res_width, args_name, res_name,
-                                     font_size, value_format, func_callee)
+            func_unit = FunctionUnit(
+                name, color, args_width, res_width, args_name, res_name, font_size,
+                value_format, func_callee)
             func_unit_list.append(func_unit)
             # Create hash value.
             func_unit_hash.append(_generate_name_with_index(isa_hash, num_id))
 
         # Placement function units.
-        self.place_object_group(func_unit_list, func_unit_hash,
-                                force_hw_ratio=num_unit[-1] if force_hw_ratio else None)
+        self.place_object_group(
+            func_unit_list, func_unit_hash,
+            force_hw_ratio=num_unit[-1] if force_hw_ratio else None)
         # Create animation
         self.add_animation(decl_func_unit(*func_unit_list), None, func_unit_list)
 
         # Return a list of function units.
         return func_unit_list
 
-    def function_call(self,
-                      isa_hash: str,
-                      args: List[ElemUnit],
-                      args_offset: List[int] = None,
-                      color_hash: Union[int, str] = None,
-                      res_width: Union[int, List[int]] = None,
-                      res_offset: Union[int, List[int]] = None,
-                      res_value: Union[Any, List[Any]] = None,
-                      res_fill_opacity: float = None,
-                      res_font_size: int = DEFAULT_FONT_SIZE,
-                      res_value_format: str = None) -> Union[ElemUnit, List[ElemUnit]]:
+    def function_call(
+        self,
+        isa_hash: str,
+        args: List[ElemUnit],
+        args_offset: List[int] = None,
+        color_hash: Union[int, str] = None,
+        res_width: Union[int, List[int]] = None,
+        res_offset: Union[int, List[int]] = None,
+        res_value: Union[Any, List[Any]] = None,
+        res_fill_opacity: float = None,
+        res_font_size: int = DEFAULT_FONT_SIZE,
+        res_value_format: str = None,
+    ) -> Union[ElemUnit, List[ElemUnit]]:
         """
         Function call.
 
@@ -649,21 +717,24 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
             args_offset: LSB offset for the argument elements.
                 If not specified, 0 for each argument elements.
             color_hash: Specified hash to get color from scheme.
-            res_width: Bit-width of return values. If there is only one return value, one single
-                interger is required.
+            res_width: Bit-width of return values. If there is only one return value,
+                one single interger is required.
             res_offset: LSB offset for the result element units.
                 If not specified, 0 for each result element units.
             res_value: Value of the result element units.
                 If not specified, assign None or calculate by inline function.
             res_fill_opacity: Fill opacity.
-                If not specified, take the value from global configuration `elem_fill_opacity`.
+                If not specified, take the value from global configuration
+                `elem_fill_opacity`.
             res_font_size: Font size of result element unit.
                 If not specified, take the value of `DEFAULT_FONT_SIZE`.
             res_value_format: Format to print result value.
-                If not specified, take the value from global configuration `elem_value_format`.
+                If not specified, take the value from global configuration
+                `elem_value_format`.
 
         Returns:
-            Result element units. If only one result value, only one element unit returns.
+            Result element units. If only one result value, only one element unit
+                returns.
         """
         func_unit: FunctionUnit = self.get_object(isa_hash)
 
@@ -694,8 +765,8 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
             # Immediate operand:
             if isinstance(elem, tuple):
                 args_elem.append(elem[0])
-                # Special case for immediate, read_func_imm is aligned with the animation to move
-                # animation.
+                # Special case for immediate, read_func_imm is aligned with the
+                # animation to move animation.
                 dup_args_elem.append(elem)
             else:
                 args_elem.append(elem)
@@ -720,16 +791,19 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
             res_color_list = [res_color_list]
         res_elem_list = [
             ElemUnit(
-                color, width, value, res_fill_opacity, res_font_size, res_value_format, 0, False)
-            for width, value, color in zip(res_width, res_value, res_color_list)]
+                color, width, value, res_fill_opacity, res_font_size, res_value_format,
+                0, False)
+            for width, value, color in zip(res_width, res_value, res_color_list)
+        ]
 
         # Create animation.
         old_dep = self.get_last_deps(*args_elem_exist)
         if old_dep is not None and not isinstance(old_dep, list):
             old_dep = [old_dep]
         animation_item = self.add_animation(
-            function_call(func_unit, dup_args_elem, res_elem_list, args_offset, res_offset),
-            args_elem_exist + dup_args_elem_exist, res_elem_list,
+            function_call(
+                func_unit, dup_args_elem, res_elem_list, args_offset,
+                res_offset), args_elem_exist + dup_args_elem_exist, res_elem_list,
             dep=(old_dep + [func_unit]) if old_dep else [func_unit])
 
         # Update elements reference counter.
@@ -744,18 +818,20 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
         else:
             return res_elem_list
 
-    def func_group_call(self,
-                        grp_isa_hash: str,
-                        para_index: Union[int, List[int]],
-                        args: List[ElemUnit],
-                        args_offset: List[int] = None,
-                        color_hash: Union[int, str] = None,
-                        res_width: Union[int, List[int]] = None,
-                        res_offset: Union[int, List[int]] = None,
-                        res_value: Union[Any, List[Any]] = None,
-                        res_fill_opacity: float = None,
-                        res_font_size: int = DEFAULT_FONT_SIZE,
-                        res_value_format: str = None) -> Union[ElemUnit, List[ElemUnit]]:
+    def func_group_call(
+        self,
+        grp_isa_hash: str,
+        para_index: Union[int, List[int]],
+        args: List[ElemUnit],
+        args_offset: List[int] = None,
+        color_hash: Union[int, str] = None,
+        res_width: Union[int, List[int]] = None,
+        res_offset: Union[int, List[int]] = None,
+        res_value: Union[Any, List[Any]] = None,
+        res_fill_opacity: float = None,
+        res_font_size: int = DEFAULT_FONT_SIZE,
+        res_value_format: str = None,
+    ) -> Union[ElemUnit, List[ElemUnit]]:
         """
         Function call among a parallel function group. The function unit is specified by
         `grp_isa_hash` and `para_index`.
@@ -767,21 +843,24 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
             args_offset: LSB offset for the argument elements.
                 If not specified, 0 for each argument elements.
             color_hash: Specified hash to get color from scheme.
-            res_width: Bit-width of return values. If there is only one return value, one single
-                interger is required.
+            res_width: Bit-width of return values. If there is only one return value,
+                one single interger is required.
             res_offset: LSB offset for the result element units.
                 If not specified, 0 for each result element units.
             res_value: Value of the result element units.
                 If not specified, assign None or calculate by inline function.
             res_fill_opacity: Fill opacity.
-                If not specified, take the value from global configuration `elem_fill_opacity`.
+                If not specified, take the value from global configuration
+                `elem_fill_opacity`.
             res_font_size: Font size of result element unit.
                 If not specified, take the value of `DEFAULT_FONT_SIZE`.
             res_value_format: Format to print result value.
-                If not specified, take the value from global configuration `elem_value_format`.
+                If not specified, take the value from global configuration
+                `elem_value_format`.
 
         Returns:
-            Result element units. If only one result value, only one element unit returns.
+            Result element units. If only one result value, only one element unit
+                returns.
         """
         if isinstance(para_index, int):
             isa_hash = f"{grp_isa_hash}{para_index}"
@@ -791,16 +870,19 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
         if color_hash is None:
             color_hash = self._traceback_hash()
 
-        return self.function_call(isa_hash, args, args_offset, color_hash, res_width, res_offset,
-                                  res_value, res_fill_opacity, res_font_size, res_value_format)
+        return self.function_call(
+            isa_hash, args, args_offset, color_hash, res_width, res_offset, res_value,
+            res_fill_opacity, res_font_size, res_value_format)
 
-    def read_func_imm(self,
-                      width: float,
-                      color_hash: Union[int, str] = None,
-                      value: Any = None,
-                      fill_opacity: float = None,
-                      font_size: int = DEFAULT_FONT_SIZE,
-                      value_format: str = None) -> Tuple[ElemUnit, Animation]:
+    def read_func_imm(
+        self,
+        width: float,
+        color_hash: Union[int, str] = None,
+        value: Any = None,
+        fill_opacity: float = None,
+        font_size: int = DEFAULT_FONT_SIZE,
+        value_format: str = None,
+    ) -> Tuple[ElemUnit, Animation]:
         """
         Generate immediate operand for function calling.
         
@@ -810,11 +892,13 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
             value: Value of the immediate element units.
                 If not specified, assign None or calculate by inline function.
             fill_opacity: Fill opacity.
-                If not specified, take the value from global configuration `elem_fill_opacity`.
+                If not specified, take the value from global configuration
+                `elem_fill_opacity`.
             font_size: Font size of result element unit.
                 If not specified, take the value of `DEFAULT_FONT_SIZE`.
             value_format: Format to print result value.
-                If not specified, take the value from global configuration `elem_value_format`. 
+                If not specified, take the value from global configuration
+                `elem_value_format`. 
            
         Returns:
             A tuple of element unit and fade-in animation.
@@ -829,7 +913,8 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
 
         # Create element unit.
         color = self.colormap_get_color(color_hash)
-        res_elem = ElemUnit(color, width, value, fill_opacity, font_size, value_format, 0, False)
+        res_elem = ElemUnit(
+            color, width, value, fill_opacity, font_size, value_format, 0, False)
 
         # Retuen a tuple of element unit and animation.
         return (res_elem, read_func_imm(res_elem))
@@ -837,27 +922,31 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
     #
     # Memory
     #
-    def decl_memory(self,
-                    addr_width: int,
-                    data_width: int,
-                    mem_range: List[Tuple[int,int]],
-                    isa_hash: str = None,
-                    addr_align: int = None,
-                    status_width: int = 0,
-                    font_size: int = DEFAULT_FONT_SIZE,
-                    value_format: str = None,
-                    para_enable: bool = False) -> MemoryUnit:
+    def decl_memory(
+        self,
+        addr_width: int,
+        data_width: int,
+        mem_range: List[Tuple[int, int]],
+        isa_hash: str = None,
+        addr_align: int = None,
+        status_width: int = 0,
+        font_size: int = DEFAULT_FONT_SIZE,
+        value_format: str = None,
+        para_enable: bool = False,
+        dual_port: bool = False,
+    ) -> MemoryUnit:
         """
-        Declare one memory unit with a specified address width (`addr_width`), data width
-        (`data_width`), and memory range (`mem_range`) and add it to the scene.
+        Declare one memory unit with a specified address width (`addr_width`), data
+        width (`data_width`), and memory range (`mem_range`) and add it to the scene.
 
         Args:
             addr_width: Bit-width of the address port.
             data_width: Bit-width of the data port.
-            mem_range: Range of memory map. Each tuple in `mem_range` presents the range of one
-                memory map. The first element in tuple is the lowest address and the second element
-                is the highest address.
-            isa_hash: Hash value of this memory unit. Used to declare more than one memory unit.
+            mem_range: Range of memory map. Each tuple in `mem_range` presents the range
+                of one memory map. The first element in tuple is the lowest address and
+                the second element is the highest address.
+            isa_hash: Hash value of this memory unit. Used to declare more than one
+                memory unit.
             addr_align: Align requirement of memory range.
                 If not specified, take the value from global configuration `mem_align`.
             status_width: Bit width of the status port.
@@ -865,9 +954,12 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
             font_size: Font size of register name.
                 If not specified, take the value of `DEFAULT_FONT_SIZE`.
             value_format: Format to print data value.
-                If not specified, take the value from global configuration `elem_value_format`.
-            para_enable: True means memory unit allow parallel animations. False means animations
-                with this memory unit must be serialized.
+                If not specified, take the value from global configuration
+                `elem_value_format`.
+            para_enable: True means memory unit allow parallel animations. False means
+                animations with this memory unit must be serialized.
+            dual_port: True means the memory unit has two data ports. Otherwise, only
+                one data port is present.
 
         Returns:
             Generated memory unit.
@@ -889,9 +981,10 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
 
         # Create memory unit.
         mem_color = self.colormap_default_color
-        mem_unit = MemoryUnit(mem_color, addr_width, data_width, addr_align, mem_range,
-                              font_size, value_format, para_enable, status_width,
-                              self.get_placement_width() - 2)
+        mem_unit = MemoryUnit(
+            mem_color, addr_width, data_width, addr_align, mem_range, font_size,
+            value_format, para_enable, status_width,
+            self.get_placement_width() - 2, dual_port)
 
         # Placement memory unit.
         self.place_object(mem_unit, isa_hash)
@@ -901,22 +994,25 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
         # Return memory unit.
         return mem_unit
 
-    def read_memory(self,
-                    addr: ElemUnit,
-                    width: int,
-                    offset: int = 0,
-                    color_hash: Union[int, str] = None,
-                    res_value: Any = None,
-                    res_fill_opacity: float = None,
-                    res_font_size: int = DEFAULT_FONT_SIZE,
-                    res_value_format: str = None,
-                    has_status_output: bool = False,
-                    status_width: int = None,
-                    status_value: Any = None,
-                    status_fill_opacity: float = None,
-                    status_font_size: int = DEFAULT_FONT_SIZE,
-                    status_value_format: str = None,
-                    mem_isa_hash: str = None) -> Union[Tuple[ElemUnit, ElemUnit], ElemUnit]:
+    def read_memory(
+        self,
+        addr: ElemUnit,
+        width: int,
+        offset: int = 0,
+        color_hash: Union[int, str] = None,
+        res_value: Any = None,
+        res_fill_opacity: float = None,
+        res_font_size: int = DEFAULT_FONT_SIZE,
+        res_value_format: str = None,
+        has_status_output: bool = False,
+        status_width: int = None,
+        status_value: Any = None,
+        status_fill_opacity: float = None,
+        status_font_size: int = DEFAULT_FONT_SIZE,
+        status_value_format: str = None,
+        port2: bool = False,
+        mem_isa_hash: str = None,
+    ) -> Union[Tuple[ElemUnit, ElemUnit], ElemUnit]:
         """
         Read data from the specified address.
 
@@ -927,29 +1023,35 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
             color_hash: Hash value to get color from color scheme.
             res_value: Value of data element.
             res_fill_opacity: Fill opacity.
-                If not specified, take the value from global configuration `elem_fill_opacity`.
+                If not specified, take the value from global configuration
+                `elem_fill_opacity`.
             res_font_size: Font size of result element unit.
                 If not specified, take the value of `DEFAULT_FONT_SIZE`.
             res_value_format: Format to print result value.
-                If not specified, take the value from global configuration `elem_value_format`. 
+                If not specified, take the value from global configuration
+                `elem_value_format`. 
             has_status_output: True means output of the status port is required.
-                If the memory unit does not have a status port, `has_status_output` is ignored.
+                If the memory unit does not have a status port, `has_status_output` is
+                ignored.
             status_width: Bit width of output status.
-                If not specified, the width of the generated status element unit is as same as the
-                status port.
+                If not specified, the width of the generated status element unit is as
+                same as the status port.
             status_value: Value of status element.
             status_fill_opacity: Fill opacity.
-                If not specified, take the value from global configuration `elem_fill_opacity`.
+                If not specified, take the value from global configuration
+                `elem_fill_opacity`.
             status_font_size: Font size of result element unit.
                 If not specified, take the value of `DEFAULT_FONT_SIZE`.
             status_value_format: Format to print result value.
-                If not specified, take the value from global configuration `elem_value_format`. 
+                If not specified, take the value from global configuration
+                `elem_value_format`. 
+            port2: Read data to port2 if the memory unit has dual ports.
             mem_isa_hash: Hash to idenify memory unit.
                 If not specified, operate on the memory unit with the hash of "Memory".
 
         Returns:
-            If having status output, return a tuple of the data and status element units.
-                Otherwise, return the data element unit.
+            If having status output, return a tuple of the data and status element
+                units. Otherwise, return the data element unit.
         """
         if mem_isa_hash is None:
             mem_isa_hash = "Memory"
@@ -985,18 +1087,21 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
 
         # Create data element
         data = ElemUnit(
-            color, width, res_value, res_fill_opacity, res_font_size, res_value_format, 0, False)
+            color, width, res_value, res_fill_opacity, res_font_size, res_value_format,
+            0, False)
 
         # Create address mark and memory mark
         if addr_value is not None:
             addr_mark = mem_unit.get_addr_mark(addr_value, addr.elem_color)
-            mem_mark = mem_unit.get_rd_mem_mark(addr_value, addr_value + width // 8, color)
+            mem_mark = mem_unit.get_rd_mem_mark(
+                addr_value, addr_value + width // 8, color)
             mem_unit.append_mem_mark_list(mem_mark)
 
         # Create status element
         if has_status_output:
-            status = ElemUnit(status_color, status_width, status_value, status_fill_opacity,
-                              status_font_size, status_value_format, 0, False)
+            status = ElemUnit(
+                status_color, status_width, status_value, status_fill_opacity,
+                status_font_size, status_value_format, 0, False)
         else:
             status = None
 
@@ -1008,17 +1113,17 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
         old_dep = self.get_last_deps(addr)
         if addr_value is not None:
             animation_item = self.add_animation(
-                read_memory(mem_unit, dup_addr, data, status, addr_mark, mem_mark, addr_match),
-                [addr, dup_addr],
+                read_memory(
+                    mem_unit, dup_addr, data, status, addr_mark, mem_mark, addr_match,
+                    port2), [addr, dup_addr],
                 [data, mem_mark, status] if has_status_output else [data, mem_mark],
                 dep=[old_dep, mem_unit] if old_dep else [mem_unit],
                 remove_after=[dup_addr] if addr_match else [addr_mark])
 
         else:
             animation_item = self.add_animation(
-                read_memory_without_addr(mem_unit, dup_addr, data, status),
-                [addr, dup_addr],
-                [data, status] if has_status_output else [data],
+                read_memory_without_addr(mem_unit, dup_addr, data, status, port2),
+                [addr, dup_addr], [data, status] if has_status_output else [data],
                 dep=[old_dep, mem_unit] if old_dep else [mem_unit],
                 remove_after=[dup_addr])
 
@@ -1034,18 +1139,21 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
         else:
             return data
 
-    def write_memory(self,
-                     addr: ElemUnit,
-                     data: ElemUnit,
-                     offset: int = 0,
-                     color_hash: Union[int, str] = None,
-                     has_status_output: bool = False,
-                     status_width: int = None,
-                     status_value: Any = None,
-                     status_fill_opacity: float = None,
-                     status_font_size: int = DEFAULT_FONT_SIZE,
-                     status_value_format: str = None,
-                     mem_isa_hash: str = None) -> Union[ElemUnit, None]:
+    def write_memory(
+        self,
+        addr: ElemUnit,
+        data: ElemUnit,
+        offset: int = 0,
+        color_hash: Union[int, str] = None,
+        has_status_output: bool = False,
+        status_width: int = None,
+        status_value: Any = None,
+        status_fill_opacity: float = None,
+        status_font_size: int = DEFAULT_FONT_SIZE,
+        status_value_format: str = None,
+        port2: bool = False,
+        mem_isa_hash: str = None,
+    ) -> Union[ElemUnit, None]:
         """
         Write data to the specified address.
 
@@ -1055,17 +1163,21 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
             offset: LSB offset of read data.
             color_hash: Hash value to get color from color scheme.
             has_status_output: True means output of the status port is required.
-                If the memory unit does not have a status port, `has_status_output` is ignored.
+                If the memory unit does not have a status port, `has_status_output` is
+                ignored.
             status_width: Bit width of output status.
-                If not specified, the width of the generated status element unit is as same as the
-                status port.
+                If not specified, the width of the generated status element unit is as
+                same as the status port.
             status_value: Value of status element.
             status_fill_opacity: Fill opacity.
-                If not specified, take the value from global configuration `elem_fill_opacity`.
+                If not specified, take the value from global configuration
+                `elem_fill_opacity`.
             status_font_size: Font size of result element unit.
                 If not specified, take the value of `DEFAULT_FONT_SIZE`.
             status_value_format: Format to print result value.
-                If not specified, take the value from global configuration `elem_value_format`. 
+                If not specified, take the value from global configuration
+                `elem_value_format`. 
+            port2: Write data from port2 if the memory unit has dual ports.
             mem_isa_hash: Hash to idenify memory unit.
                 If not specified, operate on the memory unit with the hash of "Memory".
 
@@ -1105,8 +1217,9 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
         # Create status element
         status_color = self.colormap_get_color(color_hash)
         if has_status_output:
-            status = ElemUnit(status_color, status_width, status_value, status_fill_opacity,
-                              status_font_size, status_value_format, 0, False)
+            status = ElemUnit(
+                status_color, status_width, status_value, status_fill_opacity,
+                status_font_size, status_value_format, 0, False)
         else:
             status = None
 
@@ -1119,17 +1232,17 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
         old_dep = self.get_last_deps(addr, data)
         if addr_value is not None:
             animation_item = self.add_animation(
-                write_memory(mem_unit, dup_addr, dup_data, status, addr_mark, mem_mark, addr_match),
-                [addr, data, dup_addr, dup_data],
+                write_memory(
+                    mem_unit, dup_addr, dup_data, status, addr_mark, mem_mark,
+                    addr_match, port2), [addr, data, dup_addr, dup_data],
                 [mem_mark, status] if has_status_output else [mem_mark],
                 dep=old_dep + [mem_unit] if old_dep else [mem_unit],
-                remove_after=[dup_addr, dup_data] if addr_match else [addr_mark, dup_data],
-                add_after=[mem_mark])
+                remove_after=[dup_addr, dup_data]
+                if addr_match else [addr_mark, dup_data], add_after=[mem_mark])
         else:
             animation_item = self.add_animation(
-                write_memory_without_addr(mem_unit, dup_addr, dup_data, status),
-                [addr, data, dup_addr, dup_data],
-                [status] if has_status_output else [],
+                write_memory_without_addr(mem_unit, dup_addr, dup_data, status, port2),
+                [addr, data, dup_addr, dup_data], [status] if has_status_output else [],
                 dep=old_dep + [mem_unit] if old_dep else [mem_unit],
                 remove_after=[dup_addr])
 
@@ -1143,3 +1256,136 @@ class IsaDataFlow(IsaAnimationFlow, IsaElemRefCount, IsaPlacementMap, IsaColorMa
             return status
         else:
             return None
+
+    def read_memory_pair(
+        self,
+        addr: ElemUnit,
+        width: int,
+        offset: int = 0,
+        color_hash: Union[int, str] = None,
+        res_value: Tuple[Any, Any] = None,
+        res_fill_opacity: float = None,
+        res_font_size: int = DEFAULT_FONT_SIZE,
+        res_value_format: str = None,
+        has_status_output: bool = False,
+        status_width: int = None,
+        status_value: Any = None,
+        status_fill_opacity: float = None,
+        status_font_size: int = DEFAULT_FONT_SIZE,
+        status_value_format: str = None,
+        mem_isa_hash: str = None,
+    ) -> Union[Tuple[ElemUnit, ElemUnit, ElemUnit], Tuple[ElemUnit, ElemUnit]]:
+        """
+        Read data from the specified address.
+
+        Args:
+            addr: Address element unit.
+            width: Bit width of read data.
+            offset: LSB offset of read data.
+            color_hash: Hash value to get color from color scheme.
+            res_value: Value of data element.
+            res_fill_opacity: Fill opacity.
+                If not specified, take the value from global configuration
+                `elem_fill_opacity`.
+            res_font_size: Font size of result element unit.
+                If not specified, take the value of `DEFAULT_FONT_SIZE`.
+            res_value_format: Format to print result value.
+                If not specified, take the value from global configuration
+                `elem_value_format`. 
+            has_status_output: True means output of the status port is required.
+                If the memory unit does not have a status port, `has_status_output` is
+                ignored.
+            status_width: Bit width of output status.
+                If not specified, the width of the generated status element unit is as
+                same as the status port.
+            status_value: Value of status element.
+            status_fill_opacity: Fill opacity.
+                If not specified, take the value from global configuration
+                `elem_fill_opacity`.
+            status_font_size: Font size of result element unit.
+                If not specified, take the value of `DEFAULT_FONT_SIZE`.
+            status_value_format: Format to print result value.
+                If not specified, take the value from global configuration
+                `elem_value_format`. 
+            mem_isa_hash: Hash to idenify memory unit.
+                If not specified, operate on the memory unit with the hash of "Memory".
+
+        Returns:
+            If having status output, return a tuple of two data element units and status
+                element units. Otherwise, return a tuple of two data element units.
+        """
+        if res_value is None:
+            res_value = [None, None]
+        if color_hash is None:
+            color_hash = self._traceback_hash()
+
+        data1 = self.read_memory(
+            addr, width, offset, color_hash, res_value[0], res_fill_opacity,
+            res_font_size, res_value_format, False, None, None, status_fill_opacity,
+            status_font_size, status_value_format, False, mem_isa_hash)
+        data2 = self.read_memory(
+            addr, width, offset + width // 8, color_hash, res_value[1],
+            res_fill_opacity, res_font_size, res_value_format, has_status_output,
+            status_width, status_value, status_fill_opacity, status_font_size,
+            status_value_format, True, mem_isa_hash)
+
+        if isinstance(data2, list):
+            return data1, data2[0], data2[1]
+        else:
+            return data1, data2
+
+    def write_memory_pair(
+        self,
+        addr: ElemUnit,
+        data: Tuple[ElemUnit, ElemUnit],
+        offset: int = 0,
+        color_hash: Union[int, str] = None,
+        has_status_output: bool = False,
+        status_width: int = None,
+        status_value: Any = None,
+        status_fill_opacity: float = None,
+        status_font_size: int = DEFAULT_FONT_SIZE,
+        status_value_format: str = None,
+        mem_isa_hash: str = None,
+    ) -> Union[ElemUnit, None]:
+        """
+        Write data to the specified address.
+
+        Args:
+            addr: Address element unit.
+            data: Data element unit.
+            offset: LSB offset of read data.
+            color_hash: Hash value to get color from color scheme.
+            has_status_output: True means output of the status port is required.
+                If the memory unit does not have a status port, `has_status_output` is
+                ignored.
+            status_width: Bit width of output status.
+                If not specified, the width of the generated status element unit is as
+                same as the status port.
+            status_value: Value of status element.
+            status_fill_opacity: Fill opacity.
+                If not specified, take the value from global configuration
+                `elem_fill_opacity`.
+            status_font_size: Font size of result element unit.
+                If not specified, take the value of `DEFAULT_FONT_SIZE`.
+            status_value_format: Format to print result value.
+                If not specified, take the value from global configuration
+                `elem_value_format`. 
+            mem_isa_hash: Hash to idenify memory unit.
+                If not specified, operate on the memory unit with the hash of "Memory".
+
+        Returns:
+            If having status output, return status element unit. Otherwise, return None.
+        """
+        if color_hash is None:
+            color_hash = self._traceback_hash()
+
+        status = self.write_memory(
+            addr, data[0], offset, color_hash, False, None, None, status_fill_opacity,
+            status_font_size, status_value_format, False, mem_isa_hash)
+        status = self.write_memory(
+            addr, data[1], offset + data[0].elem_width // 8, color_hash,
+            has_status_output, status_width, status_value, status_fill_opacity,
+            status_font_size, status_value_format, True, mem_isa_hash)
+
+        return status

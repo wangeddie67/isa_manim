@@ -7,16 +7,18 @@ from manim import Mobject
 from ..isa_objects import ElemUnit, RegUnit
 from .isa_animate import IsaAnimateItem
 
+
 class _IsaElemSourceItem:
     """
     Data structure to record the source of one element.
-    
+
     Attributes:
         register: Register where the element comes from.
         index: Element index to access the register.
         reg_idx: Register index to access the register.
         offset: Offset of LSB.
     """
+
     def __init__(self, register: RegUnit, index: int, reg_idx: int, offset: int):
         """
         Construct the data structure.
@@ -32,7 +34,13 @@ class _IsaElemSourceItem:
         self.reg_idx: int = reg_idx
         self.offset: int = offset
 
-    def is_match(self, register: RegUnit, index: int, reg_idx: int, offset: int) -> bool:
+    def is_match(
+        self,
+        register: RegUnit,
+        index: int,
+        reg_idx: int,
+        offset: int,
+    ) -> bool:
         """
         Check whether the specified arguments match this data structure.
 
@@ -45,18 +53,21 @@ class _IsaElemSourceItem:
         Returns:
             If arguments match, return True.
         """
-        return self.register == register and self.index == index \
-            and self.reg_idx == reg_idx and self.offset == offset
+        return (
+            self.register == register and self.index == index
+            and self.reg_idx == reg_idx and self.offset == offset)
+
 
 class _IsaElemRefCountItem:
     """
     Data structure of reference counter.
-    
+
     Attributes:
         refer_count: Reference counter. 0 means there is no reference of this unit.
         last_consumer: Animation to consumer this element unit.
         last_dep: Dependency unit of last animation.
     """
+
     def __init__(self):
         """
         Constructor data structure of reference counter.
@@ -92,8 +103,8 @@ class _IsaElemRefCountItem:
         """
         Get a copy of element if the element has been referenced.
 
-        If the element has not been referenced, return the element unit itself. Otherwise, return
-        a copy of the element.
+        If the element has not been referenced, return the element unit itself.
+        Otherwise, return a copy of the element.
 
         Add duplicated element after the last consumer animation.
 
@@ -113,19 +124,22 @@ class _IsaElemRefCountItem:
 
             return dup_elem
 
+
 class IsaElemRefCount:
     """
     Data structure for element reference counter.
     """
+
     def __init__(self):
         """
         Construct data structure for element reference counter.
 
         Attributes:
-            elem_source_dict: Dictionary of element source. Key is element unit, and value is
-                the source register and the index to access the register.
-            elem_refcount_dict: Dictionary of reference counter. Key is element unit, and value
-                contains the reference counter and the last consumer and dependency.
+            elem_source_dict: Dictionary of element source. Key is element unit, and
+                value is the source register and the index to access the register.
+            elem_refcount_dict: Dictionary of reference counter. Key is element unit,
+                and value contains the reference counter and the last consumer and
+                dependency.
         """
         # Element source dictionary
         self.elem_source_dict: Dict[ElemUnit, _IsaElemSourceItem] = {}
@@ -133,8 +147,14 @@ class IsaElemRefCount:
         self.elem_refcount_dict: Dict[ElemUnit, _IsaElemRefCountItem] = {}
 
     # Element source dictionary
-    def set_elem_source(self,
-                        elem: ElemUnit, register: RegUnit, reg_idx: int, index: int, offset: int):
+    def set_elem_source(
+        self,
+        elem: ElemUnit,
+        register: RegUnit,
+        reg_idx: int,
+        index: int,
+        offset: int,
+    ):
         """
         Set the source of one element unit.
 
@@ -145,10 +165,17 @@ class IsaElemRefCount:
             index: Element index to access the reigster.
             offset: LSB offset.
         """
-        self.elem_source_dict[elem] = _IsaElemSourceItem(register, index, reg_idx, offset)
+        self.elem_source_dict[elem] = _IsaElemSourceItem(
+            register, index, reg_idx, offset)
 
-    def get_elem_by_source(self,
-            register: RegUnit, width: int, reg_idx: int, index: int, offset: int) -> ElemUnit:
+    def get_elem_by_source(
+        self,
+        register: RegUnit,
+        width: int,
+        reg_idx: int,
+        index: int,
+        offset: int,
+    ) -> ElemUnit:
         """
         Get one element unit by source.
 
@@ -160,18 +187,20 @@ class IsaElemRefCount:
             offset: LSB offset.
 
         Returns:
-            Return the element unit specified by the source register and index. Otherwise, return
-                None.
+            Return the element unit specified by the source register and index.
+                Otherwise, return None.
         """
         for elem, elem_src in self.elem_source_dict.items():
-            if elem_src.is_match(register, index, reg_idx, offset) and elem.elem_width == width:
+            if (elem_src.is_match(register, index, reg_idx, offset)
+                    and elem.elem_width == width):
                 return elem
         return None
 
     # Element reference dictionary
     def set_elem_producer(self, elem: ElemUnit, dep: Mobject):
         """
-        Set the producer of one element unit. Called when one animation produces the element unit.
+        Set the producer of one element unit. Called when one animation produces the
+        element unit.
 
         Args:
             elem: Element unit.
@@ -182,7 +211,8 @@ class IsaElemRefCount:
 
     def set_elem_cusumer(self, elem: ElemUnit, consumer: IsaAnimateItem, dep: Mobject):
         """
-        Set the consumer of one element unit. Called when one animation consumes the element unit.
+        Set the consumer of one element unit. Called when one animation consumes the
+        element unit.
 
         Args:
             elem: Element unit.
@@ -204,14 +234,17 @@ class IsaElemRefCount:
         return self.elem_refcount_dict[elem].get_dup_elem(elem)
 
     # Element dependency dictionary
-    def get_last_deps(self, *elem_list: ElemUnit) -> Union[List[Mobject], Mobject, None]:
+    def get_last_deps(
+        self,
+        *elem_list: ElemUnit,
+    ) -> Union[List[Mobject], Mobject, None]:
         """
         Return the depedency units (Registers, Memory and Functions) of specified list.
 
-        - If `elem_list` contains only one element unit, return a single unit.
-            - Return None if no dependency unit is found.
-        - Otherwise, return a list of units.
-            - Return an empty list if no dependency unit is found.
+        -   If `elem_list` contains only one element unit, return a single unit.
+            -   Return None if no dependency unit is found.
+        -   Otherwise, return a list of units.
+            -   Return an empty list if no dependency unit is found.
 
         Returns:
             Return a list of dependency units or a single dependency unit.

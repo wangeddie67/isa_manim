@@ -2,9 +2,11 @@
 
 ## Reuse elements from the same index of the same register
 
-If one element in one register is read more than once, playing the animation only once is much better to avoid overlapping element units on the scene.
+If one element in one register is read more than once, playing the animation only once
+is much better to avoid overlapping element units on the scene.
 
-When reading one element from one register, the accessed element is recorded. If the element is reaccessed, the recorded element is used rather than creating a new element.
+When reading one element from one register, the accessed element is recorded. If the
+element is reaccessed, the recorded element is used rather than creating a new element.
 
 The recorded element is identified by all the following attributes:
 
@@ -14,21 +16,40 @@ The recorded element is identified by all the following attributes:
 - The bit offset of LSB.
 - The width of the accessed element.
 
-When reading one element from one register, return the recorded element only when all the above attributes match.
+When reading one element from one register, return the recorded element only when all
+the above attributes match.
 
-`isa_manim.isa_scene.isa_elem_refcount.IsaElemRefCount.set_elem_source` records one element and the source attributes of this element. `isa_manim.isa_scene.isa_elem_refcount.IsaElemRefCount.get_elem_by_source` returns the record element by the source attributes. If no matched recorded element, `get_elem_by_source` returns `None`.
+`isa_manim.isa_scene.isa_elem_refcount.IsaElemRefCount.set_elem_source` records one
+element and the source attributes of this element.
+`isa_manim.isa_scene.isa_elem_refcount.IsaElemRefCount.get_elem_by_source` returns the
+record element by the source attributes. If no matched recorded element,
+`get_elem_by_source` returns `None`.
 
 ## Duplicate elements with multiple consumers
 
-If one element is used as source operands of more than one animation, this element should be duplicated.
+If one element is used as source operands of more than one animation, this element
+should be duplicated.
 
-The animation to create one element is referenced as the producer. The animation referencing one element as a source is referenced as the consumer. In most situations, one element has only one producer and multiple consumers. 
+The animation to create one element is referenced as the producer. The animation
+referencing one element as a source is referenced as the consumer. In most situations,
+one element has only one producer and multiple consumers. 
 
-- `isa_manim.isa_scene.isa_elem_refcount.IsaElemRefCount.set_elem_producer` registers one element when the element is generated. The initial value of the reference counter is 0. `set_elem_producer` is applied where the element unit is created.
-- `isa_manim.isa_scene.isa_elem_refcount.IsaElemRefCount.set_elem_cusumer` registers the last consumer animation and increases the reference counter by 1. The `set_elem_cusumer` is applied where the element unit is used as the source.
-- If the reference counter is 0, `isa_manim.isa_scene.isa_elem_refcount.IsaElemRefCount.get_duplicate_item` returns the original element. If the reference counter is higher than 1, `get_duplicate_item` returns a copy of the element unit. Meanwhile, the copy i
+-   `isa_manim.isa_scene.isa_elem_refcount.IsaElemRefCount.set_elem_producer` registers
+    one element when the element is generated. The initial value of the reference
+    counter is 0. `set_elem_producer` is applied where the element unit is created.
+-   `isa_manim.isa_scene.isa_elem_refcount.IsaElemRefCount.set_elem_cusumer` registers
+    the last consumer animation and increases the reference counter by 1. The
+    `set_elem_cusumer` is applied where the element unit is used as the source.
+-   If the reference counter is 0,
+    `isa_manim.isa_scene.isa_elem_refcount.IsaElemRefCount.get_duplicate_item` returns
+    the original element. If the reference counter is higher than 1,
+    `get_duplicate_item` returns a copy of the element unit. Meanwhile, the reference
+    counter decreases by 1.
 
-For example, one element `A` from vector `Zm` operates with all elements in `Zn` in one vector instruction. The 0-th element of `Zn` operates with the original element `A`. Other elements of `Zn` operate with a copy of `A`. The copied elements will be added to the scene **before** the last consumer animation.
+For example, one element `A` from vector `Zm` operates with all elements in `Zn` in one
+vector instruction. The 0-th element of `Zn` operates with the original element `A`.
+Other elements of `Zn` operate with a copy of `A`. The copied elements will be added to
+the scene **before** the last consumer animation.
 
 ``` mermaid
 flowchart TB

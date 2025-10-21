@@ -2,12 +2,12 @@
 ISA configuration structure.
 """
 
-
 from random import randint, choice, uniform
 import os
 import re
 import shlex
 from typing import List, Dict, Any
+
 
 def _convert_value(value_str: str) -> Any:
     """
@@ -47,8 +47,9 @@ def _convert_value(value_str: str) -> Any:
     if is_float(value_strip):
         return int(value_strip)
     # List with bracket
-    if (value_strip.startswith("[") and value_strip.endswith("]")) \
-            or (value_strip.startswith("{") and value_strip.endswith("}")):
+    if (value_strip.startswith("[") and value_strip.endswith("]")) or (
+        value_strip.startswith("{") and value_strip.endswith("}")
+    ):
         # Split value item.
         value_inner_str = value_strip[1:-1].strip()
         value_inner_list = re.split(r"[, ]", value_inner_str)
@@ -67,16 +68,17 @@ def _convert_value(value_str: str) -> Any:
 
 
 isa_config = {
-    "scene_ratio": (1/8),   # scene width / bit. Default 1.0 means 8 bit.
+    "scene_ratio": (1 / 8),  # scene width / bit. Default 1.0 means 8 bit.
     "mem_addr_width": 64,
     "mem_data_width": 128,
-    "mem_range": [[0, 0x1000]], # 1KB page
-    "mem_align": 64,    # Memory address aligment 64B
+    "mem_range": [[0, 0x1000]],  # 1KB page
+    "mem_align": 64,  # Memory address aligment 64B
     "elem_fill_opacity": 0.5,
-    "elem_value_format": "{:d}"
+    "elem_value_format": "{:d}",
 }
 """
-Configuration structure to pass arguments of ISA. For example, element size and vector length.
+Configuration structure to pass arguments of ISA. For example, element size and vector
+length.
 """
 
 # Get arguments fron environment.
@@ -95,23 +97,26 @@ if "MANIM_ISA_ARGS" in os.environ:
         log_msg = f"ISA Config: {arg_key} = {isa_config[arg_key]}"
         print(log_msg)
 
+
 def get_scene_ratio() -> float:
     """
     Return scene ratio, as scene width / bit. Default: 1.0 means 8 bits.
     """
-    global isa_config   # pylint: disable=global-variable-not-assigned,invalid-name
+    global isa_config  # pylint: disable=global-variable-not-assigned,invalid-name
     return isa_config["scene_ratio"]
+
 
 def set_config(key: str, value: Any):
     """
     Set configuration.
-    
+
     Args:
         key: Name of the option.
         value: Value of the option.
     """
-    global isa_config   # pylint: disable=global-variable-not-assigned,invalid-name
+    global isa_config  # pylint: disable=global-variable-not-assigned,invalid-name
     isa_config[key] = value
+
 
 def get_config(key: str, default: Any = None) -> Any:
     """
@@ -124,7 +129,7 @@ def get_config(key: str, default: Any = None) -> Any:
     Returns:
         Value of the option. If the option is not defined, return default value.
     """
-    global isa_config   # pylint: disable=global-variable-not-assigned,invalid-name
+    global isa_config  # pylint: disable=global-variable-not-assigned,invalid-name
     if key in isa_config:
         return isa_config[key]
     elif default is not None:
@@ -133,9 +138,11 @@ def get_config(key: str, default: Any = None) -> Any:
         err_msg = f"Cannot get value of {key}"
         raise ValueError(err_msg)
 
+
 #
 # Option Configurations.
 #
+
 
 class OptionDef:
     """
@@ -176,6 +183,7 @@ class OptionDef:
         if "opt_range" in kwargs:
             self.opt_range = kwargs["opt_range"]
 
+
 def def_cfg(name: str, default: Any, **kwargs) -> OptionDef:
     """
     Define one option with default value. Option can be configurable by command line.
@@ -195,9 +203,11 @@ def def_cfg(name: str, default: Any, **kwargs) -> OptionDef:
     """
     return OptionDef(name, OptionDef.CONFIG_CFG, default, **kwargs)
 
+
 def def_random_cfg(name: str, **kwargs) -> OptionDef:
     """
-    Define one option with random value. Default value is choosen from a list or a range.
+    Define one option with random value. Default value is choosen from a list or a
+    range.
 
     Args:
         name: Name of config option.
@@ -212,6 +222,7 @@ def def_random_cfg(name: str, **kwargs) -> OptionDef:
     """
     return OptionDef(name, OptionDef.RANDOM_CFG, None, **kwargs)
 
+
 def def_fix_cfg(name: str, default: Any) -> OptionDef:
     """
     Define one option with fixed value. This option cannot be changed by commandline.
@@ -224,6 +235,7 @@ def def_fix_cfg(name: str, default: Any) -> OptionDef:
         Structure for configuration option.
     """
     return OptionDef(name, OptionDef.FIX_CFG, default)
+
 
 def def_value_cfg(name: str, **kwargs) -> OptionDef:
     """
@@ -242,6 +254,7 @@ def def_value_cfg(name: str, **kwargs) -> OptionDef:
         Structure for configuration option.
     """
     return OptionDef(name, OptionDef.VALUE_CFG, None, **kwargs)
+
 
 def get_cfgs(cfgs_list: List[OptionDef]) -> Dict:
     """
@@ -275,7 +288,8 @@ def get_cfgs(cfgs_list: List[OptionDef]) -> Dict:
                     value = uniform(min_val, max_val)
             else:
                 raise ValueError(
-                    f"Do not know how to find default value for configuration {key}.")
+                    f"Do not know how to find default value for configuration {key}."
+                )
         else:
             value = cfg_item.default
 
@@ -287,27 +301,33 @@ def get_cfgs(cfgs_list: List[OptionDef]) -> Dict:
         if cfg_item.options is not None:
             if value not in cfg_item.options:
                 raise ValueError(
-                    f"Wrong value for configuration {key}, expect options {cfg_item.options}.")
+                    f"Wrong value for configuration {key}, "
+                    f"expect options {cfg_item.options}."
+                )
 
         if cfg_item.condition is not None:
             if not cfg_item.condition(value):
-                raise ValueError(f"Wrong value for configuration {key}, "
-                                 f"expect condition \"{cfg_item.condition}\".")
+                raise ValueError(
+                    f"Wrong value for configuration {key}, "
+                    f'expect condition "{cfg_item.condition}".'
+                )
 
         namespace[key] = value
 
     return namespace
 
-def inherit_cfgs(old_list: List[OptionDef],
-                 *cfg_items: OptionDef,
-                 **fix_cfg_items: Dict[str, Any]) -> List[OptionDef]:
+
+def inherit_cfgs(
+    old_list: List[OptionDef], *cfg_items: OptionDef, **fix_cfg_items: Dict[str, Any]
+) -> List[OptionDef]:
     """
     Inherit configurations.
-    
-    `cfg_items` add new options to `old_list` or override existing options in `old_list`.
-    
-    `fix_cfg_items` add new fixed options to `old_list` or override existing options in `old_list`
-    with fixed options.
+
+    `cfg_items` add new options to `old_list` or override existing options in
+    `old_list`.
+
+    `fix_cfg_items` add new fixed options to `old_list` or override existing options in
+    `old_list` with fixed options.
 
     Args:
         old_list: Old list of configuration options.

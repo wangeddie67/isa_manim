@@ -9,14 +9,16 @@ from typing_extensions import Self
 from manim import Animation, Mobject, FadeOut
 from ..isa_objects import MemoryUnit
 
+
 class IsaAnimateItem:
     """
     Data structure for animate for dependency analysis.
 
-    It contains the list of source items and destination items of one item, which can conclude the
-    dependency of animations.
+    It contains the list of source items and destination items of one item, which can
+    conclude the dependency of animations.
 
-    It also has a list of dependency items, which must be maintained in scene during this animation.
+    It also has a list of dependency items, which must be maintained in scene during
+    this animation.
 
     Attributes:
         animate: Animate
@@ -28,16 +30,17 @@ class IsaAnimateItem:
         successor_list: List of successor animates.
     """
 
-    def __init__(self,
-                 animate: Animation,
-                 src: List[Mobject],
-                 dst: List[Mobject],
-                 dep: List[Mobject] = None,
-                 add_before: List[Mobject] = None,
-                 add_after: List[Mobject] = None,
-                 rm_before: List[Mobject] = None,
-                 rm_after: List[Mobject] = None
-        ):
+    def __init__(
+        self,
+        animate: Animation,
+        src: List[Mobject],
+        dst: List[Mobject],
+        dep: List[Mobject] = None,
+        add_before: List[Mobject] = None,
+        add_after: List[Mobject] = None,
+        rm_before: List[Mobject] = None,
+        rm_after: List[Mobject] = None,
+    ):
         """
         Construct one data structure for animate.
 
@@ -51,6 +54,7 @@ class IsaAnimateItem:
             rm_before: Objects to remove before this animation.
             rm_after: Objects to remove after this animation.
         """
+
         # Convert None to [], Convert single item to list.
         def _regular_input_argument(arg):
             if isinstance(arg, list):
@@ -95,15 +99,15 @@ class IsaAnimateItem:
 
     def is_predecessor_of(self, post: Self) -> bool:
         """
-        Check whether this item is predecessor of `post`. Successor `post` should play after this
-        animation.
+        Check whether this item is predecessor of `post`. Successor `post` should play
+        after this animation.
 
         Args:
             post: Another animation item.
 
         Returns:
-            Return True if one of the destination item of this animation is also a source item of
-                the `post` item.
+            Return True if one of the destination item of this animation is also a
+                source item of the `post` item.
         """
         for dst_item in self.dst_item_list:
             if dst_item in post.src_item_list:
@@ -113,15 +117,15 @@ class IsaAnimateItem:
 
     def is_successor_of(self, pre: Self) -> bool:
         """
-        Check whether this item is successor of `pre`. Predecessor `pre` should play before this
-        animation.
+        Check whether this item is successor of `pre`. Predecessor `pre` should play
+        before this animation.
 
         Args:
             pre: Another animation item.
 
         Returns:
-            Return True if one of the source item of this animation is also a destination item of
-                the `pre` item.
+            Return True if one of the source item of this animation is also a
+                destination item of the `pre` item.
         """
         for src_item in self.src_item_list:
             if src_item in pre.dst_item_list:
@@ -131,8 +135,8 @@ class IsaAnimateItem:
 
     def has_background(self, dep: Mobject) -> bool:
         """
-        Check whether dep is background of this item. Background item should not change during this
-        animation.
+        Check whether dep is background of this item. Background item should not change
+        during this animation.
         
         Args:
             dep: Another manim object.
@@ -144,19 +148,20 @@ class IsaAnimateItem:
 
     def __str__(self) -> str:
         string = f"[Animate={str(self.animate)}, " + \
-                 f"src={self.src_item_list}, " + \
-                 f"dst={self.dst_item_list}, " + \
-                 f"dep={self.dep_item_list}, " + \
-                 f"predecessor={self.predecessor_list}]"
+                f"src={self.src_item_list}, " + \
+                f"dst={self.dst_item_list}, " + \
+                f"dep={self.dep_item_list}, " + \
+                f"predecessor={self.predecessor_list}]"
         return string
 
     def __repr__(self) -> str:
         string = f"[Animate={str(self.animate)}, " + \
-                 f"src={self.src_item_list}, " + \
-                 f"dst={self.dst_item_list}, " + \
-                 f"dep={self.dep_item_list}, " + \
-                 f"predecessor={self.predecessor_list}]"
+                f"src={self.src_item_list}, " + \
+                f"dst={self.dst_item_list}, " + \
+                f"dep={self.dep_item_list}, " + \
+                f"predecessor={self.predecessor_list}]"
         return string
+
 
 class _IsaAnimateSection():
     """
@@ -166,18 +171,20 @@ class _IsaAnimateSection():
         animate_list: List of animation.
         wait: Wait time after this section. <=0 means no wait.
         fade_out: Whether fade out left items after this section.
-        camera_animate: Animation of move camera before this section, which is a tuple of one float
-            and a position. The float provides the scaling of camera while position provides the
-            new central position of camera.
+        camera_animate: Animation of move camera before this section, which is a tuple
+            of one float and a position. The float provides the scaling of camera while
+            position provides the new central position of camera.
         keep_objects: List of objects that keep on scene between section.
     """
 
-    def __init__(self,
-                 animate_list: List[IsaAnimateItem],
-                 wait: int = 0,
-                 fade_out: bool = True,
-                 camera_animate: Tuple[float, np.ndarray] = None,
-                 keep_objects: List[Mobject] = None):
+    def __init__(
+        self,
+        animate_list: List[IsaAnimateItem],
+        wait: int = 0,
+        fade_out: bool = True,
+        camera_animate: Tuple[float, np.ndarray] = None,
+        keep_objects: List[Mobject] = None,
+    ):
 
         self.animate_list: List[IsaAnimateItem] = animate_list
         self.wait: int = wait
@@ -185,30 +192,34 @@ class _IsaAnimateSection():
         self.camera_animate: Tuple[float, np.ndarray] = camera_animate
         self.keep_objects: List[Mobject] = keep_objects
 
+
 class _IsaAnimateStep():
     """
-    One step of ISA Animation, which contains a set of animations that can play simultaneously.
+    One step of ISA Animation, which contains a set of animations that can play
+    simultaneously.
 
     Attributes:
         animate_list: List of animation.
         wait: Wait time after this step. <=0 means no wait.
-        camera_animate: Animation of move camera before this section, which is a tuple of one float
-            and a position. The float provides the scaling of camera while position provides the
-            new central position of camera.
+        camera_animate: Animation of move camera before this section, which is a tuple
+            of one float and a position. The float provides the scaling of camera while
+            position provides the new central position of camera.
         add_before: Objects to add before this animation.
         add_after: Objects to add after this animation.
         rm_before: Objects to remove before this animation.
         rm_after: Objects to remove after this animation.
     """
 
-    def __init__(self,
-                 animate_list: List[IsaAnimateItem],
-                 wait: int = 0,
-                 camera_animate: Tuple[float, np.ndarray] = None,
-                 add_before: List[Mobject] = None,
-                 add_after: List[Mobject] = None,
-                 rm_before: List[Mobject] = None,
-                 rm_after: List[Mobject] = None):
+    def __init__(
+        self,
+        animate_list: List[IsaAnimateItem],
+        wait: int = 0,
+        camera_animate: Tuple[float, np.ndarray] = None,
+        add_before: List[Mobject] = None,
+        add_after: List[Mobject] = None,
+        rm_before: List[Mobject] = None,
+        rm_after: List[Mobject] = None,
+    ):
 
         self.animate_list: List[IsaAnimateItem] = animate_list
         self.wait: int = wait
@@ -219,17 +230,18 @@ class _IsaAnimateStep():
         self.rm_before: List[Mobject] = [] if rm_before is None else rm_before
         self.rm_after: List[Mobject] = [] if rm_after is None else rm_after
 
+
 class IsaAnimationFlow:
     """
     This class is used to analyse the order of animations.
 
     Attributes:
-        isa_animation_section_list: List of ISA animation section, which contains a set of 
-            animations.
-        isa_animation_step_list: List of ISA step section, which contains a set of animations
-            after analysis animation flow.
-        _section_animate_list: List of animations after previous section, which will be packed into
-            one section.
+        isa_animation_section_list: List of ISA animation section, which contains a set
+            of animations.
+        isa_animation_step_list: List of ISA step section, which contains a set of
+            animations after analysis animation flow.
+        _section_animate_list: List of animations after previous section, which will be
+            packed into one section.
     """
 
     def __init__(self):
@@ -237,15 +249,17 @@ class IsaAnimationFlow:
         self._animate_list: List[IsaAnimateItem] = []
         self.animation_step_list: List[_IsaAnimateStep] = []
 
-    def add_animation(self,
-                      animate: Animation,
-                      src: List[Mobject],
-                      dst: List[Mobject],
-                      dep: List[Mobject] = None,
-                      add_before: List[Mobject] = None,
-                      add_after: List[Mobject] = None,
-                      remove_before: List[Mobject] = None,
-                      remove_after: List[Mobject] = None) -> IsaAnimateItem:
+    def add_animation(
+        self,
+        animate: Animation,
+        src: List[Mobject],
+        dst: List[Mobject],
+        dep: List[Mobject] = None,
+        add_before: List[Mobject] = None,
+        add_after: List[Mobject] = None,
+        remove_before: List[Mobject] = None,
+        remove_after: List[Mobject] = None,
+    ) -> IsaAnimateItem:
         """
         Register animation to scene and build dependency.
 
@@ -256,15 +270,16 @@ class IsaAnimationFlow:
             dep: List of dependency objects of this animation.
             add_before: List of objects to add into the scene before this animation.
             add_after: List of objects to add into the scene after this animation.
-            remove_before: List of objects to remove from the scene before this animation.
+            remove_before: List of objects to remove from the scene before this
+                animation.
             remove_after: List of objects to remove from the scene after this animation.
 
         Returns:
             Return an entity of data structure for animation flow analysis.
         """
         # Create animation flow data structure
-        animate_item = IsaAnimateItem(animate, src, dst, dep,
-                                      add_before, add_after, remove_before, remove_after)
+        animate_item = IsaAnimateItem(
+            animate, src, dst, dep, add_before, add_after, remove_before, remove_after)
 
         # Analysis dependency between this animation and existing animation.
         for item in self._animate_list:
@@ -292,16 +307,18 @@ class IsaAnimationFlow:
 
         return animate_item
 
-    def switch_section(self,
-                       wait: float = 0,
-                       fade_out: bool = True,
-                       camera_animate: Tuple[float, np.ndarray] = None,
-                       keep_objects: List[Mobject] = None):
+    def switch_section(
+        self,
+        wait: float = 0,
+        fade_out: bool = True,
+        camera_animate: Tuple[float, np.ndarray] = None,
+        keep_objects: List[Mobject] = None,
+    ):
         """
         Switch animation section.
 
-        Save registered animate to an animate section structure and clear animation list for next
-        section.
+        Save registered animate to an animate section structure and clear animation list
+        for next section.
 
         Args:
             wait: Seconds to wait before end of this section.
@@ -311,11 +328,10 @@ class IsaAnimationFlow:
         """
         # Create animation list.
         if len(self._animate_list) > 0:
-            self.animation_section_list.append(_IsaAnimateSection(self._animate_list,
-                                                                  wait=wait,
-                                                                  fade_out=fade_out,
-                                                                  camera_animate=camera_animate,
-                                                                  keep_objects=keep_objects))
+            self.animation_section_list.append(
+                _IsaAnimateSection(
+                    self._animate_list, wait=wait, fade_out=fade_out,
+                    camera_animate=camera_animate, keep_objects=keep_objects))
         # If two end_section subquently, intersection the defintion of them.
         elif len(self.animation_section_list) > 0:
             self.animation_section_list[-1].wait += wait
@@ -383,17 +399,20 @@ class IsaAnimationFlow:
                 step_camera_animate = \
                     animation_section.camera_animate if first_step_in_section else None
                 # Create data structure for animations step
+                step_animation_list = [item.animate for item in new_step_animate]
+                step_add_before = itertools.chain.from_iterable(
+                    [item.add_before_list for item in new_step_animate])
+                step_add_after = itertools.chain.from_iterable(
+                    [item.add_after_list for item in new_step_animate])
+                step_rm_before = itertools.chain.from_iterable(
+                    [item.rm_before_list for item in new_step_animate])
+                step_rm_after = itertools.chain.from_iterable(
+                    [item.rm_after_list for item in new_step_animate])
                 animation_step = _IsaAnimateStep(
-                    animate_list=[item.animate for item in new_step_animate],
-                    camera_animate=step_camera_animate,
-                    add_before=itertools.chain.from_iterable(
-                        [item.add_before_list for item in new_step_animate]),
-                    add_after=itertools.chain.from_iterable(
-                        [item.add_after_list for item in new_step_animate]),
-                    rm_before=itertools.chain.from_iterable(
-                        [item.rm_before_list for item in new_step_animate]),
-                    rm_after=itertools.chain.from_iterable(
-                        [item.rm_after_list for item in new_step_animate]))
+                    animate_list=step_animation_list,
+                    camera_animate=step_camera_animate, add_before=step_add_before,
+                    add_after=step_add_after, rm_before=step_rm_before,
+                    rm_after=step_rm_after)
                 self.animation_step_list.append(animation_step)
 
                 # Update left animation item for next iteration.
@@ -413,7 +432,8 @@ class IsaAnimationFlow:
                 if animation_section.keep_objects is not None:
                     for item in animation_section.keep_objects:
                         if isinstance(item, MemoryUnit):
-                            animation_section.keep_objects.extend(item.get_mem_mark_list())
+                            animation_section.keep_objects.extend(
+                                item.get_mem_mark_list())
 
                         if item in item_list:
                             item_list.remove(item)
@@ -421,5 +441,5 @@ class IsaAnimationFlow:
 
                 # Add one step to fade-out objects.
                 if len(item_list) > 0:
-                    self.animation_step_list.append(_IsaAnimateStep(
-                        animate_list=[FadeOut(*item_list)]))
+                    self.animation_step_list.append(
+                        _IsaAnimateStep(animate_list=[FadeOut(*item_list)]))

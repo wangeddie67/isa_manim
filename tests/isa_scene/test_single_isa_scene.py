@@ -4,15 +4,17 @@ Test ISA scene with single instruction.
 
 import os
 import sys
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
-from isa_manim import SingleIsaScene # pylint: disable=wrong-import-position
+from isa_manim import SingleIsaScene
 
 
 class TestSingleIsaScene(SingleIsaScene):
     """
     Test ISA scene with single instruction.
     """
+
     def construct_isa_flow(self):
         # Title
         self.draw_title("DOT Instruction")
@@ -26,8 +28,9 @@ class TestSingleIsaScene(SingleIsaScene):
         zm = self.decl_register("Zm", vl, elements * way)
         zd = self.decl_register("Zda", vl, elements)
 
-        self.decl_func_group(elements, "dot", [esize // way, esize // way, esize], esize,
-                             func_name="a*b+sum", args_name=["a", "b", "sum"], force_hw_ratio=True)
+        self.decl_func_group(
+            elements, "dot", [esize // way, esize // way, esize], esize,
+            func_name="a*b+sum", args_name=["a", "b", "sum"], force_hw_ratio=True)
 
         for i in range(0, elements):
             dot_sum = self.read_elem(zd, i)

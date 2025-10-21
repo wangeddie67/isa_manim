@@ -5,16 +5,13 @@ ISA scene with single instruction.
 from typing import Union, List, Tuple
 import numpy as np
 from manim import logger
-from manim import (Text,
-                   ORIGIN, UP, DOWN, RIGHT,
-                   ZoomedScene,
-                   BLACK,
-                   config)
+from manim import Text, ORIGIN, UP, DOWN, RIGHT, ZoomedScene, BLACK, config
 from .isa_data_flow import IsaDataFlow
 from ..isa_config import OptionDef, get_cfgs, inherit_cfgs
 
 config.frame_height = 9
 config.frame_width = 16
+
 
 class SingleIsaScene(ZoomedScene, IsaDataFlow):
     """
@@ -32,18 +29,12 @@ class SingleIsaScene(ZoomedScene, IsaDataFlow):
         Construct scene.
         """
         ZoomedScene.__init__(
-            self,
-            zoom_factor=1.0,
-            zoomed_display_height=config.frame_height / 2 + 3,
+            self, zoom_factor=1.0, zoomed_display_height=config.frame_height / 2 + 3,
             zoomed_display_width=config.frame_width,
             zoomed_display_center=DOWN * ((config.frame_height / 2 - 3) / 2),
-            image_frame_stroke_width=0,
-            zoomed_camera_config={
-                "background_opacity": 1,
-                "default_frame_stroke_width": 0,
-                },
-            **kwargs
-        )
+            image_frame_stroke_width=0, zoomed_camera_config={
+                "background_opacity": 1, "default_frame_stroke_width": 0
+            }, **kwargs)
         IsaDataFlow.__init__(self)
 
         self.camera_scale_rate: float = 1.0
@@ -79,8 +70,9 @@ class SingleIsaScene(ZoomedScene, IsaDataFlow):
             if animation_step.camera_animate:
                 camera_ratio = animation_step.camera_animate[0]
                 camera_target = animation_step.camera_animate[1]
-                self.play(self.zoomed_camera.frame.animate.scale(camera_ratio)
-                          .move_to(camera_target))
+                self.play(
+                    self.zoomed_camera.frame.animate.scale(camera_ratio).move_to(
+                        camera_target))
 
             # Play each step in section.
             self.remove(*animation_step.rm_before)
@@ -109,9 +101,7 @@ class SingleIsaScene(ZoomedScene, IsaDataFlow):
         title_obj = Text(title, font_size=35).move_to(UP * 3.5)
         self.add(title_obj)
 
-    def end_section(self,
-                    wait: int = 1,
-                    fade_out: bool = True):
+    def end_section(self, wait: int = 1, fade_out: bool = True):
         """
         Terminate or temporary stop of section, and update camera.
 
@@ -120,9 +110,7 @@ class SingleIsaScene(ZoomedScene, IsaDataFlow):
             fade_out: True means fade_out all items on scene except always-on items.
         """
         camera_animate = self._update_camera()
-        self.switch_section(wait=wait,
-                            fade_out=fade_out,
-                            camera_animate=camera_animate)
+        self.switch_section(wait=wait, fade_out=fade_out, camera_animate=camera_animate)
 
         self.elem_source_dict.clear()
 
@@ -130,20 +118,22 @@ class SingleIsaScene(ZoomedScene, IsaDataFlow):
         """
         Update location and scale factor of zoomed camera.
 
-        If no update, return None. Otherwise, return a tuple of scaling factor and new location.
-        The returned scaling factor the ratio of new scaling factor and old scaling factor.
+        If no update, return None. Otherwise, return a tuple of scaling factor and new
+        location. The returned scaling factor the ratio of new scaling factor and old
+        scaling factor.
         """
         zoomed_frame_width = self.get_placement_width()
-        zoomed_frame_scale = \
-            self.get_camera_scale(self.zoomed_display_width, self.zoomed_display_height)
+        zoomed_frame_scale = self.get_camera_scale(
+            self.zoomed_display_width, self.zoomed_display_height)
 
         zoomed_frame_origin_x = zoomed_frame_width / 2
         zoomed_frame_origin_y = (self.zoomed_display_height * zoomed_frame_scale) / 2
-        zoomed_frame_origin = RIGHT * zoomed_frame_origin_x + DOWN * zoomed_frame_origin_y
+        zoomed_frame_origin = (
+            RIGHT * zoomed_frame_origin_x + DOWN * zoomed_frame_origin_y)
 
-        if abs(zoomed_frame_scale - self.camera_scale_rate) > 1e-3 \
-                or abs(zoomed_frame_origin[0] - self.camera_origin[0]) > 1e-3 \
-                or abs(zoomed_frame_origin[1] - self.camera_origin[1]) > 1e-3 :
+        if (abs(zoomed_frame_scale - self.camera_scale_rate) > 1e-3
+                or abs(zoomed_frame_origin[0] - self.camera_origin[0]) > 1e-3
+                or abs(zoomed_frame_origin[1] - self.camera_origin[1]) > 1e-3):
             temp_frame_scale = zoomed_frame_scale / self.camera_scale_rate
             self.camera_scale_rate = zoomed_frame_scale
             self.camera_origin = zoomed_frame_origin

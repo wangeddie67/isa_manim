@@ -15,15 +15,15 @@ config.frame_height = 6
 config.frame_width = 24
 
 
-class TestMemoryUnitStatus(Scene):
+class TestMemoryUnitDualPort(Scene):
     """
     Test object for function unit.
     """
 
     def construct(self):
         mem_unit = MemoryUnit(
-            WHITE, 64, 32, 64, [[0, 0x1000], [0x4000, 0x5000]], DEFAULT_FONT_SIZE,
-            get_config("elem_value_format"), False, 4, 0, False)
+            WHITE, 64, 16, 64, [[0, 0x1000], [0x4000, 0x5000]], DEFAULT_FONT_SIZE,
+            get_config("elem_value_format"), False, 0, 0, True)
         dots = [Dot(color=GREEN)]
         self.add(mem_unit, *dots)
 
@@ -61,12 +61,12 @@ class TestMemoryUnitStatus(Scene):
         data_up_space_brace_text = data_up_space_brace.get_text("1.0").set_color(GREEN)
         self.add(data_up_space_brace, data_up_space_brace_text)
 
-        status_up_brace = BraceBetweenPoints(
-            mem_unit.status_rect.get_left() + UP * 0.5,
-            mem_unit.status_rect.get_right() + UP * 0.5, color=GREEN)
-        status_up_brace_text = status_up_brace.get_text(
-            str(mem_unit.status_rect.width)).set_color(GREEN)
-        self.add(status_up_brace, status_up_brace_text)
+        data2_up_brace = BraceBetweenPoints(
+            mem_unit.data_rect2.get_left() + UP * 1.5,
+            mem_unit.data_rect2.get_right() + UP * 1.5, color=GREEN, direction=UP)
+        data2_up_brace_text = data2_up_brace.get_text(str(
+            mem_unit.data_rect2.width)).set_color(GREEN)
+        self.add(data2_up_brace, data2_up_brace_text)
 
         addr_down_brace = BraceBetweenPoints(
             mem_unit.addr_rect.get_left() + DOWN * 0.5,
@@ -82,12 +82,12 @@ class TestMemoryUnitStatus(Scene):
             mem_unit.mem_data_width)).set_color(BLUE)
         self.add(data_down_brace, data_down_brace_text)
 
-        status_down_brace = BraceBetweenPoints(
-            mem_unit.status_rect.get_left() + DOWN * 0.5,
-            mem_unit.status_rect.get_right() + DOWN * 0.5, color=BLUE)
-        status_down_brace_text = status_down_brace.get_text(
-            str(mem_unit.mem_status_width)).set_color(BLUE)
-        self.add(status_down_brace, status_down_brace_text)
+        data2_down_brace = BraceBetweenPoints(
+            mem_unit.data_rect2.get_left() + DOWN * 0.5,
+            mem_unit.data_rect2.get_right() + DOWN * 0.5, color=BLUE)
+        data2_down_brace_text = data2_down_brace.get_text(str(
+            mem_unit.mem_data_width)).set_color(BLUE)
+        self.add(data2_down_brace, data2_down_brace_text)
 
         mem_map_down_brace = BraceBetweenPoints(
             mem_unit.mem_map_list[0].get_left() + DOWN * 0.5,
@@ -138,14 +138,6 @@ class TestMemoryUnitStatus(Scene):
             mem_rect_label.get_right(), mem_unit.mem_rect.get_left(), color=YELLOW)
         self.add(mem_rect_label, mem_rect_arrow)
 
-        status_rect_label = Text(
-            "status_rect",
-            color=YELLOW).move_to(mem_unit.mem_rect.get_left() + RIGHT * 4 + UP * 4.5)
-        status_rect_arrow = Arrow(
-            status_rect_label.get_bottom(), mem_unit.status_rect.get_top(),
-            color=YELLOW)
-        self.add(status_rect_label, status_rect_arrow)
-
         addr_rect_label = Text(
             "addr_rect",
             color=YELLOW).move_to(mem_unit.addr_rect.get_top() + UP * 3 + LEFT * 2)
@@ -161,6 +153,14 @@ class TestMemoryUnitStatus(Scene):
             data_rect_label.get_bottom(),
             mem_unit.data_rect.get_top() + RIGHT, color=YELLOW)
         self.add(data_rect_label, data_rect_arrow)
+
+        data_rect2_label = Text(
+            "data_rect2",
+            color=YELLOW).move_to(mem_unit.data_rect2.get_top() + UP * 4 + RIGHT * 2)
+        data_rect2_arrow = Arrow(
+            data_rect2_label.get_bottom(),
+            mem_unit.data_rect2.get_top() + RIGHT, color=YELLOW)
+        self.add(data_rect2_label, data_rect2_arrow)
 
         mem_map_label = Text("mem_map_list", color=YELLOW).move_to(
             mem_unit.mem_map_list[0].get_bottom() + DOWN * 2 + RIGHT * 5)

@@ -3,8 +3,9 @@ Animation with Registers and Elements.
 """
 
 from typing import List, Union
-from manim import (FadeIn, Animation, Transform, FadeTransformPieces)
-from ..isa_objects import (ElemUnit, RegUnit)
+from manim import FadeIn, Animation, Transform, FadeTransformPieces
+from ..isa_objects import ElemUnit, RegUnit
+
 
 def decl_register(*registers: List[Union[RegUnit]]) -> Animation:
     """
@@ -19,13 +20,12 @@ def decl_register(*registers: List[Union[RegUnit]]) -> Animation:
     # Creat Animation.
     return FadeIn(*registers)
 
-def replace_register(old_reg: RegUnit,
-                     new_reg: RegUnit,
-                     offset: int) -> Animation:
+
+def replace_register(old_reg: RegUnit, new_reg: RegUnit, offset: int) -> Animation:
     """
-    Replacing exist register with a new register. The new register is right-aligned with the old
-    register. `offset` specifies the gap between the LSB of two registers, which can be positive or
-    negative.
+    Replacing exist register with a new register. The new register is right-aligned with
+    the old register. `offset` specifies the gap between the LSB of two registers, which
+    can be positive or negative.
 
     Args:
         old_reg: Object of the old vector.
@@ -41,14 +41,17 @@ def replace_register(old_reg: RegUnit,
     # Creat Animation.
     return Transform(old_reg, new_reg)
 
-def read_elem(vector: RegUnit,
-              elem: ElemUnit,
-              index: int,
-              reg_idx: int,
-              offset: int) -> Animation:
+
+def read_elem(
+    vector: RegUnit,
+    elem: ElemUnit,
+    index: int,
+    reg_idx: int,
+    offset: int,
+) -> Animation:
     """
-    Read specified element from one register. Fade in element at the specified position related
-    to the register.
+    Read specified element from one register. Fade in element at the specified position
+    related to the register.
 
     Args:
         vector: Object of the register.
@@ -65,18 +68,21 @@ def read_elem(vector: RegUnit,
     # Creat Animation.
     return FadeIn(elem)
 
-def assign_elem(old_elem: ElemUnit,
-                new_elem: ElemUnit,
-                vector: RegUnit,
-                index: int,
-                reg_idx: int,
-                offset: int) -> Animation:
+
+def assign_elem(
+    old_elem: ElemUnit,
+    new_elem: ElemUnit,
+    vector: RegUnit,
+    index: int,
+    reg_idx: int,
+    offset: int,
+) -> Animation:
     """
-    Assign one element to the register. Move element to the specified location related to
-    the register.
-    
-    Instead of move animation, this function uses transform animation. `new_elem` can use different
-    width, color, and value from the `old_elem`.
+    Assign one element to the register. Move element to the specified location related
+    to the register.
+
+    Instead of move animation, this function uses transform animation. `new_elem` can
+    use different width, color, and value from the `old_elem`.
 
     Args:
         old_elem: Element object before animation.
@@ -94,13 +100,12 @@ def assign_elem(old_elem: ElemUnit,
     # Creat Animation.
     return Transform(old_elem, new_elem)
 
-def replace_elem(old_elem: ElemUnit,
-                 new_elem: ElemUnit,
-                 offset: int) -> Animation:
+
+def replace_elem(old_elem: ElemUnit, new_elem: ElemUnit, offset: int) -> Animation:
     """
-    Replace exist element with a new element. The new element is right-aligned with the existed
-    element. `offset` specifies the gap between the LSB of two registers, which can be positive or
-    negative.
+    Replace exist element with a new element. The new element is right-aligned with the
+    existed element. `offset` specifies the gap between the LSB of two registers, which
+    can be positive or negative.
 
     Args:
         old_elem: Object of the old element.

@@ -4,15 +4,17 @@ Test ISA scene with multiple instructions.
 
 import os
 import sys
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
-from isa_manim import MultiIsaScene # pylint: disable=wrong-import-position
+from isa_manim import MultiIsaScene
 
 
 class TestMultiIsaScene(MultiIsaScene):
     """
     Test ISA scene with multiple instructions.
     """
+
     def construct_isa_flow(self):
         # Parameters
         vl = 256
@@ -26,6 +28,7 @@ class TestMultiIsaScene(MultiIsaScene):
         # Title
         self.draw_title("Shuffle instruction")
         subtitle = ["Buttom", "Top"]
+        src_reg = []
         for part in range(0, way):
             self.start_section(subtitle[part])
 
@@ -43,10 +46,10 @@ class TestMultiIsaScene(MultiIsaScene):
                         element = self.read_elem(
                             src_reg[w], s * elempersegment + part * pairpersegment + p,
                             color_hash=f"way{w}")
-                        self.move_elem(element, zd_reg, s * elempersegment + p * way + w)
+                        self.move_elem(
+                            element, zd_reg, s * elempersegment + p * way + w)
 
             if part < way - 1:
                 self.end_section(wait=1, keep_objects=[zn_reg, zm_reg])
             else:
                 self.end_section()
-

@@ -1,0 +1,10 @@
+[style]
+based_on_style = pep8
+column_limit = 88
+indent_width = 4
+continuation_indent_width = 4
+split_before_first_argument = true
+split_before_named_assigns = false
+split_arguments_when_comma_terminated = false
+each_dict_entry_on_separate_line = false
+split_penalty_import_names = 1000

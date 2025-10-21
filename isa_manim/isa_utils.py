@@ -1,9 +1,9 @@
-
 """
 Utilize functions.
 """
 
 from typing import List, Tuple
+
 
 def calculate_mem_range(array: List[int], mbyte: int) -> Tuple[int, int]:
     """

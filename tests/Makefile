@@ -31,8 +31,11 @@ test_mem_unit:
 test_mem_unit_status:
 	manim -ql --format=png isa_objects/test_mem_unit_status.py
 
-test_objects: test_one_dim_reg test_two_dim_reg test_elem_unit test_elem_unit_zero test_func_unit \
-	test_mem_unit
+test_mem_unit_dualport:
+	manim -ql --format=png isa_objects/test_mem_unit_dualport.py
+
+test_objects: test_one_dim_reg test_two_dim_reg test_elem_unit test_elem_unit_zero \
+	test_func_unit test_mem_unit test_mem_unit_status test_mem_unit_dualport
 
 # Test animation.
 test_reg_animation:
@@ -56,7 +59,12 @@ test_memory_animation_without_addr:
 test_memory_animation_parallel:
 	manim -ql --format=gif isa_animate/test_memory_animation_parallel.py
 
-test_animations: test_reg_animation test_elem_animation test_func_animation test_memory_animation
+test_memory_animation_dualport:
+	manim -ql --format=gif isa_animate/test_memory_animation_dualport.py
+
+test_animations: test_reg_animation test_elem_animation test_func_animation \
+	test_memory_animation test_memory_animation_without_addr \
+	test_memory_animation_parallel test_memory_animation_dualport
 
 # Test scene.
 test_isa_placement_map:

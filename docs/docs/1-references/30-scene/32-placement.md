@@ -1,22 +1,38 @@
 # Objects Placement
 
-`isa_manim.isa_scene.isa_placement.IsaPlacementMap` provides the data structures and function interfaces for object placement. The primary of `IsaPlacementMap` contains:
+`isa_manim.isa_scene.isa_placement.IsaPlacementMap` provides the data structures and
+function interfaces for object placement. The primary of `IsaPlacementMap` contains:
 
-- `_placement_object_dict` provides one dictionary of objects in the scene. The dictionary key can be an integer or string. The value of the dictionary is an entity of `isa_manim.isa_scene.isa_placement.IsaPlacementItem`. The data structure provides the position information of one object.
-- `_placement_map` presents the placement map as a 2-D array of an integer. Each element in the array presents the status of one single square of the grid.
+-   `_placement_object_dict` provides one dictionary of objects in the scene. The
+    dictionary key can be an integer or string. The value of the dictionary is an entity
+    of `isa_manim.isa_scene.isa_placement.IsaPlacementItem`. The data structure provides
+    the position information of one object.
+-   `_placement_map` presents the placement map as a 2-D array of an integer. Each
+    element in the array presents the status of one single square of the grid.
 
-`IsaPlacementMap` provides several groups of APIs to operate the dictionary and the map. At first, `has_object` and `get_object` are used to operate the placement dictionary. `has_object` checks whether one specified hash exists in the dictionary, and `get_object` returns the object associated with the specified hash.
+`IsaPlacementMap` provides several groups of APIs to operate the dictionary and the map.
+At first, `has_object` and `get_object` are used to operate the placement dictionary.
+`has_object` checks whether one specified hash exists in the dictionary, and
+`get_object` returns the object associated with the specified hash.
 
-Then, `place_object` adds one single object to the placement map, and `place_object_group` adds a group of objects to the placement map. These two functions call `place_placement_item` to find an appropriate space to place objects.
+Then, `place_object` adds one single object to the placement map, and
+`place_object_group` adds a group of objects to the placement map. These two functions
+call `place_placement_item` to find an appropriate space to place objects.
 
 The following functions return the status of the placement map:
 
-- `get_placement_width` and `get_placement_height` returns the width and height of the actual occupied map. Only occupied columns/rows or margins are counted.
-- `get_placement_origin` returns the central position of the placement map.
-- `get_camera_scale` returns the scale factor of the placement to fit into a specified camera. The value provided by this camera is used to show all objects in the scene by scaling the camera.
-- `dump_placement` returns a string to present the placement for debugging.
+-   `get_placement_width` and `get_placement_height` returns the width and height of the
+    actual occupied map. Only occupied columns/rows or margins are counted.
+-   `get_placement_origin` returns the central position of the placement map.
+-   `get_camera_scale` returns the scale factor of the placement to fit into a specified
+    camera. The value provided by this camera is used to show all objects in the scene
+    by scaling the camera.
+-   `dump_placement` returns a string to present the placement for debugging.
 
-The following functions operate on the placement map. `reset_placement` removes all placed objects and resizes the placement map to the initialization size. `resize_placement` resizes the placement map to a specified size while keeping all placed objects.
+The following functions operate on the placement map. `reset_placement` removes all
+placed objects and resizes the placement map to the initialization size.
+`resize_placement` resizes the placement map to a specified size while keeping all
+placed objects.
 
 ## Flow charts
 
