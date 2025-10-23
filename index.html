@@ -14,7 +14,7 @@
       
       
       <link rel="icon" href="assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.21">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.22">
     
     
       
@@ -22,7 +22,7 @@
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.66ac8b77.min.css">
+      <link rel="stylesheet" href="assets/stylesheets/main.84d31ad4.min.css">
       
       
 
@@ -43,7 +43,7 @@
     
       <link rel="stylesheet" href="assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -81,12 +81,12 @@
     <a href="." title="Manim for ISA" class="md-header__button md-logo" aria-label="Manim for ISA" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
       
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
@@ -106,36 +106,38 @@
     </div>
     
     
-      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
     
     
-      <label class="md-header__button md-icon" for="__search">
-        
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-      </label>
-      <div class="md-search" data-md-component="search" role="dialog">
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
       <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
         
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
         
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
         
         <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
           
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </nav>
       
     </form>
     <div class="md-search__output">
-      <div class="md-search__scrollwrap" data-md-scrollfix>
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
         <div class="md-search-result" data-md-component="search-result">
           <div class="md-search-result__meta">
             Initializing search
@@ -146,6 +148,7 @@
     </div>
   </div>
 </div>
+      
     
     
   </nav>
@@ -176,7 +179,7 @@
     <a href="." title="Manim for ISA" class="md-nav__button md-logo" aria-label="Manim for ISA" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
     Manim for ISA
@@ -203,8 +206,10 @@
       <a href="." class="md-nav__link md-nav__link--active">
         
   
+  
   <span class="md-ellipsis">
     Welcome to Manim for ISA
+    
   </span>
   
 
@@ -236,6 +241,7 @@
     
     
     
+    
     <li class="md-nav__item md-nav__item--nested">
       
         
@@ -246,8 +252,10 @@
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
             
   
+  
   <span class="md-ellipsis">
     Introductions
+    
   </span>
   
 
@@ -271,8 +279,10 @@
       <a href="0-introductions/01-scenes/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
     ISA Scenes
+    
   </span>
   
 
@@ -292,8 +302,10 @@
       <a href="0-introductions/02-animation-apis/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
     Animation APIs
+    
   </span>
   
 
@@ -313,8 +325,10 @@
       <a href="0-introductions/03-animation-flow/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
     Animation Scheduling
+    
   </span>
   
 
@@ -334,8 +348,10 @@
       <a href="0-introductions/04-placement/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
     Object Placement
+    
   </span>
   
 
@@ -355,8 +371,10 @@
       <a href="0-introductions/05-configuration/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
     Configuration
+    
   </span>
   
 
@@ -395,6 +413,7 @@
     
     
     
+    
     <li class="md-nav__item md-nav__item--nested">
       
         
@@ -402,13 +421,14 @@
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
-          
           <div class="md-nav__link md-nav__container">
             <a href="1-references/" class="md-nav__link ">
               
   
+  
   <span class="md-ellipsis">
     References
+    
   </span>
   
 
@@ -454,6 +474,7 @@
     
     
     
+    
     <li class="md-nav__item md-nav__item--nested">
       
         
@@ -461,13 +482,14 @@
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
         
           
-          
           <div class="md-nav__link md-nav__container">
             <a href="1-references/10-objects/" class="md-nav__link ">
               
   
+  
   <span class="md-ellipsis">
     Objects
+    
   </span>
   
 
@@ -499,8 +521,10 @@
       <a href="1-references/10-objects/11-register-unit/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
     Register Units
+    
   </span>
   
 
@@ -520,8 +544,10 @@
       <a href="1-references/10-objects/12-function-unit/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
     Function Units
+    
   </span>
   
 
@@ -541,8 +567,10 @@
       <a href="1-references/10-objects/13-memory-unit/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
     Memory Unit
+    
   </span>
   
 
@@ -562,8 +590,10 @@
       <a href="1-references/10-objects/14-element-unit/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
     Element Unit
+    
   </span>
   
 
@@ -603,6 +633,7 @@
     
     
     
+    
     <li class="md-nav__item md-nav__item--nested">
       
         
@@ -610,13 +641,14 @@
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
         
           
-          
           <div class="md-nav__link md-nav__container">
             <a href="1-references/20-animation/" class="md-nav__link ">
               
   
+  
   <span class="md-ellipsis">
     Animations
+    
   </span>
   
 
@@ -648,8 +680,10 @@
       <a href="1-references/20-animation/21-register-animation/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
     Animations for Registers and Elements
+    
   </span>
   
 
@@ -669,8 +703,10 @@
       <a href="1-references/20-animation/22-function-animation/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
     Animations For Function Units
+    
   </span>
   
 
@@ -690,8 +726,10 @@
       <a href="1-references/20-animation/23-memory-animation/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
     Animations for Memory Units
+    
   </span>
   
 
@@ -733,6 +771,7 @@
     
     
     
+    
     <li class="md-nav__item md-nav__item--nested">
       
         
@@ -740,13 +779,14 @@
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
         
           
-          
           <div class="md-nav__link md-nav__container">
             <a href="1-references/30-scene/" class="md-nav__link ">
               
   
+  
   <span class="md-ellipsis">
     Scene
+    
   </span>
   
 
@@ -778,8 +818,10 @@
       <a href="1-references/30-scene/31-color-map/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
     Color map
+    
   </span>
   
 
@@ -799,8 +841,10 @@
       <a href="1-references/30-scene/32-placement/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
     Objects Placement
+    
   </span>
   
 
@@ -820,8 +864,10 @@
       <a href="1-references/30-scene/33-animation-flow/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
     Animation Scheduling
+    
   </span>
   
 
@@ -841,8 +887,10 @@
       <a href="1-references/30-scene/34-refer-count/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
     Element Reference Counter
+    
   </span>
   
 
@@ -900,25 +948,40 @@
                   
 
 
+
 <h1 id="welcome-to-manim-for-isa">Welcome to Manim for ISA</h1>
-<p>The instruction set is the most important component of the Computer Architecture. To help users quickly and correctly understand the definition and behavior of instructions, the Computer Specification uses many pages to provide textual descriptions and pseudocode for each instruction.</p>
-<p>However, static descriptions, such as textual and pseudocode, still have the following problems for instructions with complex functionality and behaviors.</p>
+<p>The instruction set is the most important component of the Computer Architecture. To
+help users quickly and correctly understand the definition and behavior of instructions,
+the Computer Specification uses many pages to provide textual descriptions and
+pseudocode for each instruction.</p>
+<p>However, static descriptions, such as textual and pseudocode, still have the following
+problems for instructions with complex functionality and behaviors.</p>
 <ul>
-<li>The textual description is not intuitively clear enough and leads to ambiguity, especially for non-native English users.</li>
-<li>Pseudocode can clear ambiguity to some extent, depending on the coding ability of users.</li>
+<li>The textual description is not intuitively clear enough and leads to ambiguity,
+    especially for non-native English users.</li>
+<li>Pseudocode can clear ambiguity to some extent, depending on the coding ability of
+    users.</li>
 </ul>
-<p>ISAManim aims to create a well-using framework to generate animations presenting the function of one instruction or an instruction sequence. The project is developed based on <a href="https://docs.manim.community/en/stable/index.html">Manim</a>, a Python-based animation framework for mathematics and algorithms. </p>
-<p>ISAManim majorly focuses on the data flow of the instructions. Animations can present the following behaviors:</p>
+<p>ISAManim aims to create a well-using framework to generate animations presenting the
+function of one instruction or an instruction sequence. The project is developed based
+on <a href="https://docs.manim.community/en/stable/index.html">Manim</a>, a Python-based animation
+framework for mathematics and algorithms. </p>
+<p>ISAManim majorly focuses on the data flow of the instructions. Animations can present
+the following behaviors:</p>
 <ul>
 <li>Read/write elements from registers.</li>
 <li>Arithmetic/logic operation.</li>
 <li>Memory access.</li>
 </ul>
-<p>ISAManim offers automatic animation management and object placement by providing dedicated animation scenes and APIs. Users do not need to pay attention on the animation. Instead, users only need to program the animation as the instruction behavior. </p>
+<p>ISAManim offers automatic animation management and object placement by providing
+dedicated animation scenes and APIs. Users do not need to pay attention on the
+animation. Instead, users only need to program the animation as the instruction
+behavior. </p>
 <h1 id="installation">Installation</h1>
 <p>The whole project is developed based on Python3.</p>
 <h2 id="install-manim">Install Manim</h2>
-<p>Page <a href="https://docs.manim.community/en/stable/installation.html">Installation</a> provides the flow to install Manim on different OSs.</p>
+<p>Page <a href="https://docs.manim.community/en/stable/installation.html">Installation</a> provides
+the flow to install Manim on different OSs.</p>
 <p>The typical process to install Manim in Ubuntu is as follows:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Install requirements of Manim</span>
 sudo<span class="w"> </span>apt<span class="w"> </span>update
@@ -939,7 +1002,8 @@ git<span class="w"> </span>clone<span class="w"> </span>git@github.com:wangeddie
 pip3<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>isa_manim/requirements.txt
 </code></pre></div>
 <h2 id="generate-documents">Generate Documents</h2>
-<p>MkDocs is applied to generate the document for this project. The environment of MkDocs can be set up by following commands:</p>
+<p>The document for this project is generated by MkDocs. The environment of MkDocs can be
+set up by following commands:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>/root/to/isa_sim_utils/docs
 
 <span class="c1"># Install MkDocs and plugin</span>
@@ -951,7 +1015,8 @@ pip3<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </
 <span class="c1"># Publish to GitHub Pages</span>
 mkdocs<span class="w"> </span>gh-deploy<span class="w"> </span>--force
 </code></pre></div>
-<p>Users can access the generated documents in the directory <code>docs/site</code>. The index page of generated documents is <code>docs/site/index.html</code>.</p>
+<p>Users can access the generated documents in the directory <code>docs/site</code>. The index page of
+generated documents is <code>docs/site/index.html</code>.</p>
 
 
 
@@ -998,10 +1063,12 @@ mkdocs<span class="w"> </span>gh-deploy<span class="w"> </span>--force
     </div>
     
     
-    <script id="__config" type="application/json">{"base": ".", "features": ["navigation.indexes"], "search": "assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+      
+      <script id="__config" type="application/json">{"base": ".", "features": ["navigation.indexes"], "search": "assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="assets/javascripts/bundle.a7c05c9e.min.js"></script>
+      <script src="assets/javascripts/bundle.f55a23d4.min.js"></script>
       
     
   </body>
